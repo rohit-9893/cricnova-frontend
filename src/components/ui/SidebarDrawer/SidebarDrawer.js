@@ -44,6 +44,9 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
   const isClosing = useRef(false);
   const insets = useSafeAreaInsets();
 
+  // Staggered animated values for each menu item
+  const itemAnims = useRef(MENU_ITEMS.map(() => new Animated.Value(0))).current;
+
   // Smooth Animated Close Function
   const handleSmoothClose = (onComplete) => {
     if (isClosing.current) return;
@@ -131,6 +134,7 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
       isClosing.current = false;
       slideAnim.setValue(-DRAWER_WIDTH);
       fadeAnim.setValue(0);
+      itemAnims.forEach((anim) => anim.setValue(0));
 
       Animated.parallel([
         Animated.timing(slideAnim, {
@@ -145,6 +149,17 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
           easing: Easing.out(Easing.ease),
           useNativeDriver: true,
         }),
+        Animated.stagger(
+          35, // 35ms micro-stagger between items
+          itemAnims.map((anim) =>
+            Animated.timing(anim, {
+              toValue: 1,
+              duration: 240,
+              easing: Easing.out(Easing.ease),
+              useNativeDriver: true,
+            })
+          )
+        ),
       ]).start();
     }
   }, [visible, slideAnim, fadeAnim]);
@@ -229,45 +244,60 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
                 </View>
               </View>
 
-              {/* Menu Items List */}
+              {/* Menu Items List with Staggered Slide-In Animation */}
               <ScrollView
                 style={styles.menuContainer}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.menuScrollContent}
               >
-                {MENU_ITEMS.map((item, index) => (
-                  <TouchableOpacity
-                    key={item.id}
-                    style={[
-                      styles.menuItemRow,
-                      index === 0 && styles.firstMenuItemBorder,
-                    ]}
-                    activeOpacity={0.7}
-                    onPress={() => handleItemPress(item)}
-                  >
-                    {/* Left Icon */}
-                    <View style={styles.menuIconContainer}>
-                      <Ionicons name={item.icon} size={22} color="#475569" />
-                    </View>
+                {MENU_ITEMS.map((item, index) => {
+                  const itemTranslateX = itemAnims[index].interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [-30, 0],
+                  });
+                  const itemOpacity = itemAnims[index];
 
-                    {/* Title */}
-                    <Text style={styles.menuItemTitle}>{item.title}</Text>
-
-                    {/* Right Badge if present */}
-                    {item.badge && (
-                      <View
+                  return (
+                    <Animated.View
+                      key={item.id}
+                      style={{
+                        opacity: itemOpacity,
+                        transform: [{ translateX: itemTranslateX }],
+                      }}
+                    >
+                      <TouchableOpacity
                         style={[
-                          styles.badgePill,
-                          item.badge === "Free"
-                            ? styles.freeBadgePill
-                            : styles.shirtBadgePill,
+                          styles.menuItemRow,
+                          index === 0 && styles.firstMenuItemBorder,
                         ]}
+                        activeOpacity={0.7}
+                        onPress={() => handleItemPress(item)}
                       >
-                        <Text style={styles.badgeText}>{item.badge}</Text>
-                      </View>
-                    )}
-                  </TouchableOpacity>
-                ))}
+                        {/* Left Icon */}
+                        <View style={styles.menuIconContainer}>
+                          <Ionicons name={item.icon} size={22} color="#475569" />
+                        </View>
+
+                        {/* Title */}
+                        <Text style={styles.menuItemTitle}>{item.title}</Text>
+
+                        {/* Right Badge if present */}
+                        {item.badge && (
+                          <View
+                            style={[
+                              styles.badgePill,
+                              item.badge === "Free"
+                                ? styles.freeBadgePill
+                                : styles.shirtBadgePill,
+                            ]}
+                          >
+                            <Text style={styles.badgeText}>{item.badge}</Text>
+                          </View>
+                        )}
+                      </TouchableOpacity>
+                    </Animated.View>
+                  );
+                })}
               </ScrollView>
             </View>
           </TouchableWithoutFeedback>
