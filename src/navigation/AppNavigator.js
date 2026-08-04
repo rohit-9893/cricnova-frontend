@@ -8,6 +8,8 @@ import GuestCityScreen from "../screens/Auth/GuestCityScreen";
 import HomeScreen from "../screens/Home/HomeScreen";
 import PlaceholderScreen from "../screens/Placeholder/PlaceholderScreen";
 import SelectPlayingTeamsScreen from "../screens/Match/SelectPlayingTeamsScreen";
+import SelectTeamScreen from "../screens/Match/SelectTeamScreen";
+import CreateTeamScreen from "../screens/Match/CreateTeamScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +28,8 @@ const AppNavigator = () => {
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Placeholder" component={PlaceholderScreen} />
       <Stack.Screen name="SelectPlayingTeams" component={SelectPlayingTeamsScreen} />
+      <Stack.Screen name="SelectTeam" component={SelectTeamScreen} />
+      <Stack.Screen name="CreateTeam" component={CreateTeamScreen} />
     </Stack.Navigator>
   );
 };

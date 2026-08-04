@@ -30,7 +30,7 @@ const SelectPlayingTeamsScreen = ({ navigation }) => {
           <TeamSelectorCard
             title="Select team A"
             isAnimated={true}
-            onPress={() => {}}
+            onPress={() => navigation.navigate("SelectTeam", { teamType: "A" })}
           />
 
           {/* VS Diamond Divider */}
@@ -40,7 +40,7 @@ const SelectPlayingTeamsScreen = ({ navigation }) => {
           <TeamSelectorCard
             title="Select team B"
             isAnimated={false}
-            onPress={() => {}}
+            onPress={() => navigation.navigate("SelectTeam", { teamType: "B" })}
           />
         </View>
       </View>
