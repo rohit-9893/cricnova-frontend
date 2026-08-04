@@ -79,6 +79,8 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
       if (navigation && navigation.navigate) {
         if (item.id === "start_match") {
           navigation.navigate("SelectPlayingTeams");
+        } else if (item.id === "profile" || item.title === "My Profile") {
+          navigation.navigate("MyProfile");
         } else {
           navigation.navigate("Placeholder", { title: item.title });
         }

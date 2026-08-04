@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
   ScrollView,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AppHeader from "../../components/ui/AppHeader";
@@ -15,29 +16,102 @@ import TeamCard from "../../components/team/TeamCard";
 import TeamLogoPicker from "../../components/team/TeamLogoPicker";
 import UnderlineInput from "../../components/ui/UnderlineInput";
 
-const INITIAL_TEAMS = [];
+// Shared team storage across navigation turns
+let globalTeamsList = [
+  {
+    id: "team_1",
+    teamName: "CSK Indore",
+    avatarColor: "#9333EA",
+    avatarInitials: "CS",
+    location: "Indore",
+    captainName: "Shivam Solanki",
+  },
+  {
+    id: "team_2",
+    teamName: "RCB Royals",
+    avatarColor: "#1D4ED8",
+    avatarInitials: "RC",
+    location: "Indore",
+    captainName: "Rohit Panchal",
+  },
+];
+
+const AVATAR_COLORS = [
+  "#0D9488", "#9333EA", "#1D4ED8", "#F43F5E",
+  "#D97706", "#059669", "#7C3AED", "#DC2626"
+];
+
 const TABS = ["Your teams", "Opponents", "Add"];
 
 const SelectTeamScreen = ({ navigation, route }) => {
   const teamType = route.params?.teamType || "A";
   const [activeTab, setActiveTab] = useState("Your teams");
   const [searchQuery, setSearchQuery] = useState("");
-  const [teams, setTeams] = useState(INITIAL_TEAMS);
+  const [teams, setTeams] = useState(globalTeamsList);
 
   // Form State for "Add" Tab
   const [teamName, setTeamName] = useState("");
   const [city, setCity] = useState("Indore");
   const [captainPhone, setCaptainPhone] = useState("");
-  const [captainName, setCaptainName] = useState("");
-  const [addSelf, setAddSelf] = useState(false);
+  const [captainName, setCaptainName] = useState("Rohit Panchal");
+  const [addSelf, setAddSelf] = useState(true);
 
-  // Dynamic Header Title (Header stays 100% fixed & static, only title text changes)
+  // Dynamic Header Title
   const headerTitle =
     activeTab === "Add" ? "Create your team" : `Select team ${teamType}`;
 
   const filteredTeams = teams.filter((team) =>
     team.teamName.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Handle New Team Creation
+  const handleCreateTeam = () => {
+    if (!teamName.trim()) {
+      Alert.alert("Required Field", "Please enter a valid Team Name.");
+      return;
+    }
+
+    // Generate Initials from Team Name
+    const words = teamName.trim().split(" ");
+    const initials =
+      words.length >= 2
+        ? (words[0][0] + words[1][0]).toUpperCase()
+        : teamName.substring(0, 2).toUpperCase();
+
+    // Random Vibrant Avatar Color
+    const randomColor =
+      AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
+
+    const newTeam = {
+      id: Date.now().toString(),
+      teamName: teamName.trim(),
+      avatarColor: randomColor,
+      avatarInitials: initials,
+      location: city.trim() || "Indore",
+      captainName: captainName.trim() || "Captain",
+    };
+
+    const updatedList = [newTeam, ...teams];
+    globalTeamsList = updatedList;
+    setTeams(updatedList);
+
+    // Reset Form Fields
+    setTeamName("");
+
+    // Automatically select the newly created team and navigate back
+    navigation.navigate("SelectPlayingTeams", {
+      selectedTeam: newTeam,
+      teamType: teamType,
+    });
+  };
+
+  // Handle Selecting an Existing Team
+  const handleSelectTeam = (team) => {
+    navigation.navigate("SelectPlayingTeams", {
+      selectedTeam: team,
+      teamType: teamType,
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -64,25 +138,23 @@ const SelectTeamScreen = ({ navigation, route }) => {
         onTabPress={(tab) => setActiveTab(tab)}
       />
 
-      {/* Body Content Area (Pure White #FFFFFF across all tabs) */}
+      {/* Body Content Area */}
       <View style={styles.bodyContent}>
         {activeTab === "Add" ? (
-          // --- ADD TEAM FORM VIEW (Clean layout on same white background) ---
+          // --- CREATE TEAM FORM VIEW ---
           <View style={styles.formContainer}>
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.formScrollContent}
             >
-              {/* Logo Picker */}
               <TeamLogoPicker onPress={() => {}} />
 
-              {/* Form Inputs directly on white background */}
               <View style={styles.formFields}>
                 <UnderlineInput
                   label="Team name *"
                   value={teamName}
                   onChangeText={setTeamName}
-                  placeholder=""
+                  placeholder="Enter team name"
                 />
 
                 <UnderlineInput
@@ -111,7 +183,6 @@ const SelectTeamScreen = ({ navigation, route }) => {
                 />
               </View>
 
-              {/* Add Yourself Checkbox Row */}
               <TouchableOpacity
                 style={styles.checkboxRow}
                 activeOpacity={0.8}
@@ -128,12 +199,11 @@ const SelectTeamScreen = ({ navigation, route }) => {
               </TouchableOpacity>
             </ScrollView>
 
-            {/* Fixed Bottom Teal Action Button */}
             <View style={styles.bottomBar}>
               <TouchableOpacity
                 style={styles.addTeamBtn}
                 activeOpacity={0.8}
-                onPress={() => setActiveTab("Your teams")}
+                onPress={handleCreateTeam}
               >
                 <Text style={styles.addTeamBtnText}>Add team</Text>
               </TouchableOpacity>
@@ -158,13 +228,21 @@ const SelectTeamScreen = ({ navigation, route }) => {
                   avatarInitials={item.avatarInitials}
                   location={item.location}
                   captainName={item.captainName}
-                  onPress={() => navigation.goBack()}
+                  onPress={() => handleSelectTeam(item)}
                   onQrPress={() => {}}
                 />
               )}
               ListEmptyComponent={
                 <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>No teams found</Text>
+                  <Text style={styles.emptyText}>No teams created yet.</Text>
+                  <TouchableOpacity
+                    style={styles.createFirstTeamBtn}
+                    onPress={() => setActiveTab("Add")}
+                  >
+                    <Text style={styles.createFirstTeamBtnText}>
+                      + Create Your First Team
+                    </Text>
+                  </TouchableOpacity>
                 </View>
               }
               contentContainerStyle={styles.listContent}
@@ -213,6 +291,18 @@ const styles = StyleSheet.create({
   emptyText: {
     color: "#94A3B8",
     fontSize: 15,
+    marginBottom: 12,
+  },
+  createFirstTeamBtn: {
+    backgroundColor: "#0D9488",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 4,
+  },
+  createFirstTeamBtnText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "bold",
   },
   formContainer: {
     flex: 1,

@@ -41,6 +41,11 @@ export default StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  avatarInitialsText: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    fontWeight: "bold",
+  },
   selectTeamBtn: {
     backgroundColor: "#0D9488",
     paddingHorizontal: 16,
