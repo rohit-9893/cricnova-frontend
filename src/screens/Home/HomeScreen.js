@@ -6,55 +6,58 @@ import {
   TouchableOpacity,
   StatusBar,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import SidebarDrawer from "../../components/ui/SidebarDrawer";
 
 const HomeScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("For you");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-      <StatusBar barStyle="light-content" backgroundColor="#D32F2F" />
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#D32F2F" translucent={false} />
 
-      {/* Red Top Header Bar */}
-      <View style={styles.topHeader}>
-        {/* Left Section: Menu, Logo, PRO Badge */}
-        <View style={styles.headerLeft}>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            style={styles.iconButton}
-            onPress={() => setIsSidebarOpen(true)}
-          >
-            <Ionicons name="menu" size={26} color="#FFFFFF" />
-          </TouchableOpacity>
+      {/* Red Top Header Wrapper (Covers Status Bar & Notch with Red #D32F2F) */}
+      <View style={[styles.redHeaderWrapper, { paddingTop: insets.top }]}>
+        <View style={styles.topHeader}>
+          {/* Left Section: Menu, Logo, PRO Badge */}
+          <View style={styles.headerLeft}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={styles.iconButton}
+              onPress={() => setIsSidebarOpen(true)}
+            >
+              <Ionicons name="menu" size={26} color="#FFFFFF" />
+            </TouchableOpacity>
 
-          <View style={styles.logoBadge}>
-            <MaterialCommunityIcons name="cricket" size={22} color="#FFFFFF" />
+            <View style={styles.logoBadge}>
+              <MaterialCommunityIcons name="cricket" size={22} color="#FFFFFF" />
+            </View>
+
+            <TouchableOpacity activeOpacity={0.8} style={styles.proBadge}>
+              <Text style={styles.proText}>PRO @ ₹199</Text>
+            </TouchableOpacity>
           </View>
 
-          <TouchableOpacity activeOpacity={0.8} style={styles.proBadge}>
-            <Text style={styles.proText}>PRO @ ₹199</Text>
-          </TouchableOpacity>
-        </View>
+          {/* Right Section: Search, Chat, Notification */}
+          <View style={styles.headerRight}>
+            <TouchableOpacity activeOpacity={0.7} style={styles.iconButton}>
+              <Ionicons name="search-outline" size={22} color="#FFFFFF" />
+            </TouchableOpacity>
 
-        {/* Right Section: Search, Chat, Notification */}
-        <View style={styles.headerRight}>
-          <TouchableOpacity activeOpacity={0.7} style={styles.iconButton}>
-            <Ionicons name="search-outline" size={22} color="#FFFFFF" />
-          </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.7} style={styles.iconButton}>
+              <Ionicons name="chatbubble-ellipses-outline" size={21} color="#FFFFFF" />
+            </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.7} style={styles.iconButton}>
-            <Ionicons name="chatbubble-ellipses-outline" size={21} color="#FFFFFF" />
-          </TouchableOpacity>
-
-          <TouchableOpacity activeOpacity={0.7} style={styles.iconButton}>
-            <Ionicons name="notifications-outline" size={22} color="#FFFFFF" />
-            <View style={styles.notificationBadge}>
-              <Text style={styles.notificationBadgeText}>2</Text>
-            </View>
-          </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.7} style={styles.iconButton}>
+              <Ionicons name="notifications-outline" size={22} color="#FFFFFF" />
+              <View style={styles.notificationBadge}>
+                <Text style={styles.notificationBadgeText}>2</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
@@ -105,10 +108,11 @@ const HomeScreen = ({ navigation }) => {
 
       {/* Animated Sidebar Drawer */}
       <SidebarDrawer
+        navigation={navigation}
         visible={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -118,6 +122,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F8FAFC",
+  },
+  redHeaderWrapper: {
+    backgroundColor: "#D32F2F",
+    width: "100%",
   },
   topHeader: {
     height: 56,

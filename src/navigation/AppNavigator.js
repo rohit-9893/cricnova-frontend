@@ -6,6 +6,8 @@ import LoginScreen from "../screens/Auth/LoginScreen";
 import RegisterScreen from "../screens/Auth/RegisterScreen";
 import GuestCityScreen from "../screens/Auth/GuestCityScreen";
 import HomeScreen from "../screens/Home/HomeScreen";
+import PlaceholderScreen from "../screens/Placeholder/PlaceholderScreen";
+import SelectPlayingTeamsScreen from "../screens/Match/SelectPlayingTeamsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +24,8 @@ const AppNavigator = () => {
       <Stack.Screen name="GuestCity" component={GuestCityScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Placeholder" component={PlaceholderScreen} />
+      <Stack.Screen name="SelectPlayingTeams" component={SelectPlayingTeamsScreen} />
     </Stack.Navigator>
   );
 };
