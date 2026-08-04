@@ -8,9 +8,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import SidebarDrawer from "../../components/ui/SidebarDrawer";
 
 const HomeScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState("For you");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
@@ -20,7 +22,11 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.topHeader}>
         {/* Left Section: Menu, Logo, PRO Badge */}
         <View style={styles.headerLeft}>
-          <TouchableOpacity activeOpacity={0.7} style={styles.iconButton}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.iconButton}
+            onPress={() => setIsSidebarOpen(true)}
+          >
             <Ionicons name="menu" size={26} color="#FFFFFF" />
           </TouchableOpacity>
 
@@ -96,6 +102,12 @@ const HomeScreen = ({ navigation }) => {
 
       {/* Main Content Body (Blank for now) */}
       <View style={styles.bodyContent} />
+
+      {/* Animated Sidebar Drawer */}
+      <SidebarDrawer
+        visible={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
     </SafeAreaView>
   );
 };
@@ -112,7 +124,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#D32F2F",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justify.content: "space-between",
     paddingHorizontal: 12,
   },
   headerLeft: {
@@ -128,7 +140,7 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center",
+    justify.content: "center",
     alignItems: "center",
     marginHorizontal: 8,
   },
@@ -157,7 +169,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     minWidth: 16,
     height: 16,
-    justifyContent: "center",
+    justify.content: "center",
     alignItems: "center",
     paddingHorizontal: 3,
   },
@@ -180,7 +192,7 @@ const styles = StyleSheet.create({
   },
   tabItem: {
     flex: 1,
-    justifyContent: "center",
+    justify.content: "center",
     alignItems: "center",
     position: "relative",
   },
