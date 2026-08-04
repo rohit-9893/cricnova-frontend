@@ -132,7 +132,7 @@ const SplashScreen = ({ navigation }) => {
           ]}
         >
           <Text style={styles.appTitle}>
-            CRIC<Text style={styles.titleHighlight}>APP</Text>
+            CRIC<Text style={styles.titleHighlight}>NOVAS</Text>
           </Text>
           <View style={styles.taglineBadge}>
             <Ionicons name="trophy-outline" size={14} color="#F59E0B" style={styles.trophyIcon} />

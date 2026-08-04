@@ -34,7 +34,7 @@ const LoginScreen = ({ navigation }) => {
             </View>
           </View>
           <Text style={styles.brandTitle}>
-            cric<Text style={styles.brandRed}>heroes</Text>
+            cric<Text style={styles.brandRed}>novas</Text>
             <Text style={styles.tmSymbol}>™</Text>
           </Text>
           <Text style={styles.brandSubtitle}>Your cricket matters</Text>
