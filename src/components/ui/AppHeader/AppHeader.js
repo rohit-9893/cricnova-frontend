@@ -2,31 +2,26 @@ import React from "react";
 import { View, Text, TouchableOpacity, StatusBar } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "./AppHeader.styles";
 
-const AppHeader = ({
-  title,
-  onBackPress,
-  rightComponent,
-}) => {
+const AppHeader = ({ title, onBackPress, rightComponent }) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.redHeaderWrapper, { paddingTop: insets.top }]}>
+    <View className="bg-brand-red w-full" style={{ paddingTop: insets.top }}>
       <StatusBar barStyle="light-content" backgroundColor="#D32F2F" translucent={false} />
-      <View style={styles.headerBar}>
-        <View style={styles.headerLeft}>
+      <View className="h-14 bg-brand-red flex-row items-center justify-between px-3">
+        <View className="flex-row items-center flex-1">
           {onBackPress && (
-            <TouchableOpacity style={styles.backBtn} activeOpacity={0.7} onPress={onBackPress}>
+            <TouchableOpacity className="p-1 mr-2" activeOpacity={0.7} onPress={onBackPress}>
               <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
             </TouchableOpacity>
           )}
-          <Text style={styles.headerTitle} numberOfLines={1}>
+          <Text className="text-white text-lg font-bold" numberOfLines={1}>
             {title}
           </Text>
         </View>
 
-        {rightComponent && <View style={styles.rightContainer}>{rightComponent}</View>}
+        {rightComponent && <View className="flex-row items-center">{rightComponent}</View>}
       </View>
     </View>
   );

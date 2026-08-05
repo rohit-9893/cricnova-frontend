@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, Animated, Easing } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "./TeamSelectorCard.styles";
 
 const TeamSelectorCard = ({
   title,
@@ -67,12 +66,12 @@ const TeamSelectorCard = ({
   }, [isAnimated, pulseAnim, auraAnim, auraOpacity]);
 
   return (
-    <View style={styles.teamBlock}>
-      <View style={styles.circleContainer}>
+    <View className="items-center my-3">
+      <View className="w-24 h-24 justify-center items-center relative mb-4">
         {isAnimated && (
           <Animated.View
+            className="absolute w-24 h-24 rounded-full bg-teal-500/30"
             style={[
-              styles.pulsingAuraRing,
               {
                 transform: [{ scale: auraAnim }],
                 opacity: auraOpacity,
@@ -82,20 +81,21 @@ const TeamSelectorCard = ({
         )}
 
         <Animated.View
+          className={`w-20 h-20 rounded-full justify-center items-center shadow-lg ${
+            isAnimated ? "bg-brand-teal shadow-teal-500/40" : "bg-slate-700"
+          }`}
           style={[
-            styles.teamCircle,
-            avatarColor && { backgroundColor: avatarColor, borderWidth: 2, borderColor: "#FFFFFF" },
-            isAnimated && styles.teamCircleActive,
+            avatarColor ? { backgroundColor: avatarColor, borderWidth: 2, borderColor: "#FFFFFF" } : null,
             isAnimated ? { transform: [{ scale: pulseAnim }] } : null,
           ]}
         >
           <TouchableOpacity
-            style={styles.teamCircleTouch}
+            className="w-full h-full justify-center items-center"
             activeOpacity={0.8}
             onPress={onPress}
           >
             {avatarInitials ? (
-              <Text style={styles.avatarInitialsText}>{avatarInitials}</Text>
+              <Text className="text-white text-2xl font-black tracking-wider">{avatarInitials}</Text>
             ) : (
               <Ionicons name="add" size={38} color="#FFFFFF" />
             )}
@@ -104,11 +104,11 @@ const TeamSelectorCard = ({
       </View>
 
       <TouchableOpacity
-        style={styles.selectTeamBtn}
+        className="px-5 py-2.5 rounded-full bg-slate-100 border border-slate-200"
         activeOpacity={0.8}
         onPress={onPress}
       >
-        <Text style={styles.selectTeamBtnText}>{title}</Text>
+        <Text className="text-slate-800 text-sm font-bold">{title}</Text>
       </TouchableOpacity>
     </View>
   );

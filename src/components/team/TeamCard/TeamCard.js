@@ -1,55 +1,49 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "./TeamCard.styles";
 
 const TeamCard = ({
   teamName,
-  avatarColor = "#9333EA",
-  avatarInitials = "CS",
+  avatarColor = "#0D9488",
+  avatarInitials = "TM",
   location = "Indore",
-  captainName = "Player",
+  captainName = "Captain",
   onPress,
   onQrPress,
 }) => {
   return (
     <TouchableOpacity
-      style={styles.card}
+      className="flex-row items-center justify-between px-4 py-3.5 bg-white border-b border-slate-100"
       activeOpacity={0.7}
       onPress={onPress}
     >
-      {/* Team Circle Avatar */}
-      <View style={[styles.avatarCircle, { backgroundColor: avatarColor }]}>
-        <Text style={styles.avatarText}>{avatarInitials}</Text>
-      </View>
+      <View className="flex-row items-center flex-1 mr-2">
+        <View
+          className="w-12 h-12 rounded-full justify-center items-center mr-3"
+          style={{ backgroundColor: avatarColor }}
+        >
+          <Text className="text-white text-base font-bold tracking-wider">{avatarInitials}</Text>
+        </View>
 
-      {/* Team Info Details */}
-      <View style={styles.teamInfo}>
-        <Text style={styles.teamName}>{teamName}</Text>
-        <View style={styles.metaRow}>
-          {/* Location */}
-          <View style={styles.metaItem}>
-            <Ionicons name="location-outline" size={14} color="#94A3B8" style={styles.metaIcon} />
-            <Text style={styles.metaText}>{location}</Text>
-          </View>
+        <View className="flex-1">
+          <Text className="text-base font-bold text-slate-900 mb-0.5">{teamName}</Text>
 
-          {/* Captain */}
-          <View style={styles.metaItem}>
-            <View style={styles.captainBadge}>
-              <Text style={styles.captainBadgeText}>C</Text>
+          <View className="flex-row items-center flex-wrap">
+            <View className="flex-row items-center mr-3">
+              <Ionicons name="location-outline" size={13} color="#64748B" />
+              <Text className="text-xs text-slate-500 ml-0.5">{location}</Text>
             </View>
-            <Text style={styles.metaText}>{captainName}</Text>
+
+            <View className="flex-row items-center bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200">
+              <Ionicons name="person-circle-outline" size={12} color="#0D9488" />
+              <Text className="text-xs text-brand-teal font-medium ml-1">{captainName}</Text>
+            </View>
           </View>
         </View>
       </View>
 
-      {/* Right QR Icon */}
-      <TouchableOpacity
-        style={styles.qrIconBtn}
-        activeOpacity={0.7}
-        onPress={onQrPress}
-      >
-        <Ionicons name="qr-code-outline" size={24} color="#0D9488" />
+      <TouchableOpacity className="p-2" activeOpacity={0.7} onPress={onQrPress}>
+        <Ionicons name="qr-code-outline" size={22} color="#64748B" />
       </TouchableOpacity>
     </TouchableOpacity>
   );

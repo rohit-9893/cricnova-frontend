@@ -1,12 +1,11 @@
 import React from "react";
 import { View, Text } from "react-native";
-import styles from "./VsBadge.styles";
 
 const VsBadge = () => {
   return (
-    <View style={styles.vsContainer}>
-      <View style={styles.vsDiamond}>
-        <Text style={styles.vsText}>vs</Text>
+    <View className="my-4 items-center justify-center">
+      <View className="w-9 h-9 bg-brand-red rotate-45 justify-center items-center rounded-sm shadow-md">
+        <Text className="text-white text-xs font-black -rotate-45">VS</Text>
       </View>
     </View>
   );

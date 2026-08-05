@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import styles from "./MyProfileDetailsCard.styles";
 
 const MyProfileDetailsCard = ({
   mobileNumber = "7224012604",
@@ -15,79 +14,80 @@ const MyProfileDetailsCard = ({
   onCompleteProfilePress,
 }) => {
   return (
-    <View style={styles.card}>
+    <View className="bg-white p-4 border-b-8 border-slate-100">
       {/* Header Row */}
-      <View style={styles.headerRow}>
-        <Text style={styles.title}>My profile</Text>
+      <View className="flex-row items-center justify-between mb-4">
+        <Text className="text-lg font-bold text-slate-900">My profile</Text>
         <TouchableOpacity activeOpacity={0.7} onPress={onEditPress}>
-          <Text style={styles.editBtnText}>Edit</Text>
+          <Text className="text-sm font-bold text-brand-teal">Edit</Text>
         </TouchableOpacity>
       </View>
 
       {/* 2-Column Grid Fields */}
-      <View style={styles.grid}>
+      <View className="mb-4">
         {/* Row 1 */}
-        <View style={styles.gridRow}>
-          <View style={styles.gridCol}>
-            <Text style={styles.fieldLabel}>Mobile number</Text>
-            <Text style={styles.fieldValue}>{mobileNumber}</Text>
+        <View className="flex-row mb-4">
+          <View className="flex-1">
+            <Text className="text-xs text-slate-400 mb-1">Mobile number</Text>
+            <Text className="text-sm font-medium text-slate-800">{mobileNumber}</Text>
           </View>
-          <View style={styles.gridCol}>
-            <Text style={styles.fieldLabel}>Gender</Text>
-            <Text style={styles.fieldValue}>{gender}</Text>
+          <View className="flex-1">
+            <Text className="text-xs text-slate-400 mb-1">Gender</Text>
+            <Text className="text-sm font-medium text-slate-800">{gender}</Text>
           </View>
         </View>
 
         {/* Row 2 */}
-        <View style={styles.gridRow}>
-          <View style={styles.gridCol}>
-            <Text style={styles.fieldLabel}>Playing role</Text>
-            <Text style={styles.fieldValue}>{playingRole}</Text>
+        <View className="flex-row mb-4">
+          <View className="flex-1">
+            <Text className="text-xs text-slate-400 mb-1">Playing role</Text>
+            <Text className="text-sm font-medium text-slate-800">{playingRole}</Text>
           </View>
-          <View style={styles.gridCol}>
-            <Text style={styles.fieldLabel}>Batting style</Text>
-            <Text style={styles.fieldValue}>{battingStyle}</Text>
+          <View className="flex-1">
+            <Text className="text-xs text-slate-400 mb-1">Batting style</Text>
+            <Text className="text-sm font-medium text-slate-800">{battingStyle}</Text>
           </View>
         </View>
 
         {/* Row 3 */}
-        <View style={styles.gridRow}>
-          <View style={styles.gridCol}>
-            <Text style={styles.fieldLabel}>Bowling style</Text>
-            <Text style={styles.fieldValue}>{bowlingStyle}</Text>
+        <View className="flex-row mb-4">
+          <View className="flex-1">
+            <Text className="text-xs text-slate-400 mb-1">Bowling style</Text>
+            <Text className="text-sm font-medium text-slate-800">{bowlingStyle}</Text>
           </View>
-          <View style={styles.gridCol}>
-            <Text style={styles.fieldLabel}>Date of birth</Text>
-            <Text style={styles.fieldValue}>{dob}</Text>
+          <View className="flex-1">
+            <Text className="text-xs text-slate-400 mb-1">Date of birth</Text>
+            <Text className="text-sm font-medium text-slate-800">{dob}</Text>
           </View>
         </View>
 
         {/* Row 4 */}
-        <View style={styles.gridRow}>
-          <View style={styles.gridCol}>
-            <Text style={styles.fieldLabel}>Email</Text>
-            <Text style={styles.fieldValue}>{email}</Text>
+        <View className="flex-row mb-4">
+          <View className="flex-1">
+            <Text className="text-xs text-slate-400 mb-1">Email</Text>
+            <Text className="text-sm font-medium text-slate-800">{email}</Text>
           </View>
         </View>
       </View>
 
       {/* Profile Completion Progress Bar */}
-      <View style={styles.progressRow}>
-        <View style={styles.progressTrack}>
+      <View className="flex-row items-center mb-4">
+        <View className="flex-1 h-1.5 bg-slate-200 rounded-full overflow-hidden mr-2.5">
           <View
-            style={[styles.progressFill, { width: `${progressPercent}%` }]}
+            className="h-full bg-brand-teal rounded-full"
+            style={{ width: `${progressPercent}%` }}
           />
         </View>
-        <Text style={styles.progressPercentText}>{progressPercent}%</Text>
+        <Text className="text-xs italic text-slate-400">{progressPercent}%</Text>
       </View>
 
       {/* Complete Profile Link */}
       <TouchableOpacity
-        style={styles.completeProfileBtn}
+        className="self-center py-1"
         activeOpacity={0.7}
         onPress={onCompleteProfilePress}
       >
-        <Text style={styles.completeProfileText}>Complete profile</Text>
+        <Text className="text-sm font-bold text-brand-teal">Complete profile</Text>
       </TouchableOpacity>
     </View>
   );

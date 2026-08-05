@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "./DropdownInput.styles";
 
 const DropdownInput = ({ label, value, options = [], onSelect }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -19,14 +18,14 @@ const DropdownInput = ({ label, value, options = [], onSelect }) => {
   };
 
   return (
-    <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+    <View className="mb-5">
+      {label && <Text className="text-xs text-slate-500 mb-1">{label}</Text>}
       <TouchableOpacity
-        style={styles.inputRow}
+        className="flex-row items-center justify-between border-b border-slate-300 pb-2"
         activeOpacity={0.7}
         onPress={() => setModalVisible(true)}
       >
-        <Text style={styles.valueText}>{value}</Text>
+        <Text className="text-base text-slate-900 font-medium">{value}</Text>
         <Ionicons name="caret-down" size={14} color="#94A3B8" />
       </TouchableOpacity>
 
@@ -38,29 +37,29 @@ const DropdownInput = ({ label, value, options = [], onSelect }) => {
         onRequestClose={() => setModalVisible(false)}
       >
         <TouchableOpacity
-          style={styles.modalBackdrop}
+          className="flex-1 bg-black/40 justify-center items-center px-6"
           activeOpacity={1}
           onPress={() => setModalVisible(false)}
         >
           <TouchableWithoutFeedback>
-            <View style={styles.dropdownCard}>
+            <View className="w-11/12 max-h-96 bg-white rounded-lg py-2 elevation-lg">
               <FlatList
                 data={options}
                 keyExtractor={(item) => item}
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    style={[
-                      styles.optionRow,
-                      value === item && styles.selectedOptionRow,
-                    ]}
+                    className={`px-5 py-3.5 border-b border-slate-100 ${
+                      value === item ? "bg-teal-50" : ""
+                    }`}
                     activeOpacity={0.7}
                     onPress={() => handleSelect(item)}
                   >
                     <Text
-                      style={[
-                        styles.optionText,
-                        value === item && styles.selectedOptionText,
-                      ]}
+                      className={`text-base ${
+                        value === item
+                          ? "text-brand-teal font-bold"
+                          : "text-slate-700 font-normal"
+                      }`}
                     >
                       {item}
                     </Text>

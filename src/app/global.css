@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CricNovas Custom Global Variables */
+:root {
+  --primary-red: #D32F2F;
+  --action-teal: #0D9488;
+  --bg-canvas: #F8FAFC;
+  --text-dark: #0F172A;
+}

@@ -2,17 +2,13 @@ import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   Animated,
   Easing,
   StatusBar,
-  Dimensions,
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
-
-const { width } = Dimensions.get("window");
 
 const SplashScreen = ({ navigation }) => {
   // Animation Values
@@ -86,19 +82,19 @@ const SplashScreen = ({ navigation }) => {
   });
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-[#0B132B]">
       <StatusBar barStyle="light-content" backgroundColor="#0B132B" />
 
       {/* Stadium Light Glow Background Circles */}
-      <View style={styles.glowTopRight} />
-      <View style={styles.glowBottomLeft} />
+      <View className="absolute -top-28 -right-28 w-80 h-80 rounded-full bg-emerald-500/15" />
+      <View className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-red-600/15" />
 
       {/* Main Content */}
-      <View style={styles.content}>
+      <View className="flex-1 justify-center items-center px-6">
         {/* Animated Badge & Logo */}
         <Animated.View
+          className="justify-center items-center mb-7"
           style={[
-            styles.logoContainer,
             {
               opacity: fadeAnim,
               transform: [{ scale: scaleAnim }],
@@ -107,8 +103,8 @@ const SplashScreen = ({ navigation }) => {
         >
           {/* Outer Pulsing Glow */}
           <Animated.View
+            className="absolute w-28 h-28 rounded-full bg-red-600/30"
             style={[
-              styles.pulseGlow,
               {
                 transform: [{ scale: pulseAnim }],
               },
@@ -116,48 +112,50 @@ const SplashScreen = ({ navigation }) => {
           />
 
           {/* Center Cricket Emblem */}
-          <View style={styles.emblemCircle}>
+          <View className="w-24 h-24 rounded-full bg-red-600 justify-center items-center shadow-2xl border-2 border-white/30">
             <MaterialCommunityIcons name="cricket" size={54} color="#FFFFFF" />
           </View>
         </Animated.View>
 
         {/* Animated App Title & Subtitle */}
         <Animated.View
+          className="items-center mb-12"
           style={[
-            styles.titleContainer,
             {
               opacity: fadeAnim,
               transform: [{ translateY: textSlideAnim }],
             },
           ]}
         >
-          <Text style={styles.appTitle}>
-            CRIC<Text style={styles.titleHighlight}>NOVAS</Text>
+          <Text className="text-4xl font-black text-white tracking-widest">
+            CRIC<Text className="text-red-500">NOVAS</Text>
           </Text>
-          <View style={styles.taglineBadge}>
-            <Ionicons name="trophy-outline" size={14} color="#F59E0B" style={styles.trophyIcon} />
-            <Text style={styles.taglineText}>LIVE SCORES • TOURNAMENTS • STATS</Text>
+          <View className="flex-row items-center bg-white/10 px-3.5 py-1.5 rounded-full mt-3 border border-white/15">
+            <Ionicons name="trophy-outline" size={14} color="#F59E0B" />
+            <Text className="text-slate-400 text-[11px] font-bold tracking-wider ml-1.5">
+              LIVE SCORES • TOURNAMENTS • STATS
+            </Text>
           </View>
         </Animated.View>
 
         {/* Loading Progress Section */}
-        <Animated.View style={[styles.bottomSection, { opacity: fadeAnim }]}>
-          <View style={styles.loadingInfo}>
-            <Text style={styles.loadingText}>Initializing Cricket Arena...</Text>
+        <Animated.View className="w-full absolute bottom-12 items-center px-5" style={[{ opacity: fadeAnim }]}>
+          <View className="mb-2.5">
+            <Text className="text-slate-400 text-xs font-medium">Initializing Cricket Arena...</Text>
           </View>
 
           {/* Progress Track */}
-          <View style={styles.progressTrack}>
-            <Animated.View style={[styles.progressFill, { width: progressWidth }]} />
+          <View className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden mb-5">
+            <Animated.View className="h-full bg-red-600 rounded-full" style={[{ width: progressWidth }]} />
           </View>
 
           {/* Skip Button for quick testing */}
           <TouchableOpacity
-            style={styles.skipBtn}
+            className="py-1.5 px-3"
             onPress={() => navigation && navigation.replace("Login")}
             activeOpacity={0.7}
           >
-            <Text style={styles.skipText}>Skip directly to Login →</Text>
+            <Text className="text-slate-500 text-xs font-semibold">Skip directly to Login →</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>
@@ -166,131 +164,3 @@ const SplashScreen = ({ navigation }) => {
 };
 
 export default SplashScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#0B132B",
-  },
-  glowTopRight: {
-    position: "absolute",
-    top: -120,
-    right: -120,
-    width: 320,
-    height: 320,
-    borderRadius: 160,
-    backgroundColor: "rgba(16, 185, 129, 0.15)",
-  },
-  glowBottomLeft: {
-    position: "absolute",
-    bottom: -100,
-    left: -100,
-    width: 300,
-    height: 300,
-    borderRadius: 150,
-    backgroundColor: "rgba(220, 38, 38, 0.15)",
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 24,
-  },
-  logoContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 28,
-  },
-  pulseGlow: {
-    position: "absolute",
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: "rgba(220, 38, 38, 0.3)",
-  },
-  emblemCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "#DC2626",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#DC2626",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.6,
-    shadowRadius: 16,
-    elevation: 10,
-    borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-  },
-  titleContainer: {
-    alignItems: "center",
-    marginBottom: 48,
-  },
-  appTitle: {
-    fontSize: 38,
-    fontWeight: "900",
-    color: "#FFFFFF",
-    letterSpacing: 2,
-  },
-  titleHighlight: {
-    color: "#EF4444",
-  },
-  taglineBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-    marginTop: 12,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.12)",
-  },
-  trophyIcon: {
-    marginRight: 6,
-  },
-  taglineText: {
-    color: "#94A3B8",
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1,
-  },
-  bottomSection: {
-    width: "100%",
-    position: "absolute",
-    bottom: 50,
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  loadingInfo: {
-    marginBottom: 10,
-  },
-  loadingText: {
-    color: "#94A3B8",
-    fontSize: 13,
-    fontWeight: "500",
-  },
-  progressTrack: {
-    width: "100%",
-    height: 6,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: 3,
-    overflow: "hidden",
-    marginBottom: 20,
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: "#DC2626",
-    borderRadius: 3,
-  },
-  skipBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-  },
-  skipText: {
-    color: "#64748B",
-    fontSize: 13,
-    fontWeight: "600",
-  },
-});

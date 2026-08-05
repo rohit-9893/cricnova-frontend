@@ -1,28 +1,30 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import SplashScreen from "../screens/Splash/SplashScreen";
-import LoginScreen from "../screens/Auth/LoginScreen";
-import RegisterScreen from "../screens/Auth/RegisterScreen";
-import GuestCityScreen from "../screens/Auth/GuestCityScreen";
-import HomeScreen from "../screens/Home/HomeScreen";
-import PlaceholderScreen from "../screens/Placeholder/PlaceholderScreen";
-import SelectPlayingTeamsScreen from "../screens/Match/SelectPlayingTeamsScreen";
-import SelectTeamScreen from "../screens/Match/SelectTeamScreen";
-import CreateTeamScreen from "../screens/Match/CreateTeamScreen";
-import MyProfileScreen from "../screens/Profile/MyProfileScreen";
-import EditProfileScreen from "../screens/Profile/EditProfileScreen";
+import IndexScreen from "../app/index";
+import SplashScreen from "../app/splash/SplashScreen";
+import LoginScreen from "../app/(auth)/LoginScreen";
+import RegisterScreen from "../app/(auth)/RegisterScreen";
+import GuestCityScreen from "../app/(auth)/GuestCityScreen";
+import HomeScreen from "../app/(home)/HomeScreen";
+import PlaceholderScreen from "../app/placeholder/PlaceholderScreen";
+import SelectPlayingTeamsScreen from "../app/match/SelectPlayingTeamsScreen";
+import SelectTeamScreen from "../app/match/SelectTeamScreen";
+import CreateTeamScreen from "../app/match/CreateTeamScreen";
+import MyProfileScreen from "../app/profile/MyProfileScreen";
+import EditProfileScreen from "../app/profile/EditProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Splash"
+      initialRouteName="Onboarding"
       screenOptions={{
         headerShown: false,
       }}
     >
+      <Stack.Screen name="Onboarding" component={IndexScreen} />
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="GuestCity" component={GuestCityScreen} />

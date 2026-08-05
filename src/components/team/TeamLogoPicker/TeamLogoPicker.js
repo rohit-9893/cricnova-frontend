@@ -1,22 +1,21 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "./TeamLogoPicker.styles";
 
 const TeamLogoPicker = ({ onPress }) => {
   return (
-    <View style={styles.container}>
+    <View className="align-center items-center my-4">
       <TouchableOpacity
-        style={styles.circleContainer}
+        className="w-20 h-20 rounded-full border-2 border-dashed border-teal-500 bg-teal-50/50 justify-center items-center relative"
         activeOpacity={0.8}
         onPress={onPress}
       >
-        <Ionicons name="shield-checkmark-outline" size={42} color="#94A3B8" style={styles.shieldIcon} />
-        <View style={styles.addBanner}>
-          <Text style={styles.addBannerText}>Add</Text>
+        <Ionicons name="shield-outline" size={32} color="#0D9488" />
+        <View className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-brand-teal justify-center items-center border border-white">
+          <Ionicons name="camera" size={12} color="#FFFFFF" />
         </View>
       </TouchableOpacity>
-      <Text style={styles.label}>Team logo</Text>
+      <Text className="mt-2 text-xs text-slate-500 font-medium">Select Team Logo</Text>
     </View>
   );
 };
