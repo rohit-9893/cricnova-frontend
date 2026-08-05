@@ -1,38 +1,37 @@
 import React, { useState } from "react";
-import { View, ScrollView, StatusBar, Text } from "react-native";
+import { View, ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import HomeTopHeader from "../../components/home/HomeTopHeader";
-import HomeSearchBar from "../../components/home/HomeSearchBar";
 import HomePillTabs from "../../components/home/HomePillTabs";
 import SidebarDrawer from "../../components/ui/SidebarDrawer";
 
 const HomeScreen = ({ navigation }) => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("For you");
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-
-      {/* Top Header Bar */}
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }} edges={["left", "right", "bottom"]}>
+      {/* Top Header Bar with status bar inset fill */}
       <HomeTopHeader
         onMenuPress={() => setIsSidebarVisible(true)}
+        onProPress={() =>
+          navigation && navigation.navigate && navigation.navigate("Placeholder", { title: "Go PRO" })
+        }
+        onSearchPress={() =>
+          navigation && navigation.navigate && navigation.navigate("Placeholder", { title: "Search" })
+        }
+        onChatPress={() =>
+          navigation && navigation.navigate && navigation.navigate("Placeholder", { title: "Messages" })
+        }
         onNotificationPress={() =>
           navigation && navigation.navigate && navigation.navigate("Placeholder", { title: "Notifications" })
         }
+        notificationCount={2}
       />
 
       {/* Main Scrollable Canvas */}
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1 bg-white">
-        {/* Search Input Bar */}
-        <HomeSearchBar
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder="Search matches, players..."
-        />
-
-        {/* Pill Tabs */}
+        {/* Pill Tabs (For you / Club) */}
         <HomePillTabs
           activeTab={activeTab}
           onTabPress={(tab) => setActiveTab(tab)}

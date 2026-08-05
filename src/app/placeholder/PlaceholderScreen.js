@@ -6,58 +6,46 @@ import {
   TouchableOpacity,
   StatusBar,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import AppHeader from "../../components/ui/AppHeader";
 
-const PlaceholderScreen = ({ navigation, route }) => {
-  const title = route.params?.title || "Page";
-  const insets = useSafeAreaInsets();
+const PlaceholderScreen = ({ route, navigation }) => {
+  const title = route?.params?.title || "Screen";
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#D32F2F" translucent={false} />
+    <SafeAreaView style={styles.container} edges={["left", "right", "bottom"]}>
+      <AppHeader
+        title={title}
+        onBackPress={() => navigation.goBack()}
+        rightComponent={
+          <TouchableOpacity style={styles.helpBtn} activeOpacity={0.7}>
+            <Ionicons name="help-circle-outline" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        }
+      />
 
-      {/* Red Top Header Wrapper (Exact Same Red Header as Home Page) */}
-      <View style={[styles.redHeaderWrapper, { paddingTop: insets.top }]}>
-        <View style={styles.topHeader}>
-          {/* Left Section: Back Arrow & Screen Title */}
-          <View style={styles.headerLeft}>
-            <TouchableOpacity
-              activeOpacity={0.7}
-              style={styles.iconButton}
-              onPress={() => navigation.goBack()}
-            >
-              <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-            </TouchableOpacity>
-
-            <Text style={styles.headerTitleText} numberOfLines={1}>
-              {title}
-            </Text>
-          </View>
-
-          {/* Right Section: Search, Chat, Notification (Exact Same Icons as Home) */}
-          <View style={styles.headerRight}>
-            <TouchableOpacity activeOpacity={0.7} style={styles.iconButton}>
-              <Ionicons name="search-outline" size={22} color="#FFFFFF" />
-            </TouchableOpacity>
-
-            <TouchableOpacity activeOpacity={0.7} style={styles.iconButton}>
-              <Ionicons name="chatbubble-ellipses-outline" size={21} color="#FFFFFF" />
-            </TouchableOpacity>
-
-            <TouchableOpacity activeOpacity={0.7} style={styles.iconButton}>
-              <Ionicons name="notifications-outline" size={22} color="#FFFFFF" />
-              <View style={styles.notificationBadge}>
-                <Text style={styles.notificationBadgeText}>2</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+      {/* Main Body */}
+      <View style={styles.content}>
+        <View style={styles.iconContainer}>
+          <Ionicons name="construct-outline" size={64} color="#0D9488" />
         </View>
-      </View>
 
-      {/* Blank Page Content Body */}
-      <View style={styles.blankContent} />
-    </View>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.subtitle}>
+          This feature is under development and will be available soon.
+        </Text>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="arrow-back-outline" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
+          <Text style={styles.buttonText}>Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -68,56 +56,49 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F8FAFC",
   },
-  redHeaderWrapper: {
-    backgroundColor: "#D32F2F",
-    width: "100%",
+  helpBtn: {
+    padding: 4,
   },
-  topHeader: {
-    height: 56,
-    backgroundColor: "#D32F2F",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 12,
-  },
-  headerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
+  content: {
     flex: 1,
-  },
-  iconButton: {
-    padding: 6,
-    position: "relative",
-  },
-  headerTitleText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "bold",
-    marginLeft: 8,
-  },
-  headerRight: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  notificationBadge: {
-    position: "absolute",
-    top: 2,
-    right: 2,
-    backgroundColor: "#10B981",
-    borderRadius: 10,
-    minWidth: 16,
-    height: 16,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 3,
+    paddingHorizontal: 32,
   },
-  notificationBadgeText: {
-    color: "#FFFFFF",
-    fontSize: 10,
+  iconContainer: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    backgroundColor: "#CCFBF1",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  title: {
+    fontSize: 22,
     fontWeight: "bold",
+    color: "#0F172A",
+    marginBottom: 8,
+    textAlign: "center",
   },
-  blankContent: {
-    flex: 1,
-    backgroundColor: "#F8FAFC",
+  subtitle: {
+    fontSize: 14,
+    color: "#64748B",
+    textAlign: "center",
+    marginBottom: 32,
+    lineHeight: 20,
+  },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#0D9488",
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

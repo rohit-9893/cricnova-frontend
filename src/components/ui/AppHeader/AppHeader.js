@@ -7,9 +7,9 @@ const AppHeader = ({ title, onBackPress, rightComponent }) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View className="bg-brand-red w-full" style={{ paddingTop: insets.top }}>
-      <StatusBar barStyle="light-content" backgroundColor="#D32F2F" translucent={false} />
-      <View className="h-14 bg-brand-red flex-row items-center justify-between px-3">
+    <View className="bg-[#0D9488] w-full" style={{ paddingTop: insets.top }}>
+      <StatusBar barStyle="light-content" backgroundColor="#0D9488" translucent={false} />
+      <View className="h-14 bg-[#0D9488] flex-row items-center justify-between px-3">
         <View className="flex-row items-center flex-1">
           {onBackPress && (
             <TouchableOpacity className="p-1 mr-2" activeOpacity={0.7} onPress={onBackPress}>

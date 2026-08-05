@@ -1,38 +1,35 @@
 import { StyleSheet } from "react-native";
 
-export default StyleSheet.create({
-  redHeaderWrapper: {
-    backgroundColor: "#D32F2F",
-    width: "100%",
-  },
-  headerBar: {
+export const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#0D9488",
+    paddingHorizontal: 16,
     height: 56,
-    backgroundColor: "#D32F2F",
+    width: "100%",
+    justifyContent: "center",
+    elevation: 3,
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  topRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
   },
-  headerLeft: {
+  leftContainer: {
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
   },
-  backBtn: {
-    padding: 4,
-    marginRight: 16,
+  iconBtn: {
+    marginRight: 14,
   },
-  headerTitle: {
+  title: {
     color: "#FFFFFF",
     fontSize: 19,
     fontWeight: "bold",
-  },
-  rightContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  iconBtn: {
-    padding: 4,
-    marginLeft: 8,
+    flex: 1,
   },
 });
