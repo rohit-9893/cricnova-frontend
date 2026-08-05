@@ -5,17 +5,17 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const AuthLogoBadge = () => {
   return (
     <View className="items-center mb-6">
-      {/* Golden Yellow Circle Avatar */}
+      {/* Light Green Circle Avatar */}
       <View
-        className="w-22 h-22 rounded-full justify-center items-center shadow-sm"
-        style={{ width: 88, height: 88, borderRadius: 44, backgroundColor: "#C59B27" }}
+        className="rounded-full justify-center items-center bg-[#10B981] shadow-md"
+        style={{ width: 88, height: 88, borderRadius: 44 }}
       >
         <MaterialCommunityIcons name="cricket" size={48} color="#FFFFFF" />
       </View>
 
       {/* Brand Title */}
       <Text className="text-2xl font-black text-slate-900 tracking-tight mt-3">
-        CricNovas
+        Cric<Text className="text-[#10B981]">Novas</Text>
       </Text>
     </View>
   );

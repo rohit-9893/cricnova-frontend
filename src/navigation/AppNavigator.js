@@ -1,7 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import IndexScreen from "../app/index";
 import SplashScreen from "../app/splash/SplashScreen";
 import LoginScreen from "../app/(auth)/LoginScreen";
 import RegisterScreen from "../app/(auth)/RegisterScreen";
@@ -19,12 +18,11 @@ const Stack = createNativeStackNavigator();
 const AppNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Onboarding"
+      initialRouteName="Splash"
       screenOptions={{
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Onboarding" component={IndexScreen} />
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="GuestCity" component={GuestCityScreen} />

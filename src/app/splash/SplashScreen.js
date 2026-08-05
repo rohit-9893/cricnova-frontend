@@ -82,12 +82,12 @@ const SplashScreen = ({ navigation }) => {
   });
 
   return (
-    <SafeAreaView className="flex-1 bg-[#0B132B]">
-      <StatusBar barStyle="light-content" backgroundColor="#0B132B" />
+    <SafeAreaView className="flex-1 bg-white justify-between items-center py-10 px-4">
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       {/* Stadium Light Glow Background Circles */}
-      <View className="absolute -top-28 -right-28 w-80 h-80 rounded-full bg-emerald-500/15" />
-      <View className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-red-600/15" />
+      <View className="absolute -top-28 -right-28 w-80 h-80 rounded-full bg-emerald-500/10" />
+      <View className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-teal-500/10" />
 
       {/* Main Content */}
       <View className="flex-1 justify-center items-center px-6">
@@ -103,7 +103,7 @@ const SplashScreen = ({ navigation }) => {
         >
           {/* Outer Pulsing Glow */}
           <Animated.View
-            className="absolute w-28 h-28 rounded-full bg-red-600/30"
+            className="absolute w-28 h-28 rounded-full bg-emerald-500/20"
             style={[
               {
                 transform: [{ scale: pulseAnim }],
@@ -112,7 +112,7 @@ const SplashScreen = ({ navigation }) => {
           />
 
           {/* Center Cricket Emblem */}
-          <View className="w-24 h-24 rounded-full bg-red-600 justify-center items-center shadow-2xl border-2 border-white/30">
+          <View className="w-24 h-24 rounded-full bg-[#10B981] justify-center items-center shadow-xl border-2 border-white">
             <MaterialCommunityIcons name="cricket" size={54} color="#FFFFFF" />
           </View>
         </Animated.View>
@@ -127,12 +127,12 @@ const SplashScreen = ({ navigation }) => {
             },
           ]}
         >
-          <Text className="text-4xl font-black text-white tracking-widest">
-            CRIC<Text className="text-red-500">NOVAS</Text>
+          <Text className="text-4xl font-black text-slate-900 tracking-widest">
+            CRIC<Text className="text-[#10B981]">NOVAS</Text>
           </Text>
-          <View className="flex-row items-center bg-white/10 px-3.5 py-1.5 rounded-full mt-3 border border-white/15">
-            <Ionicons name="trophy-outline" size={14} color="#F59E0B" />
-            <Text className="text-slate-400 text-[11px] font-bold tracking-wider ml-1.5">
+          <View className="flex-row items-center bg-emerald-50 px-4 py-2 rounded-full mt-3 border border-emerald-200">
+            <Ionicons name="trophy-outline" size={14} color="#10B981" />
+            <Text className="text-emerald-800 text-[11px] font-extrabold tracking-wider ml-1.5">
               LIVE SCORES • TOURNAMENTS • STATS
             </Text>
           </View>
@@ -141,21 +141,21 @@ const SplashScreen = ({ navigation }) => {
         {/* Loading Progress Section */}
         <Animated.View className="w-full absolute bottom-12 items-center px-5" style={[{ opacity: fadeAnim }]}>
           <View className="mb-2.5">
-            <Text className="text-slate-400 text-xs font-medium">Initializing Cricket Arena...</Text>
+            <Text className="text-slate-600 text-xs font-semibold">Initializing Cricket Arena...</Text>
           </View>
 
           {/* Progress Track */}
-          <View className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden mb-5">
-            <Animated.View className="h-full bg-red-600 rounded-full" style={[{ width: progressWidth }]} />
+          <View className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-4 border border-slate-200">
+            <Animated.View className="h-full bg-[#10B981] rounded-full" style={[{ width: progressWidth }]} />
           </View>
 
-          {/* Skip Button for quick testing */}
+          {/* Skip Button */}
           <TouchableOpacity
             className="py-1.5 px-3"
             onPress={() => navigation && navigation.replace("Login")}
             activeOpacity={0.7}
           >
-            <Text className="text-slate-500 text-xs font-semibold">Skip directly to Login →</Text>
+            <Text className="text-slate-400 text-xs font-bold">Skip directly to Login →</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>

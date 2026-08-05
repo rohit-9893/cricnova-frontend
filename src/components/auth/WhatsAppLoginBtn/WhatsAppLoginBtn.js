@@ -1,12 +1,11 @@
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 const WhatsAppLoginBtn = ({ onPress }) => {
   return (
     <TouchableOpacity
-      className="w-full flex-row items-center justify-center rounded-2xl py-4 mb-4"
-      style={{ backgroundColor: "#0B1D3A" }}
+      className="w-full flex-row items-center justify-center rounded-2xl py-4 mb-4 bg-[#10B981] shadow-sm"
       activeOpacity={0.85}
       onPress={onPress}
     >

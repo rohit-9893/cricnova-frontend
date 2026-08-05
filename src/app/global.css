@@ -2,10 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CricNovas Custom Global Variables */
-:root {
-  --primary-red: #D32F2F;
-  --action-teal: #0D9488;
-  --bg-canvas: #F8FAFC;
-  --text-dark: #0F172A;
+@layer base {
+  :root {
+    --brand-primary: #10B981;
+    --brand-teal: #0D9488;
+    --brand-dark: #0F172A;
+    --brand-light: #F8FAFC;
+    --brand-white: #FFFFFF;
+    --brand-muted: #64748B;
+  }
 }
