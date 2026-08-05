@@ -24,8 +24,8 @@ const LoginScreen = ({ navigation }) => {
         countryName={selectedCountry.name}
         countryCode={selectedCountry.code}
         onCountryPress={() => setIsCountryModalVisible(true)}
-        onWhatsAppPress={() => navigation && navigation.navigate && navigation.navigate("Home")}
-        onMobilePress={() => navigation && navigation.navigate && navigation.navigate("Home")}
+        onWhatsAppPress={() => navigation && navigation.navigate && navigation.navigate("MobileInput")}
+        onMobilePress={() => navigation && navigation.navigate && navigation.navigate("MobileInput")}
       />
 
       {/* Bottom Explore as a Guest Link */}
