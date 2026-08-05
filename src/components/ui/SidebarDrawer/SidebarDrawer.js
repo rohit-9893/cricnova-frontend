@@ -3,7 +3,6 @@ import {
   Modal,
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
   ScrollView,
@@ -15,7 +14,7 @@ import {
   Easing,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 const DRAWER_WIDTH = width * 0.82;
@@ -152,7 +151,7 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
           useNativeDriver: true,
         }),
         Animated.stagger(
-          35, // 35ms micro-stagger between items
+          35,
           itemAnims.map((anim) =>
             Animated.timing(anim, {
               toValue: 1,
@@ -176,14 +175,13 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
       onRequestClose={() => handleSmoothClose()}
       statusBarTranslucent={false}
     >
-      <View style={styles.modalRoot}>
-        {/* Force Red Status Bar Across Entire Screen */}
-        <StatusBar barStyle="light-content" backgroundColor="#D32F2F" translucent={false} />
+      <View className="flex-1">
+        <StatusBar barStyle="light-content" backgroundColor="#143D2B" translucent={false} />
 
         {/* Fullscreen Backdrop Overlay */}
-        <Animated.View style={[styles.backdrop, { opacity: fadeAnim }]}>
+        <Animated.View className="absolute inset-0 bg-black/50" style={[{ opacity: fadeAnim }]}>
           <TouchableOpacity
-            style={styles.backdropTouch}
+            className="w-full h-full"
             activeOpacity={1}
             onPress={() => handleSmoothClose()}
           />
@@ -192,40 +190,44 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
         {/* Sliding Drawer Container */}
         <Animated.View
           {...panResponder.panHandlers}
+          className="absolute left-0 bottom-0 bg-[#143D2B] shadow-2xl elevation-xl"
           style={[
-            styles.drawerContent,
-            { top: insets.top, transform: [{ translateX: slideAnim }] },
+            {
+              width: DRAWER_WIDTH,
+              top: insets.top,
+              transform: [{ translateX: slideAnim }],
+            },
           ]}
         >
           <TouchableWithoutFeedback>
-            <View style={styles.drawerInner}>
+            <View className="flex-1 bg-[#143D2B]">
               {/* Profile Top Header Section */}
-              <View style={styles.profileSection}>
-                <View style={styles.profileTopRow}>
-                  {/* User Avatar */}
-                  <View style={styles.avatarContainer}>
-                    <View style={styles.avatarCircle}>
-                      <Ionicons name="person" size={32} color="#CBD5E1" />
+              <View className="bg-[#143D2B] p-4 border-b border-emerald-900/50">
+                <View className="flex-row items-center mb-4">
+                  {/* User Golden Circle Avatar */}
+                  <View className="relative mr-3">
+                    <View className="w-14 h-14 rounded-full bg-[#C59B27] justify-center items-center border-2 border-white/40 shadow-sm">
+                      <MaterialCommunityIcons name="cricket" size={28} color="#FFFFFF" />
                     </View>
-                    <View style={styles.addBadge}>
-                      <Ionicons name="add" size={12} color="#FFFFFF" />
+                    <View className="absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full bg-brand-teal justify-center items-center border border-[#143D2B]">
+                      <Ionicons name="add" size={10} color="#FFFFFF" />
                     </View>
                   </View>
 
                   {/* User Info Details */}
-                  <View style={styles.userDetails}>
-                    <Text style={styles.userName} numberOfLines={1}>
+                  <View className="flex-1">
+                    <Text className="text-white text-lg font-bold mb-0.5" numberOfLines={1}>
                       Rohit Panchal
                     </Text>
-                    <Text style={styles.userPhone}>7224012604</Text>
-                    <View style={styles.freeUserBadge}>
-                      <Text style={styles.freeUserText}>Free User</Text>
+                    <Text className="text-slate-300 text-xs mb-1.5">7224012604</Text>
+                    <View className="border border-emerald-400/40 bg-emerald-500/10 rounded-full px-2.5 py-0.5 self-start">
+                      <Text className="text-emerald-300 text-[10px] font-bold">Free User</Text>
                     </View>
                   </View>
 
                   {/* Profile Forward Arrow */}
                   <TouchableOpacity
-                    style={styles.profileArrowBtn}
+                    className="p-1"
                     activeOpacity={0.7}
                     onPress={() => handleItemPress({ title: "My Profile" })}
                   >
@@ -238,19 +240,19 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
                 </View>
 
                 {/* Profile Completion Progress Bar */}
-                <View style={styles.progressRow}>
-                  <View style={styles.progressTrack}>
-                    <View style={[styles.progressFill, { width: "75%" }]} />
+                <View className="flex-row items-center mt-1">
+                  <View className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden mr-2.5">
+                    <View className="h-full bg-brand-teal rounded-full" style={{ width: "75%" }} />
                   </View>
-                  <Text style={styles.progressPercentText}>75%</Text>
+                  <Text className="text-slate-300 text-xs italic font-medium">75%</Text>
                 </View>
               </View>
 
-              {/* Menu Items List with Staggered Slide-In Animation */}
+              {/* Menu Items List with NativeWind Styling */}
               <ScrollView
-                style={styles.menuContainer}
+                className="flex-1 bg-white"
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.menuScrollContent}
+                contentContainerStyle={{ paddingBottom: 24 }}
               >
                 {MENU_ITEMS.map((item, index) => {
                   const itemTranslateX = itemAnims[index].interpolate({
@@ -268,32 +270,38 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
                       }}
                     >
                       <TouchableOpacity
-                        style={[
-                          styles.menuItemRow,
-                          index === 0 && styles.firstMenuItemBorder,
-                        ]}
+                        className={`flex-row items-center px-4 py-3.5 border-b border-slate-100 ${
+                          index === 0 ? "border-b-2 border-slate-200 bg-teal-50/40" : ""
+                        }`}
                         activeOpacity={0.7}
                         onPress={() => handleItemPress(item)}
                       >
                         {/* Left Icon */}
-                        <View style={styles.menuIconContainer}>
-                          <Ionicons name={item.icon} size={22} color="#475569" />
+                        <View className="w-8 items-center mr-3">
+                          <Ionicons
+                            name={item.icon}
+                            size={21}
+                            color={index === 0 ? "#0D9488" : "#475569"}
+                          />
                         </View>
 
                         {/* Title */}
-                        <Text style={styles.menuItemTitle}>{item.title}</Text>
+                        <Text
+                          className={`flex-1 text-sm ${
+                            index === 0 ? "font-bold text-brand-teal" : "font-medium text-slate-800"
+                          }`}
+                        >
+                          {item.title}
+                        </Text>
 
                         {/* Right Badge if present */}
                         {item.badge && (
                           <View
-                            style={[
-                              styles.badgePill,
-                              item.badge === "Free"
-                                ? styles.freeBadgePill
-                                : styles.shirtBadgePill,
-                            ]}
+                            className={`px-2 py-0.5 rounded-full ${
+                              item.badge === "Free" ? "bg-slate-500" : "bg-transparent"
+                            }`}
                           >
-                            <Text style={styles.badgeText}>{item.badge}</Text>
+                            <Text className="text-white text-[10px] font-bold">{item.badge}</Text>
                           </View>
                         )}
                       </TouchableOpacity>
@@ -310,171 +318,3 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
 };
 
 export default SidebarDrawer;
-
-const styles = StyleSheet.create({
-  modalRoot: {
-    flex: 1,
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  backdropTouch: {
-    width: "100%",
-    height: "100%",
-  },
-  drawerContent: {
-    position: "absolute",
-    left: 0,
-    bottom: 0,
-    width: DRAWER_WIDTH,
-    backgroundColor: "#2C2C2C",
-    shadowColor: "#000000",
-    shadowOffset: { width: 4, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 16,
-  },
-  drawerInner: {
-    flex: 1,
-    backgroundColor: "#2C2C2C",
-  },
-  profileSection: {
-    backgroundColor: "#2C2C2C",
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 16,
-  },
-  profileTopRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  avatarContainer: {
-    position: "relative",
-    marginRight: 12,
-  },
-  avatarCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#475569",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1.5,
-    borderColor: "#94A3B8",
-  },
-  addBadge: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: "#0D9488",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1.5,
-    borderColor: "#2C2C2C",
-  },
-  userDetails: {
-    flex: 1,
-  },
-  userName: {
-    color: "#FFFFFF",
-    fontSize: 17,
-    fontWeight: "bold",
-    marginBottom: 2,
-  },
-  userPhone: {
-    color: "#CBD5E1",
-    fontSize: 13,
-    marginBottom: 4,
-  },
-  freeUserBadge: {
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.4)",
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 1,
-    alignSelf: "flex-start",
-  },
-  freeUserText: {
-    color: "#FFFFFF",
-    fontSize: 11,
-    fontWeight: "500",
-  },
-  profileArrowBtn: {
-    padding: 4,
-  },
-  progressRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 4,
-  },
-  progressTrack: {
-    flex: 1,
-    height: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    borderRadius: 2,
-    overflow: "hidden",
-    marginRight: 10,
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: "#00BCD4",
-    borderRadius: 2,
-  },
-  progressPercentText: {
-    color: "#CBD5E1",
-    fontSize: 12,
-    fontStyle: "italic",
-    fontWeight: "500",
-  },
-  menuContainer: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-  },
-  menuScrollContent: {
-    paddingBottom: 24,
-  },
-  menuItemRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#F1F5F9",
-  },
-  firstMenuItemBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#E2E8F0",
-  },
-  menuIconContainer: {
-    width: 32,
-    alignItems: "center",
-    marginRight: 12,
-  },
-  menuItemTitle: {
-    flex: 1,
-    fontSize: 15,
-    color: "#1E293B",
-    fontWeight: "500",
-  },
-  badgePill: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
-  },
-  freeBadgePill: {
-    backgroundColor: "#64748B",
-  },
-  shirtBadgePill: {
-    backgroundColor: "transparent",
-  },
-  badgeText: {
-    color: "#FFFFFF",
-    fontSize: 11,
-    fontWeight: "bold",
-  },
-});

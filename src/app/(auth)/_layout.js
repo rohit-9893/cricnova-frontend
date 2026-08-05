@@ -7,6 +7,6 @@ export default function AuthLayout() {
       <Stack.Screen name="LoginScreen" />
       <Stack.Screen name="RegisterScreen" />
       <Stack.Screen name="GuestCityScreen" />
-    </Stack.Screen>
+    </Stack>
   );
 }
