@@ -24,6 +24,9 @@ const MobileInputScreen = ({ navigation }) => {
   });
   const [isCountryModalVisible, setIsCountryModalVisible] = useState(false);
 
+  // Dynamic Button Disabled State
+  const isValidNumber = mobileNumber.trim().length === 10;
+
   // Animated Value for smooth bottom margin when keyboard opens/closes
   const keyboardMarginAnim = useRef(new Animated.Value(0)).current;
 
@@ -54,14 +57,10 @@ const MobileInputScreen = ({ navigation }) => {
   }, [keyboardMarginAnim]);
 
   const handleSendOtp = () => {
-    const cleanedNumber = mobileNumber.trim();
-    if (cleanedNumber.length < 10) {
-      Alert.alert("Invalid Number", "Please enter a valid 10-digit mobile number.");
-      return;
-    }
+    if (!isValidNumber) return;
 
     navigation.navigate("OtpVerify", {
-      mobileNumber: `${selectedCountry.code} ${cleanedNumber}`,
+      mobileNumber: `${selectedCountry.code} ${mobileNumber.trim()}`,
     });
   };
 
@@ -82,7 +81,7 @@ const MobileInputScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          {/* Main Layout (Space Between: Logo Top, Form Card Bottom) */}
+          {/* Main Layout */}
           <View className="flex-1 justify-between px-6 pb-6">
             {/* Top Branding Banner */}
             <View className="justify-center items-center my-4">
@@ -97,7 +96,7 @@ const MobileInputScreen = ({ navigation }) => {
               </Text>
             </View>
 
-            {/* Bottom Form Card (Stays at Bottom initially, Slides Up smoothly when Keyboard opens) */}
+            {/* Bottom Form Card */}
             <Animated.View
               className="w-full mt-auto"
               style={{ marginBottom: keyboardMarginAnim }}
@@ -137,17 +136,20 @@ const MobileInputScreen = ({ navigation }) => {
                 </View>
               </View>
 
-              {/* Action Button ("Let's play") */}
+              {/* Dynamic Action Button ("Send OTP →") */}
               <TouchableOpacity
+                disabled={!isValidNumber}
                 className={`w-full h-13 rounded-xl justify-center items-center shadow-md ${
-                  mobileNumber.trim().length >= 10
+                  isValidNumber
                     ? "bg-[#0D9488] shadow-teal-500/20"
-                    : "bg-slate-300"
+                    : "bg-slate-300 opacity-60"
                 }`}
-                activeOpacity={0.85}
+                activeOpacity={isValidNumber ? 0.85 : 1}
                 onPress={handleSendOtp}
               >
-                <Text className="text-white text-base font-extrabold">Let's play</Text>
+                <Text className="text-white text-base font-extrabold">
+                  {isValidNumber ? "Send OTP →" : "Enter 10-digit number"}
+                </Text>
               </TouchableOpacity>
             </Animated.View>
           </View>
