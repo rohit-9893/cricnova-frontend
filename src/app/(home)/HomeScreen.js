@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { View, ScrollView, StatusBar } from "react-native";
+import { View, ScrollView, StatusBar, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import HomeTopHeader from "../../components/home/HomeTopHeader";
 import HomeSearchBar from "../../components/home/HomeSearchBar";
 import HomePillTabs from "../../components/home/HomePillTabs";
-import HomeFeedCard from "../../components/home/HomeFeedCard";
 import SidebarDrawer from "../../components/ui/SidebarDrawer";
 
 const HomeScreen = ({ navigation }) => {
@@ -13,10 +12,10 @@ const HomeScreen = ({ navigation }) => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F0F7F2]">
-      <StatusBar barStyle="dark-content" backgroundColor="#F0F7F2" />
+    <SafeAreaView className="flex-1 bg-white">
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* Top Header Bar (Sidebar ☰ + CricNovas + Golden Bell 🔔) */}
+      {/* Top Header Bar */}
       <HomeTopHeader
         onMenuPress={() => setIsSidebarVisible(true)}
         onNotificationPress={() =>
@@ -25,7 +24,7 @@ const HomeScreen = ({ navigation }) => {
       />
 
       {/* Main Scrollable Canvas */}
-      <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+      <ScrollView showsVerticalScrollIndicator={false} className="flex-1 bg-white">
         {/* Search Input Bar */}
         <HomeSearchBar
           value={searchQuery}
@@ -33,55 +32,20 @@ const HomeScreen = ({ navigation }) => {
           placeholder="Search matches, players..."
         />
 
-        {/* Forest Green Pill Tabs (For you / Club) */}
+        {/* Pill Tabs */}
         <HomePillTabs
           activeTab={activeTab}
           onTabPress={(tab) => setActiveTab(tab)}
         />
 
-        {/* Feed Cards Section */}
-        {activeTab === "For you" ? (
-          <View className="pb-8">
-            <HomeFeedCard
-              title="🏆 Local Premier League 2026"
-              subtitle="Live • Indore XI vs Bhopal Tigers"
-              onPress={() =>
-                navigation && navigation.navigate && navigation.navigate("Placeholder", { title: "Match Details" })
-              }
-            />
-            <HomeFeedCard
-              title="🏏 Weekend T20 Knockout Tournament"
-              subtitle="Registration Open • 8 Teams Slot Remaining"
-              onPress={() =>
-                navigation && navigation.navigate && navigation.navigate("Placeholder", { title: "Tournament Registration" })
-              }
-            />
-            <HomeFeedCard
-              title="🔥 Player of the Month Leaderboard"
-              subtitle="Top Scorer: Rohit Panchal (342 Runs)"
-              onPress={() =>
-                navigation && navigation.navigate && navigation.navigate("Placeholder", { title: "Leaderboard" })
-              }
-            />
-          </View>
-        ) : (
-          <View className="pb-8">
-            <HomeFeedCard
-              title="🛡️ Royal Cricket Club"
-              subtitle="Indore • 24 Members"
-              onPress={() =>
-                navigation && navigation.navigate && navigation.navigate("Placeholder", { title: "Club Details" })
-              }
-            />
-            <HomeFeedCard
-              title="🛡️ Strikers XI Cricket Club"
-              subtitle="Bhopal • 18 Members"
-              onPress={() =>
-                navigation && navigation.navigate && navigation.navigate("Placeholder", { title: "Club Details" })
-              }
-            />
-          </View>
-        )}
+        {/* Empty State — API se data aayega */}
+        <View className="flex-1 items-center justify-center py-24 px-8">
+          <Text className="text-slate-400 text-sm font-semibold text-center leading-6">
+            {activeTab === "For you"
+              ? "No matches found.\nTap the sidebar menu to start a match!"
+              : "No clubs found.\nJoin or create a club to see it here."}
+          </Text>
+        </View>
       </ScrollView>
 
       {/* Animated Sidebar Drawer Modal */}

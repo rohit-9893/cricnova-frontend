@@ -37,7 +37,7 @@ const MENU_ITEMS = [
   { id: "app_code", title: "App code", icon: "qr-code-outline", badge: null },
 ];
 
-const SidebarDrawer = ({ visible, onClose, navigation }) => {
+const SidebarDrawer = ({ visible, onClose, navigation, user = {} }) => {
   const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const isClosing = useRef(false);
@@ -217,11 +217,15 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
                   {/* User Info Details */}
                   <View className="flex-1">
                     <Text className="text-white text-lg font-bold mb-0.5" numberOfLines={1}>
-                      Rohit Panchal
+                      {user.name || "Guest User"}
                     </Text>
-                    <Text className="text-slate-300 text-xs mb-1.5">7224012604</Text>
+                    <Text className="text-slate-300 text-xs mb-1.5">
+                      {user.phone || "Not logged in"}
+                    </Text>
                     <View className="border border-emerald-400/40 bg-emerald-500/10 rounded-full px-2.5 py-0.5 self-start">
-                      <Text className="text-emerald-300 text-[10px] font-bold">Free User</Text>
+                      <Text className="text-emerald-300 text-[10px] font-bold">
+                        {user.plan || "Free User"}
+                      </Text>
                     </View>
                   </View>
 
@@ -242,9 +246,14 @@ const SidebarDrawer = ({ visible, onClose, navigation }) => {
                 {/* Profile Completion Progress Bar */}
                 <View className="flex-row items-center mt-1">
                   <View className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden mr-2.5">
-                    <View className="h-full bg-brand-teal rounded-full" style={{ width: "75%" }} />
+                    <View
+                      className="h-full bg-brand-teal rounded-full"
+                      style={{ width: `${user.profileCompletion || 0}%` }}
+                    />
                   </View>
-                  <Text className="text-slate-300 text-xs italic font-medium">75%</Text>
+                  <Text className="text-slate-300 text-xs italic font-medium">
+                    {user.profileCompletion || 0}%
+                  </Text>
                 </View>
               </View>
 

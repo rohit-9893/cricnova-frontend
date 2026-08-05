@@ -16,25 +16,8 @@ import TeamCard from "../../components/team/TeamCard";
 import TeamLogoPicker from "../../components/team/TeamLogoPicker";
 import UnderlineInput from "../../components/ui/UnderlineInput";
 
-// Shared team storage across navigation turns
-let globalTeamsList = [
-  {
-    id: "team_1",
-    teamName: "CSK Indore",
-    avatarColor: "#9333EA",
-    avatarInitials: "CS",
-    location: "Indore",
-    captainName: "Shivam Solanki",
-  },
-  {
-    id: "team_2",
-    teamName: "RCB Royals",
-    avatarColor: "#1D4ED8",
-    avatarInitials: "RC",
-    location: "Indore",
-    captainName: "Rohit Panchal",
-  },
-];
+// Shared team storage across navigation turns (starts empty — filled by API)
+let globalTeamsList = [];
 
 const AVATAR_COLORS = [
   "#0D9488", "#9333EA", "#1D4ED8", "#F43F5E",
@@ -51,9 +34,9 @@ const SelectTeamScreen = ({ navigation, route }) => {
 
   // Form State for "Add" Tab
   const [teamName, setTeamName] = useState("");
-  const [city, setCity] = useState("Indore");
+  const [city, setCity] = useState("");
   const [captainPhone, setCaptainPhone] = useState("");
-  const [captainName, setCaptainName] = useState("Rohit Panchal");
+  const [captainName, setCaptainName] = useState("");
   const [addSelf, setAddSelf] = useState(true);
 
   // Dynamic Header Title

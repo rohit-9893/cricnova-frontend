@@ -3,11 +3,11 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const ProfileHeaderCard = ({
-  name = "Rohit Panchal",
-  location = "Indore",
-  sinceDate = "30-Jul-2026",
+  name = "",
+  location = "",
+  sinceDate = "",
   followersCount = 0,
-  viewsCount = 1,
+  viewsCount = 0,
   onGoProPress,
   onEditAvatarPress,
   onQrPress,

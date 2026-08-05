@@ -32,11 +32,11 @@ const MyProfileScreen = ({ navigation }) => {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Profile Header Details & Stats Card */}
         <ProfileHeaderCard
-          name="Rohit Panchal"
-          location="Indore"
-          sinceDate="30-Jul-2026"
+          name=""
+          location=""
+          sinceDate=""
           followersCount={0}
-          viewsCount={1}
+          viewsCount={0}
           onGoProPress={() => navigation.navigate("Placeholder", { title: "PRO Membership" })}
           onEditAvatarPress={() => navigation.navigate("EditProfile")}
           onQrPress={() => navigation.navigate("Placeholder", { title: "Your QR Code" })}
@@ -44,7 +44,7 @@ const MyProfileScreen = ({ navigation }) => {
 
         {/* Custom Jersey Store Carousel */}
         <CustomJerseyCarousel
-          userName="Rohit Panchal"
+          userName=""
           onItemPress={() => navigation.navigate("Placeholder", { title: "Custom Jersey Store" })}
         />
 
@@ -55,14 +55,14 @@ const MyProfileScreen = ({ navigation }) => {
 
         {/* My Profile Details Card (Grid Fields + Progress Bar + Complete Profile) */}
         <MyProfileDetailsCard
-          mobileNumber="7224012604"
-          gender="Male"
-          playingRole="-"
-          battingStyle="LHB"
-          bowlingStyle="Right-arm fast"
-          dob="2000-03-02"
-          email="-"
-          progressPercent={75}
+          mobileNumber=""
+          gender=""
+          playingRole=""
+          battingStyle=""
+          bowlingStyle=""
+          dob=""
+          email=""
+          progressPercent={0}
           onEditPress={() => navigation.navigate("EditProfile")}
           onCompleteProfilePress={() => navigation.navigate("EditProfile")}
         />

@@ -44,15 +44,15 @@ const BOWLING_STYLES = [
 
 const EditProfileScreen = ({ navigation }) => {
   // Form State
-  const [playerName, setPlayerName] = useState("Rohit Panchal");
-  const [location, setLocation] = useState("Indore");
-  const [dob, setDob] = useState("2000-03-02");
+  const [playerName, setPlayerName] = useState("");
+  const [location, setLocation] = useState("");
+  const [dob, setDob] = useState("");
   const [email, setEmail] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("7224012604");
+  const [mobileNumber, setMobileNumber] = useState("");
   const [playingRole, setPlayingRole] = useState("None");
-  const [battingStyle, setBattingStyle] = useState("Left-hand bat");
-  const [bowlingStyle, setBowlingStyle] = useState("Right-arm fast");
-  const [gender, setGender] = useState("Male");
+  const [battingStyle, setBattingStyle] = useState("Right-hand bat");
+  const [bowlingStyle, setBowlingStyle] = useState("None");
+  const [gender, setGender] = useState("");
 
   const handleUpdate = () => {
     Alert.alert("Success", "Profile updated successfully!", [

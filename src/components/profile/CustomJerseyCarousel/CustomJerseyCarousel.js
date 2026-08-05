@@ -30,7 +30,7 @@ const JERSEYS = [
 ];
 
 const CustomJerseyCarousel = ({
-  userName = "Rohit Panchal",
+  userName = "",
   onItemPress,
 }) => {
   return (
