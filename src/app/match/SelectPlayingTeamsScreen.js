@@ -2,55 +2,65 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
-  ScrollView,
+  StatusBar,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import AppHeader from "../../components/ui/AppHeader";
 import TeamSelectorCard from "../../components/match/TeamSelectorCard";
 import VsBadge from "../../components/match/VsBadge";
 
-const SelectPlayingTeamsScreen = ({ navigation, route }) => {
-  const [teamA, setTeamA] = useState(null);
-  const [teamB, setTeamB] = useState(null);
+// Persistent module-level store so selected teams NEVER disappear
+let playingTeamsStore = {
+  teamA: null,
+  teamB: null,
+};
 
-  // Receive selected team from SelectTeamScreen
+const SelectPlayingTeamsScreen = ({ navigation, route }) => {
+  const [teamA, setTeamA] = useState(playingTeamsStore.teamA);
+  const [teamB, setTeamB] = useState(playingTeamsStore.teamB);
+
+  // Receive selected team from SelectTeamScreen / TeamRosterScreen
   useEffect(() => {
     if (route.params?.selectedTeam) {
       const { selectedTeam, teamType } = route.params;
       if (teamType === "A") {
+        playingTeamsStore.teamA = selectedTeam;
         setTeamA(selectedTeam);
       } else if (teamType === "B") {
+        playingTeamsStore.teamB = selectedTeam;
         setTeamB(selectedTeam);
       }
     }
-  }, [route.params]);
+  }, [route.params?.selectedTeam, route.params?.teamType]);
 
   // Determine which team button should pulse
   const isTeamAPulsing = !teamA;
   const isTeamBPulsing = teamA && !teamB;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView className="flex-1 bg-white">
+      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
+
       {/* App Header Component */}
       <AppHeader
         title="Select playing teams"
         onBackPress={() => navigation.goBack()}
         rightComponent={
-          <TouchableOpacity style={styles.helpBtn} activeOpacity={0.7}>
+          <TouchableOpacity className="p-1" activeOpacity={0.7}>
             <Ionicons name="help-circle-outline" size={24} color="#FFFFFF" />
           </TouchableOpacity>
         }
       />
 
       {/* Main Content Area */}
-      <View style={styles.content}>
-        <Text style={styles.subtitleNotice}>
+      <View className="flex-1 bg-white px-5 pt-4">
+        <Text className="text-slate-500 text-sm italic mb-10">
           *Scoring a match on CricNovas is free.
         </Text>
 
-        <View style={styles.teamSelectorCenter}>
+        <View className="flex-1 justify-center items-center pb-20">
           {/* Team A Card */}
           <TeamSelectorCard
             title={teamA ? teamA.teamName : "Select team A"}
@@ -76,72 +86,25 @@ const SelectPlayingTeamsScreen = ({ navigation, route }) => {
 
       {/* Start Match Action Bar (Appears when both teams are selected) */}
       {teamA && teamB && (
-        <View style={styles.bottomBar}>
+        <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 shadow-lg">
           <TouchableOpacity
-            style={styles.startMatchBtn}
-            activeOpacity={0.8}
+            className="w-full h-13 bg-[#0D9488] rounded-xl justify-center items-center shadow-md shadow-teal-500/20"
+            activeOpacity={0.85}
             onPress={() =>
-              navigation.navigate("Placeholder", {
-                title: `${teamA.teamName} vs ${teamB.teamName}`,
+              navigation.navigate("StartMatchSetup", {
+                teamA: teamA,
+                teamB: teamB,
               })
             }
           >
-            <Text style={styles.startMatchBtnText}>Start Match 🏏</Text>
+            <Text className="text-white text-base font-extrabold">
+              Start Match 🏏 ({teamA.teamName} vs {teamB.teamName})
+            </Text>
           </TouchableOpacity>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
 export default SelectPlayingTeamsScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-  },
-  helpBtn: {
-    padding: 4,
-  },
-  content: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 20,
-    paddingTop: 16,
-  },
-  subtitleNotice: {
-    color: "#64748B",
-    fontSize: 14,
-    fontStyle: "italic",
-    marginBottom: 40,
-  },
-  teamSelectorCenter: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingBottom: 80,
-  },
-  bottomBar: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "#FFFFFF",
-    borderTopWidth: 1,
-    borderTopColor: "#E2E8F0",
-    padding: 16,
-  },
-  startMatchBtn: {
-    height: 50,
-    backgroundColor: "#0D9488",
-    borderRadius: 6,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  startMatchBtnText: {
-    color: "#FFFFFF",
-    fontSize: 17,
-    fontWeight: "bold",
-  },
-});

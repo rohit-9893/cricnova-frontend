@@ -16,7 +16,7 @@ import TeamCard from "../../components/team/TeamCard";
 import TeamLogoPicker from "../../components/team/TeamLogoPicker";
 import UnderlineInput from "../../components/ui/UnderlineInput";
 
-// Shared team storage across navigation turns (starts empty — filled by API)
+// Shared team storage across navigation turns
 let globalTeamsList = [];
 
 const AVATAR_COLORS = [
@@ -28,9 +28,19 @@ const TABS = ["Your teams", "Opponents", "Add"];
 
 const SelectTeamScreen = ({ navigation, route }) => {
   const teamType = route.params?.teamType || "A";
-  const [activeTab, setActiveTab] = useState("Your teams");
+  const [activeTab, setActiveTab] = useState(
+    teamType === "B" ? "Opponents" : "Your teams"
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [teams, setTeams] = useState(globalTeamsList);
+
+  useEffect(() => {
+    if (route.params?.teamType === "B") {
+      setActiveTab("Opponents");
+    } else {
+      setActiveTab("Your teams");
+    }
+  }, [route.params?.teamType]);
 
   // Form State for "Add" Tab
   const [teamName, setTeamName] = useState("");
@@ -41,13 +51,15 @@ const SelectTeamScreen = ({ navigation, route }) => {
 
   // Dynamic Header Title
   const headerTitle =
-    activeTab === "Add" ? "Create your team" : `Select team ${teamType}`;
+    activeTab === "Add"
+      ? `Create ${teamType === "B" ? "Opponent " : ""}Team`
+      : `Select team ${teamType}${teamType === "B" ? " (Opponent)" : ""}`;
 
   const filteredTeams = teams.filter((team) =>
     team.teamName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Handle New Team Creation
+  // Handle New Team Creation -> Navigates to Captain Roster & Add Player Screen
   const handleCreateTeam = () => {
     if (!teamName.trim()) {
       Alert.alert("Required Field", "Please enter a valid Team Name.");
@@ -72,6 +84,8 @@ const SelectTeamScreen = ({ navigation, route }) => {
       avatarInitials: initials,
       location: city.trim() || "Indore",
       captainName: captainName.trim() || "Captain",
+      captainPhone: captainPhone.trim() || "+91 98930 00000",
+      isOpponent: teamType === "B",
     };
 
     const updatedList = [newTeam, ...teams];
@@ -80,25 +94,28 @@ const SelectTeamScreen = ({ navigation, route }) => {
 
     // Reset Form Fields
     setTeamName("");
+    setCity("");
+    setCaptainName("");
+    setCaptainPhone("");
 
-    // Automatically select the newly created team and navigate back
-    navigation.navigate("SelectPlayingTeams", {
-      selectedTeam: newTeam,
+    // Navigate to TeamRoster screen (Captain Profile & Add Player Roster)
+    navigation.navigate("TeamRoster", {
+      team: newTeam,
       teamType: teamType,
     });
   };
 
-  // Handle Selecting an Existing Team
+  // Handle Selecting an Existing Team -> Navigates to TeamRoster screen
   const handleSelectTeam = (team) => {
-    navigation.navigate("SelectPlayingTeams", {
-      selectedTeam: team,
+    navigation.navigate("TeamRoster", {
+      team: team,
       teamType: teamType,
     });
   };
 
   return (
     <View style={styles.container}>
-      {/* Fixed Red Top Header */}
+      {/* Fixed Top Header */}
       <AppHeader
         title={headerTitle}
         onBackPress={() => navigation.goBack()}
@@ -217,13 +234,15 @@ const SelectTeamScreen = ({ navigation, route }) => {
               )}
               ListEmptyComponent={
                 <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>No teams created yet.</Text>
+                  <Text style={styles.emptyText}>
+                    No {activeTab === "Opponents" ? "opponent" : ""} teams created yet.
+                  </Text>
                   <TouchableOpacity
                     style={styles.createFirstTeamBtn}
                     onPress={() => setActiveTab("Add")}
                   >
                     <Text style={styles.createFirstTeamBtnText}>
-                      + Create Your First Team
+                      + Create {activeTab === "Opponents" ? "Opponent" : "Your"} Team
                     </Text>
                   </TouchableOpacity>
                 </View>

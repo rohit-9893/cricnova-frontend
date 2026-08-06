@@ -12,6 +12,8 @@ import PlaceholderScreen from "../app/placeholder/PlaceholderScreen";
 import SelectPlayingTeamsScreen from "../app/match/SelectPlayingTeamsScreen";
 import SelectTeamScreen from "../app/match/SelectTeamScreen";
 import CreateTeamScreen from "../app/match/CreateTeamScreen";
+import TeamRosterScreen from "../app/team/TeamRosterScreen";
+import StartMatchSetupScreen from "../app/match/StartMatchSetupScreen";
 import CreateTournamentScreen from "../app/tournament/CreateTournamentScreen";
 import MyProfileScreen from "../app/profile/MyProfileScreen";
 import EditProfileScreen from "../app/profile/EditProfileScreen";
@@ -37,6 +39,8 @@ const AppNavigator = () => {
       <Stack.Screen name="SelectPlayingTeams" component={SelectPlayingTeamsScreen} />
       <Stack.Screen name="SelectTeam" component={SelectTeamScreen} />
       <Stack.Screen name="CreateTeam" component={CreateTeamScreen} />
+      <Stack.Screen name="TeamRoster" component={TeamRosterScreen} />
+      <Stack.Screen name="StartMatchSetup" component={StartMatchSetupScreen} />
       <Stack.Screen name="CreateTournament" component={CreateTournamentScreen} />
       <Stack.Screen name="MyProfile" component={MyProfileScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
