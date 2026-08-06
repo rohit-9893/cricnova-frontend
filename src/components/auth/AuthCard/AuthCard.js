@@ -7,7 +7,7 @@ import MobileLoginBtn from "../MobileLoginBtn";
 
 const AuthCard = ({
   countryName = "India",
-  countryCode = "IN",
+  countryFlag = "🇮🇳",
   onCountryPress,
   onWhatsAppPress,
   onMobilePress,
@@ -33,7 +33,7 @@ const AuthCard = ({
       {/* Country Selection Button */}
       <CountrySelectBtn
         countryName={countryName}
-        countryCode={countryCode}
+        countryFlag={countryFlag}
         onPress={onCountryPress}
       />
 

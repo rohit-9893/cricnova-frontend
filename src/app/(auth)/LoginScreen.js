@@ -3,13 +3,10 @@ import { View, Text, TouchableOpacity, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AuthCard from "../../components/auth/AuthCard";
 import CountryPickerModal from "../../components/ui/CountryPickerModal";
+import { getDefaultCountry } from "../../utils/countryDetector";
 
 const LoginScreen = ({ navigation }) => {
-  const [selectedCountry, setSelectedCountry] = useState({
-    name: "India",
-    code: "IN",
-    flag: "🇮🇳",
-  });
+  const [selectedCountry, setSelectedCountry] = useState(getDefaultCountry());
   const [isCountryModalVisible, setIsCountryModalVisible] = useState(false);
 
   return (
@@ -22,7 +19,7 @@ const LoginScreen = ({ navigation }) => {
       {/* Central Floating White Auth Card */}
       <AuthCard
         countryName={selectedCountry.name}
-        countryCode={selectedCountry.code}
+        countryFlag={selectedCountry.flag}
         onCountryPress={() => setIsCountryModalVisible(true)}
         onWhatsAppPress={() => navigation && navigation.navigate && navigation.navigate("MobileInput")}
         onMobilePress={() => navigation && navigation.navigate && navigation.navigate("MobileInput")}
@@ -47,6 +44,7 @@ const LoginScreen = ({ navigation }) => {
           setSelectedCountry({
             name: country.name,
             code: country.code || "IN",
+            dialCode: country.dialCode || "+91",
             flag: country.flag,
           })
         }
