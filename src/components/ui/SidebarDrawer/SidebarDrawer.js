@@ -180,14 +180,26 @@ const SidebarDrawer = ({ visible, onClose, navigation, user = {} }) => {
       <View className="flex-1">
         <StatusBar barStyle="light-content" backgroundColor="#143D2B" translucent={false} />
 
-        {/* Fullscreen Backdrop Overlay */}
-        <Animated.View className="absolute inset-0 bg-black/50" style={[{ opacity: fadeAnim }]}>
-          <TouchableOpacity
-            className="w-full h-full"
-            activeOpacity={1}
-            onPress={() => handleSmoothClose()}
+        {/* Fullscreen Backdrop Overlay (Closes drawer when tapped outside) */}
+        <TouchableOpacity
+          activeOpacity={1}
+          style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0 }}
+          onPress={() => handleSmoothClose()}
+        >
+          <Animated.View
+            style={[
+              {
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                backgroundColor: "rgba(0,0,0,0.5)",
+                opacity: fadeAnim,
+              },
+            ]}
           />
-        </Animated.View>
+        </TouchableOpacity>
 
         {/* Sliding Drawer Container */}
         <Animated.View
@@ -201,8 +213,10 @@ const SidebarDrawer = ({ visible, onClose, navigation, user = {} }) => {
             },
           ]}
         >
-          <TouchableWithoutFeedback>
-            <View className="flex-1 bg-[#143D2B]">
+          <View
+            className="flex-1 bg-[#143D2B]"
+            onStartShouldSetResponder={() => true}
+          >
               {/* Profile Top Header Section */}
               <View className="bg-[#143D2B] p-4 border-b border-emerald-900/50">
                 <View className="flex-row items-center mb-4">
@@ -321,7 +335,6 @@ const SidebarDrawer = ({ visible, onClose, navigation, user = {} }) => {
                 })}
               </ScrollView>
             </View>
-          </TouchableWithoutFeedback>
         </Animated.View>
       </View>
     </Modal>

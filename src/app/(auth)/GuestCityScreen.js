@@ -2,22 +2,17 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   TextInput,
   StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import Button from "../../components/ui/Button";
 import CountryPickerModal from "../../components/ui/CountryPickerModal";
-import { Colors, Spacing, Radius, Typography } from "../../theme";
+import { getDefaultCountry } from "../../utils/countryDetector";
 
 const GuestCityScreen = ({ navigation }) => {
-  const [selectedCountry, setSelectedCountry] = useState({
-    name: "India",
-    flag: "🇮🇳",
-  });
+  const [selectedCountry, setSelectedCountry] = useState(getDefaultCountry());
   const [isCountryModalVisible, setIsCountryModalVisible] = useState(false);
   const [city, setCity] = useState("");
 
@@ -26,16 +21,16 @@ const GuestCityScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-[#F8FAFC]">
       <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
 
-      {/* Decorative top background curve */}
-      <View style={styles.topBgCurve} />
+      {/* Decorative Top Background Curve */}
+      <View className="absolute -top-20 -left-10 -right-10 h-96 bg-slate-100 rounded-b-[280px]" />
 
       {/* Header Back Button */}
-      <View style={styles.header}>
+      <View className="px-5 pt-3 z-10">
         <TouchableOpacity
-          style={styles.backBtn}
+          className="w-10 h-10 justify-center items-start"
           onPress={() => navigation.goBack()}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
@@ -44,31 +39,33 @@ const GuestCityScreen = ({ navigation }) => {
       </View>
 
       {/* Content Container */}
-      <View style={styles.content}>
-        <View style={styles.bottomSection}>
+      <View className="flex-1 justify-end px-6 pb-8">
+        <View className="w-full">
           {/* Heading */}
-          <Text style={styles.heading}>
+          <Text className="text-xl font-bold text-slate-900 leading-7">
             Tell us your city to personalise your experience.
           </Text>
-          <View style={styles.dividerBar} />
+          <View className="w-8 h-1 bg-[#0D9488] rounded-full mt-2 mb-6" />
 
           {/* Country Selector */}
           <TouchableOpacity
-            style={styles.countryDropdown}
+            className="w-full h-13 bg-slate-100 border border-slate-300 rounded-xl flex-row items-center justify-between px-4 mb-4"
             activeOpacity={0.7}
             onPress={() => setIsCountryModalVisible(true)}
           >
-            <View style={styles.countryInfo}>
-              <Text style={styles.flag}>{selectedCountry.flag}</Text>
-              <Text style={styles.countryName}>{selectedCountry.name}</Text>
+            <View className="flex-row items-center">
+              <Text className="text-xl mr-2.5">{selectedCountry.flag}</Text>
+              <Text className="text-base font-semibold text-slate-900">
+                {selectedCountry.name}
+              </Text>
             </View>
             <Ionicons name="caret-down-sharp" size={14} color="#334155" />
           </TouchableOpacity>
 
           {/* City Input */}
-          <View style={styles.inputContainer}>
+          <View className="w-full h-13 bg-slate-100 border border-slate-300 rounded-xl justify-center px-4 mb-6">
             <TextInput
-              style={styles.textInput}
+              className="text-base font-semibold text-slate-900 p-0"
               placeholder="Enter your city"
               placeholderTextColor="#94A3B8"
               value={city}
@@ -77,12 +74,13 @@ const GuestCityScreen = ({ navigation }) => {
           </View>
 
           {/* Continue Button */}
-          <Button
-            title="Continue"
+          <TouchableOpacity
+            className="w-full h-13 bg-[#0D9488] rounded-xl justify-center items-center shadow-md shadow-teal-500/20"
+            activeOpacity={0.85}
             onPress={handleContinue}
-            style={styles.continueBtn}
-            textStyle={styles.continueBtnText}
-          />
+          >
+            <Text className="text-white text-base font-extrabold">Continue</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -97,106 +95,3 @@ const GuestCityScreen = ({ navigation }) => {
 };
 
 export default GuestCityScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F8FAFC",
-  },
-  topBgCurve: {
-    position: "absolute",
-    top: -80,
-    left: -40,
-    right: -40,
-    height: 380,
-    backgroundColor: "#F1F5F9",
-    borderBottomLeftRadius: 280,
-    borderBottomRightRadius: 280,
-  },
-  header: {
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
-    zIndex: 10,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "flex-start",
-  },
-  content: {
-    flex: 1,
-    justifyContent: "flex-end",
-    paddingHorizontal: Spacing.xl,
-    paddingBottom: Spacing.xl,
-  },
-  bottomSection: {
-    width: "100%",
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#0F172A",
-    lineHeight: 28,
-  },
-  dividerBar: {
-    width: 32,
-    height: 3,
-    backgroundColor: "#94A3B8",
-    borderRadius: 2,
-    marginTop: Spacing.sm,
-    marginBottom: Spacing.xl,
-  },
-  countryDropdown: {
-    width: "100%",
-    height: 50,
-    backgroundColor: "#F1F5F9",
-    borderWidth: 1,
-    borderColor: "#CBD5E1",
-    borderRadius: Radius.sm,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
-    marginBottom: Spacing.md,
-  },
-  countryInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  flag: {
-    fontSize: 20,
-    marginRight: Spacing.sm,
-  },
-  countryName: {
-    fontSize: Typography.body,
-    fontWeight: "500",
-    color: "#0F172A",
-  },
-  inputContainer: {
-    width: "100%",
-    height: 50,
-    backgroundColor: "#F1F5F9",
-    borderWidth: 1,
-    borderColor: "#CBD5E1",
-    borderRadius: Radius.sm,
-    justifyContent: "center",
-    paddingHorizontal: Spacing.md,
-    marginBottom: Spacing.xl,
-  },
-  textInput: {
-    fontSize: Typography.body,
-    color: "#0F172A",
-  },
-  continueBtn: {
-    width: "100%",
-    height: 50,
-    backgroundColor: "#0D9488",
-    borderRadius: Radius.sm,
-  },
-  continueBtnText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
-});
