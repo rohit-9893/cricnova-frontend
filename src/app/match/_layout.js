@@ -7,6 +7,6 @@ export default function MatchLayout() {
       <Stack.Screen name="SelectPlayingTeamsScreen" />
       <Stack.Screen name="SelectTeamScreen" />
       <Stack.Screen name="CreateTeamScreen" />
-    </Stack.Screen>
+    </Stack>
   );
 }

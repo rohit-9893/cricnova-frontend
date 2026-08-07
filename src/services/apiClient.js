@@ -7,9 +7,11 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:5000/
 const apiClient = axios.create({
   baseURL: BASE_URL,
   timeout: 15000,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
+    "ngrok-skip-browser-warning": "true",
   },
 });
 

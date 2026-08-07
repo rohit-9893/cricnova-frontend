@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import AppHeader from "../../components/ui/AppHeader";
 import SubHeaderTabs from "../../components/ui/SubHeaderTabs";
@@ -31,17 +31,17 @@ const CreateTeamScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Red Top Header */}
+    <SafeAreaView className="flex-1 bg-[#F8FAFC]">
+      {/* Top Header */}
       <AppHeader
         title="Create your team"
         onBackPress={() => navigation.goBack()}
         rightComponent={
-          <View style={styles.headerRightActions}>
-            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.7}>
+          <View className="flex-row items-center">
+            <TouchableOpacity className="p-1 ml-2.5" activeOpacity={0.7}>
               <Ionicons name="qr-code-outline" size={22} color="#FFFFFF" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.7}>
+            <TouchableOpacity className="p-1 ml-2.5" activeOpacity={0.7}>
               <Ionicons name="search-outline" size={22} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
@@ -57,10 +57,10 @@ const CreateTeamScreen = ({ navigation }) => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
       >
         {/* White Form Card Container */}
-        <View style={styles.formCard}>
+        <View className="bg-white rounded-xl border border-slate-200 px-5 py-4 mb-5 shadow-xs">
           {/* Logo Picker */}
           <TeamLogoPicker onPress={() => {}} />
 
@@ -103,109 +103,35 @@ const CreateTeamScreen = ({ navigation }) => {
 
         {/* Add Yourself Checkbox Row */}
         <TouchableOpacity
-          style={styles.checkboxRow}
+          className="flex-row items-center px-1 mb-6"
           activeOpacity={0.8}
           onPress={() => setAddSelf(!addSelf)}
         >
-          <View style={[styles.checkbox, addSelf && styles.checkboxChecked]}>
+          <View
+            className={`w-5 h-5 rounded border justify-center items-center mr-2.5 ${
+              addSelf ? "bg-[#0D9488] border-[#0D9488]" : "bg-white border-slate-400"
+            }`}
+          >
             {addSelf && <Ionicons name="checkmark" size={14} color="#FFFFFF" />}
           </View>
-          <Text style={styles.checkboxText}>Add yourself in the team</Text>
+          <Text className="text-sm text-slate-600 font-medium">
+            Add yourself in the team
+          </Text>
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Fixed Bottom Teal Add Team Button */}
-      <View style={styles.bottomBar}>
+      {/* Fixed Bottom Action Bar */}
+      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3">
         <TouchableOpacity
-          style={styles.addTeamBtn}
-          activeOpacity={0.8}
+          className="h-12 bg-[#0D9488] rounded-xl justify-center items-center shadow-md shadow-teal-500/20"
+          activeOpacity={0.85}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.addTeamBtnText}>Add team</Text>
+          <Text className="text-white text-base font-bold">Add team</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 export default CreateTeamScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F8FAFC",
-  },
-  headerRightActions: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  iconBtn: {
-    padding: 4,
-    marginLeft: 10,
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 100,
-  },
-  formCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    marginBottom: 20,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  checkboxRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 4,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 3,
-    borderWidth: 1.5,
-    borderColor: "#94A3B8",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
-    backgroundColor: "#FFFFFF",
-  },
-  checkboxChecked: {
-    backgroundColor: "#0D9488",
-    borderColor: "#0D9488",
-  },
-  checkboxText: {
-    fontSize: 15,
-    color: "#475569",
-    fontWeight: "500",
-  },
-  bottomBar: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "#FFFFFF",
-    borderTopWidth: 1,
-    borderTopColor: "#E2E8F0",
-    padding: 12,
-  },
-  addTeamBtn: {
-    height: 48,
-    backgroundColor: "#0D9488",
-    borderRadius: 4,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  addTeamBtnText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});

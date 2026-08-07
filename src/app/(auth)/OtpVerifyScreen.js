@@ -12,11 +12,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { verifyOtp, sendOtp } from "../../services/authService";
 
 const OtpVerifyScreen = ({ navigation, route }) => {
   const mobileNumber = route.params?.mobileNumber || "+91 98930 00000";
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [timer, setTimer] = useState(30);
+  const [isLoading, setIsLoading] = useState(false);
 
   const inputRefs = [
     useRef(null),
@@ -51,30 +53,51 @@ const OtpVerifyScreen = ({ navigation, route }) => {
     }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const enteredOtp = otp.join("");
-    if (enteredOtp.length < 4) {
+    if (enteredOtp.length < 4 || isLoading) {
       Alert.alert("Invalid OTP", "Please enter the complete 4-digit OTP code.");
       return;
     }
 
-    Alert.alert(
-      "Login Successful! 🎉",
-      "Welcome to CricNovas Arena.",
-      [
-        {
-          text: "OK",
-          onPress: () =>
-            navigation && navigation.replace && navigation.replace("Home"),
-        },
-      ]
-    );
+    setIsLoading(true);
+    try {
+      await verifyOtp(mobileNumber, enteredOtp);
+
+      // Only navigate on SUCCESSFUL verification
+      Alert.alert(
+        "OTP Verified! 🎉",
+        "Please complete your player profile.",
+        [
+          {
+            text: "Continue to Profile Setup ➔",
+            onPress: () =>
+              navigation &&
+              navigation.navigate &&
+              navigation.navigate("Register", { mobileNumber }),
+          },
+        ]
+      );
+    } catch (err) {
+      console.warn("[VERIFY OTP API ERROR]:", err?.message || err);
+      Alert.alert(
+        "Verification Failed ❌",
+        err?.message || "The OTP you entered is invalid. Please enter the correct OTP code."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setTimer(30);
     setOtp(["", "", "", ""]);
     inputRefs[0].current?.focus();
+    try {
+      await sendOtp(mobileNumber);
+    } catch (err) {
+      console.warn("[RESEND OTP API NOTICE]:", err?.message || err);
+    }
     Alert.alert("OTP Resent", `A new OTP has been sent to ${mobileNumber}`);
   };
 

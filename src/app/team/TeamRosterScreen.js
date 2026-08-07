@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,10 @@ import {
   TextInput,
   Alert,
   StatusBar,
+  Keyboard,
+  Animated,
+  Platform,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -44,6 +48,35 @@ const TeamRosterScreen = ({ navigation, route }) => {
 
   // Modal State for Captain Profile View
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
+
+  // Animated Value for smooth bottom margin when keyboard opens/closes in Add Player Modal
+  const keyboardMarginAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+    const showSub = Keyboard.addListener(showEvent, (e) => {
+      Animated.timing(keyboardMarginAnim, {
+        toValue: e.endCoordinates ? e.endCoordinates.height : 280,
+        duration: Platform.OS === "ios" ? e.duration || 250 : 250,
+        useNativeDriver: false,
+      }).start();
+    });
+
+    const hideSub = Keyboard.addListener(hideEvent, () => {
+      Animated.timing(keyboardMarginAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, [keyboardMarginAnim]);
 
   const handleAddPlayer = () => {
     if (!newPlayerName.trim()) {
@@ -214,73 +247,85 @@ const TeamRosterScreen = ({ navigation, route }) => {
         animationType="slide"
         onRequestClose={() => setIsAddPlayerModalVisible(false)}
       >
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className="bg-white rounded-t-3xl p-6">
-            <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-xl font-black text-slate-900">Add New Player</Text>
-              <TouchableOpacity onPress={() => setIsAddPlayerModalVisible(false)}>
-                <Ionicons name="close-circle" size={26} color="#64748B" />
-              </TouchableOpacity>
-            </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View className="flex-1 bg-black/50 justify-end">
+            <TouchableWithoutFeedback>
+              <Animated.View
+                className="bg-white rounded-t-3xl p-6 max-h-[85%]"
+                style={{ marginBottom: keyboardMarginAnim }}
+              >
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps="handled"
+                >
+                  <View className="flex-row items-center justify-between mb-4">
+                    <Text className="text-xl font-black text-slate-900">Add New Player</Text>
+                    <TouchableOpacity onPress={() => setIsAddPlayerModalVisible(false)}>
+                      <Ionicons name="close-circle" size={26} color="#64748B" />
+                    </TouchableOpacity>
+                  </View>
 
-            <View className="mb-4">
-              <Text className="text-slate-700 text-xs font-bold mb-1.5">Player Name *</Text>
-              <TextInput
-                className="w-full h-12 bg-slate-50 border border-slate-300 rounded-xl px-4 text-base font-bold text-slate-900"
-                placeholder="Enter player full name"
-                placeholderTextColor="#94A3B8"
-                value={newPlayerName}
-                onChangeText={setNewPlayerName}
-              />
-            </View>
+                  <View className="mb-4">
+                    <Text className="text-slate-700 text-xs font-bold mb-1.5">Player Name *</Text>
+                    <TextInput
+                      className="w-full h-12 bg-slate-50 border border-slate-300 rounded-xl px-4 text-base font-bold text-slate-900"
+                      placeholder="Enter player full name"
+                      placeholderTextColor="#94A3B8"
+                      value={newPlayerName}
+                      onChangeText={setNewPlayerName}
+                    />
+                  </View>
 
-            <View className="mb-4">
-              <Text className="text-slate-700 text-xs font-bold mb-1.5">Playing Role</Text>
-              <View className="flex-row flex-wrap space-x-2">
-                {["Batsman", "Bowler", "All-Rounder", "Wicket-Keeper"].map((role) => (
+                  <View className="mb-4">
+                    <Text className="text-slate-700 text-xs font-bold mb-1.5">Playing Role</Text>
+                    <View className="flex-row flex-wrap space-x-2">
+                      {["Batsman", "Bowler", "All-Rounder", "Wicket-Keeper"].map((role) => (
+                        <TouchableOpacity
+                          key={role}
+                          className={`px-3 py-2 rounded-lg border mb-2 mr-2 ${
+                            newPlayerRole === role
+                              ? "bg-[#0D9488] border-[#0D9488]"
+                              : "bg-slate-100 border-slate-300"
+                          }`}
+                          onPress={() => setNewPlayerRole(role)}
+                        >
+                          <Text
+                            className={`text-xs font-bold ${
+                              newPlayerRole === role ? "text-white" : "text-slate-700"
+                            }`}
+                          >
+                            {role}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </View>
+
+                  <View className="mb-6">
+                    <Text className="text-slate-700 text-xs font-bold mb-1.5">Mobile Number</Text>
+                    <TextInput
+                      className="w-full h-12 bg-slate-50 border border-slate-300 rounded-xl px-4 text-base font-bold text-slate-900"
+                      placeholder="Enter 10-digit mobile number"
+                      placeholderTextColor="#94A3B8"
+                      keyboardType="phone-pad"
+                      maxLength={10}
+                      value={newPlayerPhone}
+                      onChangeText={setNewPlayerPhone}
+                    />
+                  </View>
+
                   <TouchableOpacity
-                    key={role}
-                    className={`px-3 py-2 rounded-lg border mb-2 mr-2 ${
-                      newPlayerRole === role
-                        ? "bg-[#0D9488] border-[#0D9488]"
-                        : "bg-slate-100 border-slate-300"
-                    }`}
-                    onPress={() => setNewPlayerRole(role)}
+                    className="w-full h-13 bg-[#0D9488] rounded-xl justify-center items-center shadow-md shadow-teal-500/20"
+                    activeOpacity={0.85}
+                    onPress={handleAddPlayer}
                   >
-                    <Text
-                      className={`text-xs font-bold ${
-                        newPlayerRole === role ? "text-white" : "text-slate-700"
-                      }`}
-                    >
-                      {role}
-                    </Text>
+                    <Text className="text-white text-base font-extrabold">+ Save Player to Squad</Text>
                   </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            <View className="mb-6">
-              <Text className="text-slate-700 text-xs font-bold mb-1.5">Mobile Number</Text>
-              <TextInput
-                className="w-full h-12 bg-slate-50 border border-slate-300 rounded-xl px-4 text-base font-bold text-slate-900"
-                placeholder="Enter 10-digit mobile number"
-                placeholderTextColor="#94A3B8"
-                keyboardType="phone-pad"
-                maxLength={10}
-                value={newPlayerPhone}
-                onChangeText={setNewPlayerPhone}
-              />
-            </View>
-
-            <TouchableOpacity
-              className="w-full h-13 bg-[#0D9488] rounded-xl justify-center items-center shadow-md shadow-teal-500/20"
-              activeOpacity={0.85}
-              onPress={handleAddPlayer}
-            >
-              <Text className="text-white text-base font-extrabold">+ Save Player to Squad</Text>
-            </TouchableOpacity>
+                </ScrollView>
+              </Animated.View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
 
       {/* Captain Profile View Modal */}

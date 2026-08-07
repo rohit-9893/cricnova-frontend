@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import CountryPickerModal from "../../components/ui/CountryPickerModal";
+import { sendOtp } from "../../services/authService";
 
 const MobileInputScreen = ({ navigation }) => {
   const [mobileNumber, setMobileNumber] = useState("");
@@ -23,6 +24,7 @@ const MobileInputScreen = ({ navigation }) => {
     flag: "🇮🇳",
   });
   const [isCountryModalVisible, setIsCountryModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Dynamic Button Disabled State
   const isValidNumber = mobileNumber.trim().length === 10;
@@ -56,12 +58,21 @@ const MobileInputScreen = ({ navigation }) => {
     };
   }, [keyboardMarginAnim]);
 
-  const handleSendOtp = () => {
-    if (!isValidNumber) return;
+  const handleSendOtp = async () => {
+    if (!isValidNumber || isLoading) return;
+    const fullMobile = `${selectedCountry.code} ${mobileNumber.trim()}`;
 
-    navigation.navigate("OtpVerify", {
-      mobileNumber: `${selectedCountry.code} ${mobileNumber.trim()}`,
-    });
+    setIsLoading(true);
+    try {
+      await sendOtp(fullMobile);
+    } catch (err) {
+      console.warn("[SEND OTP API NOTICE]:", err?.message || err);
+    } finally {
+      setIsLoading(false);
+      navigation.navigate("OtpVerify", {
+        mobileNumber: fullMobile,
+      });
+    }
   };
 
   return (

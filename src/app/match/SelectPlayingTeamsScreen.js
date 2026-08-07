@@ -67,7 +67,13 @@ const SelectPlayingTeamsScreen = ({ navigation, route }) => {
             avatarInitials={teamA ? teamA.avatarInitials : null}
             avatarColor={teamA ? teamA.avatarColor : null}
             isAnimated={isTeamAPulsing}
-            onPress={() => navigation.navigate("SelectTeam", { teamType: "A" })}
+            onPress={() =>
+              navigation.navigate("SelectTeam", {
+                teamType: "A",
+                existingTeamA: teamA,
+                existingTeamB: teamB,
+              })
+            }
           />
 
           {/* VS Diamond Divider */}
@@ -79,7 +85,13 @@ const SelectPlayingTeamsScreen = ({ navigation, route }) => {
             avatarInitials={teamB ? teamB.avatarInitials : null}
             avatarColor={teamB ? teamB.avatarColor : null}
             isAnimated={isTeamBPulsing}
-            onPress={() => navigation.navigate("SelectTeam", { teamType: "B" })}
+            onPress={() =>
+              navigation.navigate("SelectTeam", {
+                teamType: "B",
+                existingTeamA: teamA,
+                existingTeamB: teamB,
+              })
+            }
           />
         </View>
       </View>
