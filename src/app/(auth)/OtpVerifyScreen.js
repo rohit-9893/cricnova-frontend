@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { verifyOtp, sendOtp } from "../../services/authService";
+import useAuthStore from "../../store/useAuthStore";
 
 const OtpVerifyScreen = ({ navigation, route }) => {
   const mobileNumber = route.params?.mobileNumber || "+91 98930 00000";
@@ -62,7 +63,24 @@ const OtpVerifyScreen = ({ navigation, route }) => {
 
     setIsLoading(true);
     try {
-      await verifyOtp(mobileNumber, enteredOtp);
+      const res = await verifyOtp(mobileNumber, enteredOtp);
+
+      const token =
+        res?.data?.data?.accessToken ||
+        res?.data?.accessToken ||
+        res?.accessToken ||
+        res?.token ||
+        res?.data?.token ||
+        res?.data?.data?.token;
+
+      const user =
+        res?.data?.data?.user ||
+        res?.data?.user ||
+        res?.user;
+
+      if (token) {
+        await useAuthStore.getState().setAuth(token, user);
+      }
 
       // Only navigate on SUCCESSFUL verification
       Alert.alert(

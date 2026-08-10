@@ -1,5 +1,6 @@
 import createStore from "./createStore";
 import { getItem, setItem, removeItem } from "../utils/storage";
+import { getUserProfile, updateUserProfile } from "../services/userService";
 
 export const useAuthStore = createStore((set, get) => ({
   user: null,
@@ -20,6 +21,11 @@ export const useAuthStore = createStore((set, get) => ({
         isAuthenticated: Boolean(storedToken || (storedUser && storedUser.isRegistered)),
         isLoading: false,
       });
+
+      // If token exists, sync live profile in background
+      if (storedToken) {
+        get().fetchProfileApi();
+      }
     } catch (err) {
       console.warn("[AUTH STORE INIT ERROR]:", err);
       set({ isLoading: false });
@@ -38,7 +44,45 @@ export const useAuthStore = createStore((set, get) => ({
     });
   },
 
-  // Update User Profile
+  // Fetch Live Profile from Backend API (`GET /users/me`)
+  fetchProfileApi: async () => {
+    try {
+      const res = await getUserProfile();
+      const userData = res?.data || res?.user || res;
+      if (userData) {
+        const currentUser = get().user || {};
+        const mergedUser = { ...currentUser, ...userData };
+        await setItem("user-profile", JSON.stringify(mergedUser));
+        set({ user: mergedUser, isAuthenticated: true });
+      }
+    } catch (err) {
+      console.warn("[FETCH PROFILE API NOTICE]:", err?.message || err);
+    }
+  },
+
+  // Update Profile on Backend API (`PATCH /users/me/profile`)
+  updateProfileApi: async (profilePayload) => {
+    try {
+      const res = await updateUserProfile(profilePayload);
+      const updatedData = res?.data || res?.user || profilePayload;
+      const currentUser = get().user || {};
+      const mergedUser = { ...currentUser, ...updatedData, isRegistered: true };
+
+      await setItem("user-profile", JSON.stringify(mergedUser));
+      set({ user: mergedUser, isAuthenticated: true });
+      return mergedUser;
+    } catch (err) {
+      console.warn("[UPDATE PROFILE API NOTICE]:", err?.message || err);
+      // Fallback to local save if offline
+      const currentUser = get().user || {};
+      const mergedUser = { ...currentUser, ...profilePayload, isRegistered: true };
+      await setItem("user-profile", JSON.stringify(mergedUser));
+      set({ user: mergedUser, isAuthenticated: true });
+      return mergedUser;
+    }
+  },
+
+  // Update User Profile (Local helper)
   updateUser: async (partialUser) => {
     const currentUser = get().user || {};
     const updated = { ...currentUser, ...partialUser };

@@ -58,15 +58,33 @@ export const verifyOtp = async (inputMobile, otp) => {
       code: cleanOtp,
     });
 
-    // Save tokens if returned in API response
-    if (response?.token || response?.accessToken) {
-      await setItem("auth-token", response.token || response.accessToken);
+    // Extract tokens and user matching backend response.data.data.accessToken structure
+    const token =
+      response?.data?.data?.accessToken ||
+      response?.data?.accessToken ||
+      response?.accessToken ||
+      response?.token ||
+      response?.data?.token ||
+      response?.data?.data?.token;
+
+    const refreshToken =
+      response?.data?.data?.refreshToken ||
+      response?.data?.refreshToken ||
+      response?.refreshToken;
+
+    const user =
+      response?.data?.data?.user ||
+      response?.data?.user ||
+      response?.user;
+
+    if (token) {
+      await setItem("auth-token", token);
     }
-    if (response?.refreshToken) {
-      await setItem("refresh-token", response.refreshToken);
+    if (refreshToken) {
+      await setItem("refresh-token", refreshToken);
     }
-    if (response?.user) {
-      await setItem("user-profile", JSON.stringify(response.user));
+    if (user) {
+      await setItem("user-profile", JSON.stringify(user));
     }
 
     return response;

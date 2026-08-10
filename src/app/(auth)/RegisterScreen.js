@@ -42,6 +42,9 @@ const RegisterScreen = ({ navigation, route }) => {
     setGender,
     selectedSticker,
     setSelectedSticker,
+    profileImageUri,
+    handlePickFromGallery,
+    handleTakePhoto,
     keyboardMarginAnim,
     getInitials,
     handleNextStep1,
@@ -307,36 +310,61 @@ const RegisterScreen = ({ navigation, route }) => {
                         Let's make your cricket profile complete with your best photo.
                       </Text>
 
-                      {/* Large Sticker Avatar Badge Preview */}
+                      {/* Large Photo / Sticker Avatar Badge Preview */}
                       <View
-                        className="w-64 h-64 rounded-full justify-center items-center mb-6 shadow-xl border-4 border-white relative overflow-hidden"
-                        style={{ backgroundColor: selectedSticker.bg }}
+                        className="w-56 h-56 rounded-full justify-center items-center mb-4 shadow-xl border-4 border-white relative overflow-hidden"
+                        style={{ backgroundColor: profileImageUri ? "#0F172A" : selectedSticker.bg }}
                       >
-                        <MaterialCommunityIcons
-                          name={selectedSticker.icon}
-                          size={110}
-                          color="#FFFFFF"
-                        />
-                        <View className="absolute bottom-4 bg-slate-900/80 px-3 py-1 rounded-full border border-white/40">
+                        {profileImageUri ? (
+                          <Image source={{ uri: profileImageUri }} className="w-full h-full" resizeMode="cover" />
+                        ) : (
+                          <MaterialCommunityIcons
+                            name={selectedSticker.icon}
+                            size={100}
+                            color="#FFFFFF"
+                          />
+                        )}
+                        <View className="absolute bottom-3 bg-slate-900/80 px-3 py-1 rounded-full border border-white/40">
                           <Text className="text-white text-xs font-black">
                             {getInitials(fullName)}
                           </Text>
                         </View>
                       </View>
 
-                      {/* Stickers Pill Label */}
-                      <View className="bg-white border border-slate-300 px-4 py-1 rounded-full mb-4 shadow-xs">
-                        <Text className="text-slate-700 text-xs font-bold">Stickers</Text>
+                      {/* Camera & Gallery Action Buttons */}
+                      <View className="flex-row items-center justify-center space-x-3 mb-5">
+                        <TouchableOpacity
+                          className="flex-row items-center bg-slate-900 px-4 py-2.5 rounded-full shadow-md"
+                          activeOpacity={0.8}
+                          onPress={handleTakePhoto}
+                        >
+                          <Ionicons name="camera" size={18} color="#FFFFFF" />
+                          <Text className="text-white text-xs font-bold ml-1.5">Take Photo</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          className="flex-row items-center bg-[#00A896] px-4 py-2.5 rounded-full shadow-md"
+                          activeOpacity={0.8}
+                          onPress={handlePickFromGallery}
+                        >
+                          <Ionicons name="images" size={18} color="#FFFFFF" />
+                          <Text className="text-white text-xs font-bold ml-1.5">Gallery</Text>
+                        </TouchableOpacity>
+                      </View>
+
+                      {/* Or Select Sticker Label */}
+                      <View className="bg-white border border-slate-300 px-4 py-1 rounded-full mb-3 shadow-xs">
+                        <Text className="text-slate-600 text-xs font-semibold">Or Pick a Cricket Sticker</Text>
                       </View>
 
                       {/* Row of Cricket Avatar Stickers */}
                       <View className="flex-row items-center justify-center space-x-3 mb-6">
                         {AVATAR_STICKERS.map((sticker) => {
-                          const isSelected = selectedSticker.id === sticker.id;
+                          const isSelected = !profileImageUri && selectedSticker.id === sticker.id;
                           return (
                             <TouchableOpacity
                               key={sticker.id}
-                              className={`w-16 h-16 rounded-full justify-center items-center border-2 ${
+                              className={`w-14 h-14 rounded-full justify-center items-center border-2 ${
                                 isSelected
                                   ? "border-white scale-110 shadow-md border-3"
                                   : "border-transparent opacity-80"
@@ -347,7 +375,7 @@ const RegisterScreen = ({ navigation, route }) => {
                             >
                               <MaterialCommunityIcons
                                 name={sticker.icon}
-                                size={28}
+                                size={24}
                                 color="#FFFFFF"
                               />
                             </TouchableOpacity>
@@ -368,16 +396,20 @@ const RegisterScreen = ({ navigation, route }) => {
                 ) : (
                   /* STEP 6: Welcome Screen */
                   <View className="items-center pt-8">
-                    {/* User Selected Avatar Badge */}
+                    {/* User Selected Photo / Avatar Badge */}
                     <View
                       className="w-56 h-56 rounded-full justify-center items-center mb-6 shadow-2xl border-4 border-white overflow-hidden"
-                      style={{ backgroundColor: selectedSticker.bg }}
+                      style={{ backgroundColor: profileImageUri ? "#0F172A" : selectedSticker.bg }}
                     >
-                      <MaterialCommunityIcons
-                        name={selectedSticker.icon}
-                        size={100}
-                        color="#FFFFFF"
-                      />
+                      {profileImageUri ? (
+                        <Image source={{ uri: profileImageUri }} className="w-full h-full" resizeMode="cover" />
+                      ) : (
+                        <MaterialCommunityIcons
+                          name={selectedSticker.icon}
+                          size={100}
+                          color="#FFFFFF"
+                        />
+                      )}
                     </View>
 
                     {/* Welcome Subtitle */}

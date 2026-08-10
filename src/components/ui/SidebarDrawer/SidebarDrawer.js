@@ -12,9 +12,12 @@ import {
   PanResponder,
   BackHandler,
   Easing,
+  Image,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+
+import useAuthStore from "../../../store/useAuthStore";
 
 const { width } = Dimensions.get("window");
 const DRAWER_WIDTH = width * 0.82;
@@ -37,7 +40,15 @@ const MENU_ITEMS = [
   { id: "app_code", title: "App code", icon: "qr-code-outline", badge: null },
 ];
 
-const SidebarDrawer = ({ visible, onClose, navigation, user = {} }) => {
+const SidebarDrawer = ({ visible, onClose, navigation, user: propsUser = {} }) => {
+  const storeUser = useAuthStore((state) => state.user) || {};
+  const activeUser = Object.keys(storeUser).length > 0 ? storeUser : propsUser;
+
+  const displayName = activeUser.fullName || `${activeUser.firstName || ""} ${activeUser.lastName || ""}`.trim() || activeUser.name || "Cricket Player";
+  const displayPhone = activeUser.mobileNumber || activeUser.phone || "Logged In";
+  const avatarBg = activeUser.avatarColor || "#C59B27";
+  const avatarText = activeUser.avatarInitials || (displayName !== "Cricket Player" ? displayName.substring(0, 2).toUpperCase() : "CN");
+  const completionPercent = activeUser.profileCompleted || activeUser.isRegistered ? 100 : 60;
   const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const isClosing = useRef(false);
@@ -220,27 +231,31 @@ const SidebarDrawer = ({ visible, onClose, navigation, user = {} }) => {
               {/* Profile Top Header Section */}
               <View className="bg-[#143D2B] p-4 border-b border-emerald-900/50">
                 <View className="flex-row items-center mb-4">
-                  {/* User Golden Circle Avatar */}
+                  {/* User Avatar Circle */}
                   <View className="relative mr-3">
-                    <View className="w-14 h-14 rounded-full bg-[#C59B27] justify-center items-center border-2 border-white/40 shadow-sm">
-                      <MaterialCommunityIcons name="cricket" size={28} color="#FFFFFF" />
-                    </View>
-                    <View className="absolute bottom-0 right-0 w-4.5 h-4.5 rounded-full bg-brand-teal justify-center items-center border border-[#143D2B]">
-                      <Ionicons name="add" size={10} color="#FFFFFF" />
+                    <View
+                      className="w-14 h-14 rounded-full justify-center items-center border-2 border-white/40 shadow-sm overflow-hidden"
+                      style={{ backgroundColor: activeUser.profileImageUrl ? "#0F172A" : avatarBg }}
+                    >
+                      {activeUser.profileImageUrl ? (
+                        <Image source={{ uri: activeUser.profileImageUrl }} className="w-full h-full" resizeMode="cover" />
+                      ) : (
+                        <Text className="text-white text-lg font-black">{avatarText}</Text>
+                      )}
                     </View>
                   </View>
 
                   {/* User Info Details */}
                   <View className="flex-1">
                     <Text className="text-white text-lg font-bold mb-0.5" numberOfLines={1}>
-                      {user.name || "Guest User"}
+                      {displayName}
                     </Text>
                     <Text className="text-slate-300 text-xs mb-1.5">
-                      {user.phone || "Not logged in"}
+                      {displayPhone}
                     </Text>
                     <View className="border border-emerald-400/40 bg-emerald-500/10 rounded-full px-2.5 py-0.5 self-start">
                       <Text className="text-emerald-300 text-[10px] font-bold">
-                        {user.plan || "Free User"}
+                        Free User
                       </Text>
                     </View>
                   </View>
@@ -264,11 +279,11 @@ const SidebarDrawer = ({ visible, onClose, navigation, user = {} }) => {
                   <View className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden mr-2.5">
                     <View
                       className="h-full bg-brand-teal rounded-full"
-                      style={{ width: `${user.profileCompletion || 0}%` }}
+                      style={{ width: `${completionPercent}%` }}
                     />
                   </View>
                   <Text className="text-slate-300 text-xs italic font-medium">
-                    {user.profileCompletion || 0}%
+                    {completionPercent}%
                   </Text>
                 </View>
               </View>
