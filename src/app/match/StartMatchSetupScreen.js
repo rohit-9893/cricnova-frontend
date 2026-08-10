@@ -61,8 +61,14 @@ const StartMatchSetupScreen = ({ navigation, route }) => {
       return;
     }
 
-    navigation.navigate("Placeholder", {
-      title: `Toss - ${teamA.teamName} vs ${teamB.teamName}`,
+    navigation.navigate("Toss", {
+      teamA,
+      teamB,
+      totalOvers: noOfOvers,
+      oversPerBowler,
+      selectedBallType,
+      selectedPitchType,
+      venue: ground || city,
     });
   };
 

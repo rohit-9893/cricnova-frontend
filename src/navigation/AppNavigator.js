@@ -18,6 +18,9 @@ import CreateTournamentScreen from "../app/tournament/CreateTournamentScreen";
 import MyProfileScreen from "../app/profile/MyProfileScreen";
 import EditProfileScreen from "../app/profile/EditProfileScreen";
 
+import TossScreen from "../app/match/TossScreen";
+import LiveScoringScreen from "../app/match/LiveScoringScreen";
+
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
@@ -41,6 +44,8 @@ const AppNavigator = () => {
       <Stack.Screen name="CreateTeam" component={CreateTeamScreen} />
       <Stack.Screen name="TeamRoster" component={TeamRosterScreen} />
       <Stack.Screen name="StartMatchSetup" component={StartMatchSetupScreen} />
+      <Stack.Screen name="Toss" component={TossScreen} />
+      <Stack.Screen name="LiveScoring" component={LiveScoringScreen} />
       <Stack.Screen name="CreateTournament" component={CreateTournamentScreen} />
       <Stack.Screen name="MyProfile" component={MyProfileScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />

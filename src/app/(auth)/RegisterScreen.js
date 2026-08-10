@@ -1,314 +1,444 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
   StatusBar,
   Alert,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
+  Image,
+  Keyboard,
+  Animated,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { setItem } from "../../utils/storage";
 
-const AVATAR_COLORS = [
-  "#0D9488", "#9333EA", "#1D4ED8", "#F43F5E",
-  "#D97706", "#059669", "#7C3AED", "#DC2626"
-];
+import useRegisterFlow, { AVATAR_STICKERS } from "../../hooks/useRegisterFlow";
 
-const ROLES = ["Batsman", "Bowler", "All-Rounder", "Wicket-Keeper"];
-const BATTING_STYLES = ["Right-Hand Bat", "Left-Hand Bat"];
-const BOWLING_STYLES = [
-  "Right-Arm Fast",
-  "Right-Arm Spin",
-  "Left-Arm Fast",
-  "Left-Arm Spin",
-  "None",
-];
+const GENDER_OPTIONS = ["Male", "Female", "Prefer, not to say"];
 
 const RegisterScreen = ({ navigation, route }) => {
   const mobileNumber = route.params?.mobileNumber || "+91 98930 00000";
 
-  // Form State
-  const [fullName, setFullName] = useState("");
-  const [city, setCity] = useState("");
-  const [playingRole, setPlayingRole] = useState("Batsman");
-  const [battingStyle, setBattingStyle] = useState("Right-Hand Bat");
-  const [bowlingStyle, setBowlingStyle] = useState("Right-Arm Fast");
-  const [avatarColor, setAvatarColor] = useState("#0D9488");
+  const {
+    currentStep,
+    setCurrentStep,
+    fullName,
+    setFullName,
+    city,
+    setCity,
+    dobDay,
+    setDobDay,
+    dobMonth,
+    setDobMonth,
+    dobYear,
+    setDobYear,
+    gender,
+    setGender,
+    selectedSticker,
+    setSelectedSticker,
+    keyboardMarginAnim,
+    getInitials,
+    handleNextStep1,
+    handleNextStep2,
+    handleNextStep3,
+    handleNextStep4,
+    handleDoneStep5,
+    handleLetTheGamesBegin,
+  } = useRegisterFlow(navigation, mobileNumber);
 
-  // Get Initials for Avatar Preview
-  const getInitials = (name) => {
-    if (!name.trim()) return "CN";
-    const words = name.trim().split(" ");
-    if (words.length >= 2) {
-      return (words[0][0] + words[1][0]).toUpperCase();
+  const [isPhotoEditorOpen, setIsPhotoEditorOpen] = useState(false);
+  const monthRef = useRef(null);
+  const yearRef = useRef(null);
+
+  const handleBackPress = () => {
+    if (currentStep === 6) {
+      setCurrentStep(5);
+    } else if (isPhotoEditorOpen) {
+      setIsPhotoEditorOpen(false);
+    } else if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    } else {
+      navigation.goBack();
     }
-    return name.substring(0, 2).toUpperCase();
   };
 
-  const handleSaveProfile = async () => {
-    if (!fullName.trim()) {
-      Alert.alert("Required Field", "Please enter your full name.");
-      return;
+  const handleDayChange = (text) => {
+    setDobDay(text);
+    if (text.length === 2 && monthRef.current) {
+      monthRef.current.focus();
     }
-    if (!city.trim()) {
-      Alert.alert("Required Field", "Please enter your city / town.");
-      return;
+  };
+
+  const handleMonthChange = (text) => {
+    setDobMonth(text);
+    if (text.length === 2 && yearRef.current) {
+      yearRef.current.focus();
     }
-
-    const userProfile = {
-      fullName: fullName.trim(),
-      mobileNumber: mobileNumber,
-      city: city.trim(),
-      playingRole: playingRole,
-      battingStyle: battingStyle,
-      bowlingStyle: bowlingStyle,
-      avatarColor: avatarColor,
-      avatarInitials: getInitials(fullName),
-      isRegistered: true,
-    };
-
-    try {
-      await setItem("user-profile", JSON.stringify(userProfile));
-    } catch (e) {
-      console.warn("[REGISTER SAVE STORAGE ERROR]:", e);
-    }
-
-    Alert.alert(
-      "Profile Setup Complete! 🎉",
-      `Welcome to CricNovas, ${fullName.trim()}!`,
-      [
-        {
-          text: "Start Exploring 🏏",
-          onPress: () =>
-            navigation && navigation.replace && navigation.replace("Home"),
-        },
-      ]
-    );
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]">
-      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
+    <SafeAreaView className="flex-1 bg-[#F5F0FB]">
+      <StatusBar barStyle="dark-content" backgroundColor="#F5F0FB" />
 
-      {/* Top Header Row */}
-      <View className="h-14 flex-row items-center justify-between px-4">
-        <TouchableOpacity
-          className="w-10 h-10 rounded-full justify-center items-center"
-          activeOpacity={0.7}
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={24} color="#0F172A" />
-        </TouchableOpacity>
-
-        <View className="bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">
-          <Text className="text-emerald-800 text-xs font-extrabold">
-            Step 2 of 2 • Setup Profile
-          </Text>
-        </View>
-      </View>
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 110 }}
-        >
-          {/* Section Heading */}
-          <View className="mt-2 mb-6">
-            <Text className="text-2xl font-black text-slate-900 mb-1">
-              Setup Your Player Profile 🏏
-            </Text>
-            <View className="w-10 h-1 bg-[#0D9488] rounded-full mb-2" />
-            <Text className="text-slate-500 text-xs font-semibold">
-              Enter your personal details to personalize your CricNovas stats.
-            </Text>
-          </View>
-
-          {/* Avatar Circle Preview & Color Picker */}
-          <View className="w-full bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs mb-6 items-center">
-            <View className="relative mb-4">
-              <View
-                className="w-20 h-20 rounded-full justify-center items-center shadow-md border-2 border-white"
-                style={{ backgroundColor: avatarColor }}
+      {/* Dismiss Keyboard when tapping outside */}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View className="flex-1">
+          {/* Top Navigation Header Row (Hidden on Step 6 for clean Welcome Screen) */}
+          {currentStep < 6 && (
+            <View className="h-14 flex-row items-center justify-between px-4">
+              <TouchableOpacity
+                className="w-10 h-10 rounded-full justify-center items-center"
+                activeOpacity={0.7}
+                onPress={handleBackPress}
               >
-                <Text className="text-white text-2xl font-black">
-                  {getInitials(fullName)}
-                </Text>
-              </View>
-              <View className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-slate-900 justify-center items-center border border-white">
-                <Ionicons name="camera" size={12} color="#FFFFFF" />
-              </View>
-            </View>
+                <Ionicons name="arrow-back" size={24} color="#0F172A" />
+              </TouchableOpacity>
 
-            <Text className="text-slate-600 text-xs font-bold mb-2">
-              Choose Avatar Theme Color:
-            </Text>
-
-            <View className="flex-row flex-wrap justify-center space-x-2">
-              {AVATAR_COLORS.map((color) => (
+              {/* Skip button visible on Step 5 */}
+              {currentStep === 5 && (
                 <TouchableOpacity
-                  key={color}
-                  className={`w-7 h-7 rounded-full justify-center items-center mr-2 mb-1 border ${
-                    avatarColor === color ? "border-slate-900 scale-110" : "border-transparent"
-                  }`}
-                  style={{ backgroundColor: color }}
-                  onPress={() => setAvatarColor(color)}
+                  activeOpacity={0.7}
+                  onPress={handleDoneStep5}
+                  className="px-3 py-1"
                 >
-                  {avatarColor === color && (
-                    <Ionicons name="checkmark" size={14} color="#FFFFFF" />
-                  )}
+                  <Text className="text-slate-600 text-sm font-bold">Skip</Text>
                 </TouchableOpacity>
-              ))}
+              )}
             </View>
-          </View>
+          )}
 
-          {/* Form Card */}
-          <View className="w-full bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs space-y-4 mb-6">
-            {/* Full Name Input */}
-            <View className="mb-4">
-              <Text className="text-slate-800 text-xs font-extrabold mb-1.5">
-                Full Name *
-              </Text>
-              <TextInput
-                className="w-full h-12 bg-slate-50 border border-slate-300 rounded-xl px-4 text-base font-bold text-slate-900"
-                placeholder="Enter your full name"
-                placeholderTextColor="#94A3B8"
-                value={fullName}
-                onChangeText={setFullName}
-              />
-            </View>
-
-            {/* City / Town Input */}
-            <View className="mb-4">
-              <Text className="text-slate-800 text-xs font-extrabold mb-1.5">
-                City / Town *
-              </Text>
-              <TextInput
-                className="w-full h-12 bg-slate-50 border border-slate-300 rounded-xl px-4 text-base font-bold text-slate-900"
-                placeholder="e.g. Indore, Mumbai, Delhi"
-                placeholderTextColor="#94A3B8"
-                value={city}
-                onChangeText={setCity}
-              />
-            </View>
-
-            {/* Registered Mobile Number (Disabled/Read-only) */}
-            <View className="mb-4">
-              <Text className="text-slate-800 text-xs font-extrabold mb-1.5">
-                Mobile Number
-              </Text>
-              <View className="w-full h-12 bg-slate-100 border border-slate-200 rounded-xl px-4 justify-center">
-                <Text className="text-base font-bold text-slate-500">
-                  {mobileNumber} (Verified ✓)
-                </Text>
-              </View>
-            </View>
-
-            {/* Primary Playing Role */}
-            <View className="mb-4">
-              <Text className="text-slate-800 text-xs font-extrabold mb-2">
-                Primary Playing Role
-              </Text>
-              <View className="flex-row flex-wrap">
-                {ROLES.map((role) => (
-                  <TouchableOpacity
-                    key={role}
-                    className={`px-3.5 py-2 rounded-xl border mr-2 mb-2 ${
-                      playingRole === role
-                        ? "bg-[#0D9488] border-[#0D9488]"
-                        : "bg-slate-50 border-slate-300"
-                    }`}
-                    onPress={() => setPlayingRole(role)}
-                  >
-                    <Text
-                      className={`text-xs font-bold ${
-                        playingRole === role ? "text-white" : "text-slate-700"
-                      }`}
-                    >
-                      {role}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            {/* Batting Style */}
-            <View className="mb-4">
-              <Text className="text-slate-800 text-xs font-extrabold mb-2">
-                Batting Style
-              </Text>
-              <View className="flex-row flex-wrap">
-                {BATTING_STYLES.map((style) => (
-                  <TouchableOpacity
-                    key={style}
-                    className={`px-3.5 py-2 rounded-xl border mr-2 mb-2 ${
-                      battingStyle === style
-                        ? "bg-[#0D9488] border-[#0D9488]"
-                        : "bg-slate-50 border-slate-300"
-                    }`}
-                    onPress={() => setBattingStyle(style)}
-                  >
-                    <Text
-                      className={`text-xs font-bold ${
-                        battingStyle === style ? "text-white" : "text-slate-700"
-                      }`}
-                    >
-                      {style}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            {/* Bowling Style */}
-            <View>
-              <Text className="text-slate-800 text-xs font-extrabold mb-2">
-                Bowling Style
-              </Text>
-              <View className="flex-row flex-wrap">
-                {BOWLING_STYLES.map((style) => (
-                  <TouchableOpacity
-                    key={style}
-                    className={`px-3.5 py-2 rounded-xl border mr-2 mb-2 ${
-                      bowlingStyle === style
-                        ? "bg-[#0D9488] border-[#0D9488]"
-                        : "bg-slate-50 border-slate-300"
-                    }`}
-                    onPress={() => setBowlingStyle(style)}
-                  >
-                    <Text
-                      className={`text-xs font-bold ${
-                        bowlingStyle === style ? "text-white" : "text-slate-700"
-                      }`}
-                    >
-                      {style}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-          </View>
-
-          {/* Action Button ("Complete Profile & Start 🏏") */}
-          <TouchableOpacity
-            className="w-full h-13 bg-[#0D9488] rounded-xl justify-center items-center shadow-md shadow-teal-500/20"
-            activeOpacity={0.85}
-            onPress={handleSaveProfile}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            className="flex-1"
           >
-            <Text className="text-white text-base font-extrabold">
-              Complete Profile & Start 🏏
-            </Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </KeyboardAvoidingView>
+            <ScrollView
+              contentContainerStyle={{ flexGrow: 1, justifyContent: "space-between" }}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+              className="px-6 pb-8"
+            >
+              {/* Main Content Area */}
+              <View className="mt-auto mb-6">
+                {currentStep === 1 ? (
+                  /* STEP 1: Tell us your full name */
+                  <View>
+                    <Text className="text-2xl font-bold text-slate-900 mb-2">
+                      Tell us your full name
+                    </Text>
+                    <View className="w-12 h-1 bg-[#0D9488] rounded-full mb-8" />
+
+                    <View className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 shadow-xs">
+                      <TextInput
+                        className="text-base text-slate-900 font-medium p-0"
+                        placeholder="Rahul Sharma"
+                        placeholderTextColor="#94A3B8"
+                        value={fullName}
+                        onChangeText={setFullName}
+                        autoFocus={true}
+                      />
+                    </View>
+                  </View>
+                ) : currentStep === 2 ? (
+                  /* STEP 2: Where do you live? */
+                  <View>
+                    <Text className="text-2xl font-bold text-slate-900 mb-2">
+                      Where do you live?
+                    </Text>
+                    <View className="w-12 h-1 bg-[#0D9488] rounded-full mb-8" />
+
+                    <View className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 shadow-xs">
+                      <TextInput
+                        className="text-base text-slate-900 font-medium p-0"
+                        placeholder="Enter your city"
+                        placeholderTextColor="#94A3B8"
+                        value={city}
+                        onChangeText={setCity}
+                        autoFocus={true}
+                      />
+                    </View>
+                  </View>
+                ) : currentStep === 3 ? (
+                  /* STEP 3: When can we wish you happy birthday */
+                  <View>
+                    <Text className="text-2xl font-bold text-slate-900 mb-2">
+                      When can we wish you happy birthday
+                    </Text>
+                    <View className="w-12 h-1 bg-[#0D9488] rounded-full mb-8" />
+
+                    {/* 3 Box Inline DOB Input (DD / MM / YYYY) */}
+                    <View className="w-full bg-white border border-slate-300 rounded-xl p-3 flex-row items-center justify-between shadow-xs">
+                      <TextInput
+                        className="w-16 text-center text-base font-bold text-slate-900 p-1"
+                        placeholder="DD"
+                        placeholderTextColor="#94A3B8"
+                        keyboardType="number-pad"
+                        maxLength={2}
+                        value={dobDay}
+                        onChangeText={handleDayChange}
+                        autoFocus={true}
+                      />
+                      <Text className="text-slate-300 text-lg font-bold">/</Text>
+                      <TextInput
+                        ref={monthRef}
+                        className="w-16 text-center text-base font-bold text-slate-900 p-1"
+                        placeholder="MM"
+                        placeholderTextColor="#94A3B8"
+                        keyboardType="number-pad"
+                        maxLength={2}
+                        value={dobMonth}
+                        onChangeText={handleMonthChange}
+                      />
+                      <Text className="text-slate-300 text-lg font-bold">/</Text>
+                      <TextInput
+                        ref={yearRef}
+                        className="w-24 text-center text-base font-bold text-slate-900 p-1"
+                        placeholder="YYYY"
+                        placeholderTextColor="#94A3B8"
+                        keyboardType="number-pad"
+                        maxLength={4}
+                        value={dobYear}
+                        onChangeText={setDobYear}
+                      />
+                    </View>
+                  </View>
+                ) : currentStep === 4 ? (
+                  /* STEP 4: Select your gender */
+                  <View>
+                    <Text className="text-2xl font-bold text-slate-900 mb-2">
+                      Select your gender
+                    </Text>
+                    <View className="w-12 h-1 bg-[#0D9488] rounded-full mb-8" />
+
+                    {/* Gender Option Cards */}
+                    <View className="space-y-3">
+                      {GENDER_OPTIONS.map((option) => {
+                        const isSelected = gender === option;
+                        return (
+                          <TouchableOpacity
+                            key={option}
+                            className={`w-full h-14 rounded-xl border px-5 flex-row items-center justify-between shadow-xs mb-3 ${
+                              isSelected
+                                ? "bg-white border-[#0D9488] border-2"
+                                : "bg-white border-slate-300"
+                            }`}
+                            activeOpacity={0.8}
+                            onPress={() => setGender(option)}
+                          >
+                            <Text
+                              className={`text-base font-bold ${
+                                isSelected ? "text-[#0D9488]" : "text-slate-700"
+                              }`}
+                            >
+                              {option}
+                            </Text>
+                            {isSelected && (
+                              <Ionicons
+                                name="checkmark-circle"
+                                size={22}
+                                color="#0D9488"
+                              />
+                            )}
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </View>
+                  </View>
+                ) : currentStep === 5 ? (
+                  !isPhotoEditorOpen ? (
+                    /* STEP 5A: Add your profile photo (Initial Upload Screen) */
+                    <View className="items-center">
+                      <Text className="text-2xl font-bold text-slate-900 mb-1.5 text-center">
+                        Add your profile photo
+                      </Text>
+                      <Text className="text-slate-500 text-sm font-medium mb-6 text-center">
+                        Let's make your cricket profile complete with your best photo.
+                      </Text>
+
+                      {/* Big Avatar Illustration Container */}
+                      <View className="w-56 h-56 rounded-full bg-[#1E293B] justify-center items-center mb-8 shadow-md border-4 border-white overflow-hidden relative">
+                        <View className="items-center justify-center">
+                          <MaterialCommunityIcons
+                            name="cricket"
+                            size={80}
+                            color="#F8FAFC"
+                          />
+                          <View className="w-16 h-16 rounded-full bg-[#0D9488] justify-center items-center mt-2 border-2 border-white">
+                            <Text className="text-white text-xl font-black">
+                              {getInitials(fullName)}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+
+                      {/* Upload Buttons */}
+                      <TouchableOpacity
+                        className="w-full h-13 bg-[#00A896] rounded-xl justify-center items-center shadow-md mb-4 active:opacity-90"
+                        activeOpacity={0.85}
+                        onPress={() => setIsPhotoEditorOpen(true)}
+                      >
+                        <Text className="text-white text-base font-bold">
+                          Upload from gallery
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        className="py-2"
+                        activeOpacity={0.7}
+                        onPress={() => setIsPhotoEditorOpen(true)}
+                      >
+                        <Text className="text-[#00A896] text-base font-bold underline">
+                          Take a selfie
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    /* STEP 5B: Avatar & Stickers Editor Screen */
+                    <View className="items-center">
+                      <Text className="text-2xl font-bold text-slate-900 mb-1 text-center">
+                        Add your profile photo
+                      </Text>
+                      <Text className="text-slate-500 text-xs font-medium mb-6 text-center">
+                        Let's make your cricket profile complete with your best photo.
+                      </Text>
+
+                      {/* Large Sticker Avatar Badge Preview */}
+                      <View
+                        className="w-64 h-64 rounded-full justify-center items-center mb-6 shadow-xl border-4 border-white relative overflow-hidden"
+                        style={{ backgroundColor: selectedSticker.bg }}
+                      >
+                        <MaterialCommunityIcons
+                          name={selectedSticker.icon}
+                          size={110}
+                          color="#FFFFFF"
+                        />
+                        <View className="absolute bottom-4 bg-slate-900/80 px-3 py-1 rounded-full border border-white/40">
+                          <Text className="text-white text-xs font-black">
+                            {getInitials(fullName)}
+                          </Text>
+                        </View>
+                      </View>
+
+                      {/* Stickers Pill Label */}
+                      <View className="bg-white border border-slate-300 px-4 py-1 rounded-full mb-4 shadow-xs">
+                        <Text className="text-slate-700 text-xs font-bold">Stickers</Text>
+                      </View>
+
+                      {/* Row of Cricket Avatar Stickers */}
+                      <View className="flex-row items-center justify-center space-x-3 mb-6">
+                        {AVATAR_STICKERS.map((sticker) => {
+                          const isSelected = selectedSticker.id === sticker.id;
+                          return (
+                            <TouchableOpacity
+                              key={sticker.id}
+                              className={`w-16 h-16 rounded-full justify-center items-center border-2 ${
+                                isSelected
+                                  ? "border-white scale-110 shadow-md border-3"
+                                  : "border-transparent opacity-80"
+                              }`}
+                              style={{ backgroundColor: sticker.bg }}
+                              activeOpacity={0.8}
+                              onPress={() => setSelectedSticker(sticker)}
+                            >
+                              <MaterialCommunityIcons
+                                name={sticker.icon}
+                                size={28}
+                                color="#FFFFFF"
+                              />
+                            </TouchableOpacity>
+                          );
+                        })}
+                      </View>
+
+                      {/* Bottom Done Button */}
+                      <TouchableOpacity
+                        className="w-full h-13 bg-[#00A896] rounded-xl justify-center items-center shadow-md active:opacity-90"
+                        activeOpacity={0.85}
+                        onPress={handleDoneStep5}
+                      >
+                        <Text className="text-white text-base font-bold">Done</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )
+                ) : (
+                  /* STEP 6: Welcome Screen */
+                  <View className="items-center pt-8">
+                    {/* User Selected Avatar Badge */}
+                    <View
+                      className="w-56 h-56 rounded-full justify-center items-center mb-6 shadow-2xl border-4 border-white overflow-hidden"
+                      style={{ backgroundColor: selectedSticker.bg }}
+                    >
+                      <MaterialCommunityIcons
+                        name={selectedSticker.icon}
+                        size={100}
+                        color="#FFFFFF"
+                      />
+                    </View>
+
+                    {/* Welcome Subtitle */}
+                    <Text className="text-slate-500 text-sm font-semibold mb-1">
+                      Welcome
+                    </Text>
+
+                    {/* Dynamic User Full Name */}
+                    <Text className="text-2xl font-black text-slate-900 mb-2 text-center">
+                      {fullName || "kartavy jat"}
+                    </Text>
+                    <View className="w-10 h-1 bg-slate-400 rounded-full mb-6" />
+
+                    {/* Tagline Heading */}
+                    <Text className="text-lg font-bold text-slate-800 text-center mb-1">
+                      In our world, your cricket matters
+                    </Text>
+
+                    {/* Subtitle Message */}
+                    <Text className="text-slate-500 text-xs font-medium text-center px-4 leading-5 mb-8">
+                      It's time to celebrate the spirit of cricket{"\n"}and make your mark.
+                    </Text>
+
+                    {/* Bottom Action Button ("Let the games begin") */}
+                    <TouchableOpacity
+                      className="w-full h-13 bg-[#00A896] rounded-xl justify-center items-center shadow-md active:opacity-90"
+                      activeOpacity={0.85}
+                      onPress={handleLetTheGamesBegin}
+                    >
+                      <Text className="text-white text-base font-bold">
+                        Let the games begin
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+
+              {/* Fixed Bottom Action Button for Steps 1-4 with Animated Keyboard Shift */}
+              {currentStep < 5 && (
+                <Animated.View style={{ marginBottom: keyboardMarginAnim }}>
+                  <TouchableOpacity
+                    className="w-full h-13 bg-[#00A896] rounded-xl justify-center items-center shadow-md active:opacity-90"
+                    activeOpacity={0.85}
+                    onPress={
+                      currentStep === 1
+                        ? handleNextStep1
+                        : currentStep === 2
+                        ? handleNextStep2
+                        : currentStep === 3
+                        ? handleNextStep3
+                        : handleNextStep4
+                    }
+                  >
+                    <Text className="text-white text-base font-bold">Next</Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              )}
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };

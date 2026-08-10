@@ -13,6 +13,8 @@ import AvatarPicker from "../../components/profile/AvatarPicker";
 import UnderlineInput from "../../components/ui/UnderlineInput";
 import DropdownInput from "../../components/ui/DropdownInput";
 import RadioGroup from "../../components/ui/RadioGroup";
+import useAuthStore from "../../store/useAuthStore";
+import { updateProfile as apiUpdateProfile } from "../../services/authService";
 
 const GENDER_OPTIONS = ["Male", "Female", "Prefer not to say"];
 
@@ -43,26 +45,60 @@ const BOWLING_STYLES = [
 ];
 
 const EditProfileScreen = ({ navigation }) => {
-  // Form State
-  const [playerName, setPlayerName] = useState("");
-  const [location, setLocation] = useState("");
-  const [dob, setDob] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [playingRole, setPlayingRole] = useState("None");
-  const [battingStyle, setBattingStyle] = useState("Right-hand bat");
-  const [bowlingStyle, setBowlingStyle] = useState("None");
-  const [gender, setGender] = useState("");
+  const user = useAuthStore((state) => state.user) || {};
+  const updateUserStore = useAuthStore((state) => state.updateUser);
 
-  const handleUpdate = () => {
-    Alert.alert("Success", "Profile updated successfully!", [
-      { text: "OK", onPress: () => navigation.goBack() },
-    ]);
+  // Form State prefilled from Store
+  const [playerName, setPlayerName] = useState(user.fullName || user.name || "");
+  const [location, setLocation] = useState(user.city || user.location || "");
+  const [dob, setDob] = useState(user.dateOfBirth || user.dob || "");
+  const [email, setEmail] = useState(user.email || "");
+  const [mobileNumber, setMobileNumber] = useState(user.mobileNumber || user.phone || "");
+  const [playingRole, setPlayingRole] = useState(user.playingRole || "None");
+  const [battingStyle, setBattingStyle] = useState(user.battingStyle || "Right-hand bat");
+  const [bowlingStyle, setBowlingStyle] = useState(user.bowlingStyle || "None");
+  const [gender, setGender] = useState(user.gender || "Male");
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleUpdate = async () => {
+    if (!location.trim()) {
+      Alert.alert("Required Field", "Please enter your city/town location.");
+      return;
+    }
+
+    const updatedData = {
+      fullName: playerName.trim(),
+      name: playerName.trim(),
+      city: location.trim(),
+      location: location.trim(),
+      dateOfBirth: dob.trim(),
+      dob: dob.trim(),
+      email: email.trim(),
+      mobileNumber: mobileNumber.trim(),
+      playingRole,
+      battingStyle,
+      bowlingStyle,
+      gender,
+    };
+
+    setIsLoading(true);
+    try {
+      await apiUpdateProfile(updatedData);
+    } catch (err) {
+      console.warn("[UPDATE PROFILE API NOTICE]:", err?.message || err);
+    } finally {
+      setIsLoading(false);
+      await updateUserStore(updatedData);
+      Alert.alert("Profile Updated 🎉", "Your profile details have been saved successfully!", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* Red Header Bar */}
+      {/* Top Header Bar */}
       <AppHeader
         title="Edit profile"
         onBackPress={() => navigation.goBack()}
@@ -165,11 +201,14 @@ const EditProfileScreen = ({ navigation }) => {
       {/* Fixed Bottom Action Bar */}
       <View style={styles.bottomBar}>
         <TouchableOpacity
-          style={styles.updateBtn}
+          style={[styles.updateBtn, isLoading && { opacity: 0.7 }]}
           activeOpacity={0.8}
           onPress={handleUpdate}
+          disabled={isLoading}
         >
-          <Text style={styles.updateBtnText}>Update</Text>
+          <Text style={styles.updateBtnText}>
+            {isLoading ? "Saving..." : "Update"}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

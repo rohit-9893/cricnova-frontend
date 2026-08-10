@@ -1,10 +1,15 @@
 const Colors = {
-  primary: "#0B6EFE",
-  primaryDark: "#0052CC",
+  // Brand Palette
+  brandTeal: "#0D9488",
+  brandDarkTeal: "#143D2B",
+  emeraldGlow: "#10B981",
+  warmCream: "#FDFBF5",
 
-  secondary: "#FF9800",
+  primary: "#0D9488",
+  primaryDark: "#143D2B",
+  secondary: "#C59B27",
 
-  success: "#22C55E",
+  success: "#10B981",
   warning: "#F59E0B",
   error: "#EF4444",
 
@@ -14,11 +19,10 @@ const Colors = {
   background: "#F8FAFC",
   surface: "#FFFFFF",
 
-  textPrimary: "#1E293B",
+  textPrimary: "#0F172A",
   textSecondary: "#64748B",
 
   border: "#E2E8F0",
-
   disabled: "#CBD5E1",
 };
 
