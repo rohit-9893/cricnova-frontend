@@ -228,61 +228,60 @@ const SidebarDrawer = ({ visible, onClose, navigation, user: propsUser = {} }) =
             className="flex-1 bg-[#143D2B]"
             onStartShouldSetResponder={() => true}
           >
-              {/* Profile Top Header Section */}
-              <View className="bg-[#143D2B] p-4 border-b border-emerald-900/50">
-                <View className="flex-row items-center mb-4">
-                  {/* User Avatar Circle */}
-                  <View className="relative mr-3">
+              {/* Profile Top Header Section (Option 1: Modern Dark Slate Glassmorphism) */}
+              <View className="bg-[#0F172A] p-4 border-b border-slate-800 shadow-lg">
+                <View className="flex-row items-center mb-3.5">
+                  {/* User Avatar Circle (Vibrant Teal with Gold Accent Ring) */}
+                  <View className="relative mr-3.5">
                     <View
-                      className="w-14 h-14 rounded-full justify-center items-center border-2 border-white/40 shadow-sm overflow-hidden"
-                      style={{ backgroundColor: activeUser.profileImageUrl ? "#0F172A" : avatarBg }}
+                      className="w-14 h-14 rounded-full justify-center items-center border-2 border-[#C59B27] shadow-md overflow-hidden bg-[#0D9488]"
                     >
                       {activeUser.profileImageUrl ? (
                         <Image source={{ uri: activeUser.profileImageUrl }} className="w-full h-full" resizeMode="cover" />
                       ) : (
-                        <Text className="text-white text-lg font-black">{avatarText}</Text>
+                        <Text className="text-white text-lg font-black tracking-wider">{avatarText}</Text>
                       )}
                     </View>
                   </View>
 
                   {/* User Info Details */}
                   <View className="flex-1">
-                    <Text className="text-white text-lg font-bold mb-0.5" numberOfLines={1}>
+                    <Text className="text-white text-lg font-black tracking-wide mb-0.5" numberOfLines={1}>
                       {displayName}
                     </Text>
-                    <Text className="text-slate-300 text-xs mb-1.5">
+                    <Text className="text-slate-400 text-xs font-medium mb-1.5">
                       {displayPhone}
                     </Text>
-                    <View className="border border-emerald-400/40 bg-emerald-500/10 rounded-full px-2.5 py-0.5 self-start">
-                      <Text className="text-emerald-300 text-[10px] font-bold">
-                        Free User
+                    <View className="border border-teal-500/40 bg-teal-500/15 rounded-full px-2.5 py-0.5 self-start">
+                      <Text className="text-[#5EEAD4] text-[10px] font-black tracking-wider uppercase">
+                        {activeUser.isPro ? "PRO User" : "Free User"}
                       </Text>
                     </View>
                   </View>
 
-                  {/* Profile Forward Arrow */}
+                  {/* Profile Forward Arrow Button */}
                   <TouchableOpacity
-                    className="p-1"
+                    className="p-1.5 bg-slate-800/80 rounded-full border border-slate-700"
                     activeOpacity={0.7}
                     onPress={() => handleItemPress({ title: "My Profile" })}
                   >
                     <Ionicons
-                      name="chevron-forward-circle-outline"
-                      size={24}
-                      color="#FFFFFF"
+                      name="chevron-forward"
+                      size={18}
+                      color="#C59B27"
                     />
                   </TouchableOpacity>
                 </View>
 
-                {/* Profile Completion Progress Bar */}
-                <View className="flex-row items-center mt-1">
-                  <View className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden mr-2.5">
+                {/* Profile Completion Progress Bar (Teal & Gold Styling) */}
+                <View className="flex-row items-center mt-1 pt-1.5 border-t border-slate-800/80">
+                  <View className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden mr-2.5">
                     <View
-                      className="h-full bg-brand-teal rounded-full"
+                      className="h-full bg-[#0D9488] rounded-full"
                       style={{ width: `${completionPercent}%` }}
                     />
                   </View>
-                  <Text className="text-slate-300 text-xs italic font-medium">
+                  <Text className="text-[#C59B27] text-xs font-black">
                     {completionPercent}%
                   </Text>
                 </View>

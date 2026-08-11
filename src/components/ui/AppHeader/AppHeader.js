@@ -3,13 +3,13 @@ import { View, Text, TouchableOpacity, StatusBar } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
-const AppHeader = ({ title, onBackPress, rightComponent }) => {
+const AppHeader = ({ title, onBackPress, rightComponent, backgroundColor = "#0D9488" }) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View className="bg-[#0D9488] w-full" style={{ paddingTop: insets.top }}>
-      <StatusBar barStyle="light-content" backgroundColor="#0D9488" translucent={false} />
-      <View className="h-14 bg-[#0D9488] flex-row items-center justify-between px-3">
+    <View style={{ backgroundColor, paddingTop: insets.top }} className="w-full">
+      <StatusBar barStyle="light-content" backgroundColor={backgroundColor} translucent={true} />
+      <View style={{ backgroundColor }} className="h-14 flex-row items-center justify-between px-3">
         <View className="flex-row items-center flex-1">
           {onBackPress && (
             <TouchableOpacity className="p-1 mr-2" activeOpacity={0.7} onPress={onBackPress}>

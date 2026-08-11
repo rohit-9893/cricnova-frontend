@@ -1,84 +1,165 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const ScoringKeypad = ({
   onScoreRuns,
-  onScoreExtra,
   onOpenWicketModal,
+  onOpenWideModal,
+  onOpenNoBallModal,
+  onOpenByeModal,
+  onOpenLegByeModal,
+  onOpenCustomRunsModal,
+  onOpenShortcutsModal,
   onUndo,
 }) => {
+  const [showSyncedToast, setShowSyncedToast] = useState(false);
+
+  const handleScore = (actionFn) => {
+    if (actionFn) actionFn();
+    setShowSyncedToast(true);
+    setTimeout(() => {
+      setShowSyncedToast(false);
+    }, 1200);
+  };
+
   return (
-    <View className="bg-white p-4 rounded-2xl border border-slate-200 shadow-md">
-      <Text className="text-slate-800 text-xs font-black uppercase mb-3">
-        Scoring Keypad
-      </Text>
+    <View className="bg-slate-200 border-t border-slate-300 w-full shadow-2xl relative">
+      {/* Floating Synced Toast Badge */}
+      {showSyncedToast && (
+        <View className="absolute -top-12 self-center z-50 bg-slate-900/90 px-4 py-2 rounded-xl flex-row items-center shadow-2xl border border-slate-700">
+          <Ionicons name="checkmark-sharp" size={16} color="#FFFFFF" />
+          <Text className="text-white text-xs font-black ml-1.5">Synced</Text>
+        </View>
+      )}
 
-      {/* Main Run Buttons: 0, 1, 2, 3, 4, 6 */}
-      <View className="flex-row justify-between mb-3">
-        {[0, 1, 2, 3, 4, 6].map((num) => (
-          <TouchableOpacity
-            key={num}
-            className={`w-12 h-14 rounded-xl justify-center items-center shadow-xs border ${
-              num === 4
-                ? "bg-blue-600 border-blue-700"
-                : num === 6
-                ? "bg-emerald-600 border-emerald-700"
-                : "bg-slate-100 border-slate-300"
-            }`}
-            activeOpacity={0.7}
-            onPress={() => onScoreRuns(num)}
-          >
-            <Text
-              className={`text-lg font-black ${
-                num === 4 || num === 6 ? "text-white" : "text-slate-900"
-              }`}
-            >
-              {num}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* Extras Row: Wide, No Ball, Bye, Leg Bye */}
-      <View className="flex-row justify-between mb-3">
-        {[
-          { label: "Wide", type: "WD" },
-          { label: "No Ball", type: "NB" },
-          { label: "Bye", type: "B" },
-          { label: "Leg Bye", type: "LB" },
-        ].map((item) => (
-          <TouchableOpacity
-            key={item.type}
-            className="flex-1 h-11 bg-amber-500 rounded-xl justify-center items-center mx-1 border border-amber-600 shadow-xs"
-            activeOpacity={0.75}
-            onPress={() => onScoreExtra(item.type, 0)}
-          >
-            <Text className="text-white font-extrabold text-xs">{item.label}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* Action Row: Wicket & Undo Ball */}
-      <View className="flex-row space-x-3">
+      {/* Grid Row 1: 0, 1, 2, UNDO */}
+      <View className="flex-row border-b border-slate-300">
         <TouchableOpacity
-          className="flex-1 h-13 bg-red-600 rounded-xl justify-center items-center flex-row space-x-2 shadow-md border border-red-700 mr-2"
-          activeOpacity={0.8}
-          onPress={onOpenWicketModal}
+          className="flex-1 h-20 bg-white justify-center items-center border-r border-slate-300"
+          activeOpacity={0.7}
+          onPress={() => handleScore(() => onScoreRuns(0))}
         >
-          <Ionicons name="close-circle" size={20} color="#FFFFFF" />
-          <Text className="text-white font-extrabold text-sm">WICKET!</Text>
+          <Text className="text-slate-800 text-2xl font-black">0</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="w-24 h-13 bg-slate-200 rounded-xl justify-center items-center flex-row space-x-1 border border-slate-300"
+          className="flex-1 h-20 bg-white justify-center items-center border-r border-slate-300"
+          activeOpacity={0.7}
+          onPress={() => handleScore(() => onScoreRuns(1))}
+        >
+          <Text className="text-slate-800 text-2xl font-black">1</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-1 h-20 bg-white justify-center items-center border-r border-slate-300"
+          activeOpacity={0.7}
+          onPress={() => handleScore(() => onScoreRuns(2))}
+        >
+          <Text className="text-slate-800 text-2xl font-black">2</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-1 h-20 bg-slate-50 justify-center items-center"
           activeOpacity={0.75}
-          onPress={onUndo}
+          onPress={() => handleScore(onUndo)}
         >
-          <Ionicons name="arrow-undo" size={18} color="#475569" />
-          <Text className="text-slate-700 font-extrabold text-xs">UNDO</Text>
+          <Text className="text-[#0D9488] text-sm font-black tracking-wider">UNDO</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Grid Row 2: 3, 4 (Four), 6 (Six), 5,7 / OUT Column */}
+      <View className="flex-row border-b border-slate-300">
+        <TouchableOpacity
+          className="flex-1 h-20 bg-white justify-center items-center border-r border-slate-300"
+          activeOpacity={0.7}
+          onPress={() => handleScore(() => onScoreRuns(3))}
+        >
+          <Text className="text-slate-800 text-2xl font-black">3</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-1 h-20 bg-white justify-center items-center border-r border-slate-300"
+          activeOpacity={0.7}
+          onPress={() => handleScore(() => onScoreRuns(4))}
+        >
+          <Text className="text-slate-800 text-2xl font-black">4</Text>
+          <Text className="text-slate-400 text-[10px] font-semibold">Four</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-1 h-20 bg-white justify-center items-center border-r border-slate-300"
+          activeOpacity={0.7}
+          onPress={() => handleScore(() => onScoreRuns(6))}
+        >
+          <Text className="text-slate-800 text-2xl font-black">6</Text>
+          <Text className="text-slate-400 text-[10px] font-semibold">Six</Text>
+        </TouchableOpacity>
+
+        {/* 4th Column Split: 5,7 on top, OUT on bottom */}
+        <View className="flex-1 h-20 flex-col">
+          <TouchableOpacity
+            className="flex-1 bg-slate-50 justify-center items-center border-b border-slate-200"
+            activeOpacity={0.7}
+            onPress={onOpenCustomRunsModal}
+          >
+            <Text className="text-slate-600 text-xs font-black">5, 7</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="flex-1 bg-slate-50 justify-center items-center"
+            activeOpacity={0.8}
+            onPress={onOpenWicketModal}
+          >
+            <Text className="text-[#DC2626] text-xs font-black tracking-wider">OUT</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Grid Row 3: WD, NB, BYE, LB */}
+      <View className="flex-row border-b border-slate-300">
+        <TouchableOpacity
+          className="flex-1 h-16 bg-white justify-center items-center border-r border-slate-300"
+          activeOpacity={0.75}
+          onPress={onOpenWideModal}
+        >
+          <Text className="text-slate-700 text-sm font-extrabold">WD</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-1 h-16 bg-white justify-center items-center border-r border-slate-300"
+          activeOpacity={0.75}
+          onPress={onOpenNoBallModal}
+        >
+          <Text className="text-slate-700 text-sm font-extrabold">NB</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-1 h-16 bg-white justify-center items-center border-r border-slate-300"
+          activeOpacity={0.75}
+          onPress={onOpenByeModal}
+        >
+          <Text className="text-slate-700 text-sm font-extrabold">BYE</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-1 h-16 bg-white justify-center items-center"
+          activeOpacity={0.75}
+          onPress={onOpenLegByeModal}
+        >
+          <Text className="text-slate-700 text-sm font-extrabold">LB</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Bottom Shortcuts Bar */}
+      <TouchableOpacity
+        className="bg-slate-400/80 py-3 justify-center items-center flex-row"
+        activeOpacity={0.8}
+        onPress={onOpenShortcutsModal}
+      >
+        <Text className="text-white text-xs font-bold mr-1">Scoring shortcuts</Text>
+        <Ionicons name="chevron-up" size={14} color="#FFFFFF" />
+      </TouchableOpacity>
     </View>
   );
 };

@@ -1,18 +1,24 @@
 import React, { useState } from "react";
-import { View, ScrollView, StatusBar, Alert, TouchableOpacity, Text, Modal } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import AppHeader from "../../components/ui/AppHeader";
+import { View, ScrollView, StatusBar, TouchableOpacity, Text, Modal, Alert } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ScorecardHeader from "../../components/scoring/ScorecardHeader";
 import OverTimeline from "../../components/scoring/OverTimeline";
 import ScoringKeypad from "../../components/scoring/ScoringKeypad";
 import WicketModal from "../../components/scoring/WicketModal";
-import BallEventOverlay from "../../components/scoring/BallEventOverlay";
+import WideBallModal from "../../components/scoring/WideBallModal";
+import NoBallModal from "../../components/scoring/NoBallModal";
+import ByeLegByeModal from "../../components/scoring/ByeLegByeModal";
+import CustomRunsModal from "../../components/scoring/CustomRunsModal";
+import ScoringShortcutsModal from "../../components/scoring/ScoringShortcutsModal";
 import useMatchScoringEngine from "../../hooks/useMatchScoringEngine";
 
 const LiveScoringScreen = ({ navigation }) => {
   const [isWicketModalVisible, setIsWicketModalVisible] = useState(false);
-  const [activeOverlayEvent, setActiveOverlayEvent] = useState(null);
+  const [isWideModalVisible, setIsWideModalVisible] = useState(false);
+  const [isNoBallModalVisible, setIsNoBallModalVisible] = useState(false);
+  const [byeModalType, setByeModalType] = useState(null); // 'BYE' | 'LB' | null
+  const [isCustomRunsModalVisible, setIsCustomRunsModalVisible] = useState(false);
+  const [isShortcutsModalVisible, setIsShortcutsModalVisible] = useState(false);
 
   const {
     totalRuns,
@@ -41,90 +47,134 @@ const LiveScoringScreen = ({ navigation }) => {
 
   const handleScoreRuns = (runs) => {
     scoreRuns(runs);
-    if (runs === 4 || runs === 6) {
-      setActiveOverlayEvent(String(runs));
-    }
   };
 
   const handleScoreWicket = (wicketType) => {
     scoreWicket(wicketType);
-    setActiveOverlayEvent("W");
+  };
+
+  const handleSelectWide = (extraRuns) => {
+    const runsToAdd = extraRuns === "custom" ? 1 : extraRuns;
+    scoreExtra("WD", runsToAdd);
+  };
+
+  const handleSelectNoBall = (extraRuns) => {
+    const runsToAdd = extraRuns === "custom" ? 1 : extraRuns;
+    scoreExtra("NB", runsToAdd);
+  };
+
+  const handleSelectByeLegBye = (runs) => {
+    const runsToAdd = runs === "+" ? 1 : parseInt(runs, 10);
+    scoreExtra(byeModalType, runsToAdd);
+  };
+
+  const handleSelectShortcut = (shortcutId) => {
+    if (shortcutId === "FULL_SCORECARD") {
+      navigation.navigate("FullScorecard");
+    } else {
+      Alert.alert("Shortcut Selected ⌨️", `Activated shortcut: ${shortcutId}`);
+    }
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]">
-      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
+    <View className="flex-1 bg-[#F8FAFC]">
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
 
-      <AppHeader
-        title={`Live Match - ${currentInning === 1 ? "1st Inning" : "2nd Inning"}`}
-        onBackPress={() => navigation.goBack()}
-        rightComponent={
-          <TouchableOpacity
-            className="p-1"
-            onPress={() => Alert.alert("End Match", "Are you sure you want to end this match?", [
-              { text: "Cancel" },
-              { text: "End Match", onPress: () => navigation.replace("Home") },
-            ])}
-          >
-            <Ionicons name="flag-outline" size={22} color="#FFFFFF" />
-          </TouchableOpacity>
-        }
-      />
+      {/* Main Screen Flex Container */}
+      <View className="flex-1 justify-between bg-[#F8FAFC]">
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          {/* Main Glassmorphism Dark Blurred Stadium Scorecard Header */}
+          <ScorecardHeader
+            teamName={battingTeam?.teamName || "Srk"}
+            totalRuns={totalRuns}
+            wickets={wickets}
+            formattedOvers={`${formattedOvers}/${totalOvers}`}
+            tossInfo={`${bowlingTeam?.teamName || "King"} won the toss and elected to field`}
+            matchId="26303040"
+            striker={striker}
+            strikerRuns={totalRuns > 0 ? Math.max(1, Math.floor(totalRuns / 2)) : 0}
+            strikerBalls={totalRuns > 0 ? 3 : 0}
+            nonStriker={nonStriker}
+            bowler={bowler}
+            bowlerStats={`${formattedOvers}-0-${totalRuns}-${wickets}`}
+            onBackPress={() => navigation.goBack()}
+            onSharePress={() => {}}
+            onSettingsPress={() => {}}
+            onSwapStriker={swapStrikers}
+          />
 
-      <ScrollView
-        className="flex-1 px-4 py-4"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
-      >
-        {/* Target Banner for Inning 2 */}
-        {currentInning === 2 && targetRuns && (
-          <View className="bg-[#143D2B] p-3 rounded-xl mb-3 flex-row justify-between items-center border border-emerald-700">
-            <Text className="text-emerald-300 font-extrabold text-xs">
-              TARGET: {targetRuns} RUNS IN {totalOvers} OVERS
-            </Text>
-            <Text className="text-white font-black text-xs">
-              NEED {Math.max(0, targetRuns - totalRuns)} RUNS
-            </Text>
-          </View>
-        )}
+          {/* Target Banner for Inning 2 */}
+          {currentInning === 2 && targetRuns && (
+            <View className="bg-emerald-900 px-4 py-2.5 flex-row justify-between items-center border-b border-emerald-700">
+              <Text className="text-emerald-300 font-extrabold text-xs">
+                TARGET: {targetRuns} RUNS IN {totalOvers} OVERS
+              </Text>
+              <Text className="text-white font-black text-xs">
+                NEED {Math.max(0, targetRuns - totalRuns)} RUNS
+              </Text>
+            </View>
+          )}
 
-        {/* Main Live Scorecard Header */}
-        <ScorecardHeader
-          teamName={battingTeam?.teamName || "Batting Team"}
-          totalRuns={totalRuns}
-          wickets={wickets}
-          formattedOvers={`${formattedOvers} / ${totalOvers}`}
-          currentRunRate={currentRunRate}
-          striker={striker}
-          nonStriker={nonStriker}
-          bowler={bowler}
-          onSwapStriker={swapStrikers}
-        />
+          {/* Current Over Timeline Circles */}
+          <OverTimeline timeline={timeline} />
+        </ScrollView>
 
-        {/* Current Over Timeline */}
-        <OverTimeline timeline={timeline} />
-
-        {/* Scoring Control Keypad */}
+        {/* 4x4 Keypad Grid Matrix Sitting Flush at Bottom Edge */}
         <ScoringKeypad
           onScoreRuns={handleScoreRuns}
-          onScoreExtra={scoreExtra}
           onOpenWicketModal={() => setIsWicketModalVisible(true)}
+          onOpenWideModal={() => setIsWideModalVisible(true)}
+          onOpenNoBallModal={() => setIsNoBallModalVisible(true)}
+          onOpenByeModal={() => setByeModalType("BYE")}
+          onOpenLegByeModal={() => setByeModalType("LB")}
+          onOpenCustomRunsModal={() => setIsCustomRunsModalVisible(true)}
+          onOpenShortcutsModal={() => setIsShortcutsModalVisible(true)}
           onUndo={undoLastBall}
         />
-      </ScrollView>
+      </View>
 
-      {/* Animated Pop-up Event Overlay (4s, 6s, Wickets) */}
-      <BallEventOverlay
-        eventTag={activeOverlayEvent}
-        visible={Boolean(activeOverlayEvent)}
-        onDismiss={() => setActiveOverlayEvent(null)}
-      />
-
-      {/* Wicket Modal Selection */}
+      {/* 1. Full 16 Wicket Dismissals Selection Modal */}
       <WicketModal
         visible={isWicketModalVisible}
         onClose={() => setIsWicketModalVisible(false)}
         onSelectWicket={handleScoreWicket}
+      />
+
+      {/* 2. Wide Ball Extra Runs Modal */}
+      <WideBallModal
+        visible={isWideModalVisible}
+        onClose={() => setIsWideModalVisible(false)}
+        onSelectWide={handleSelectWide}
+      />
+
+      {/* 3. No Ball Extra Runs Modal */}
+      <NoBallModal
+        visible={isNoBallModalVisible}
+        onClose={() => setIsNoBallModalVisible(false)}
+        onSelectNoBall={handleSelectNoBall}
+      />
+
+      {/* 4. Bye / Leg Bye Runs Modal */}
+      <ByeLegByeModal
+        visible={Boolean(byeModalType)}
+        type={byeModalType || "BYE"}
+        onClose={() => setByeModalType(null)}
+        onSelectRuns={handleSelectByeLegBye}
+        onSetKeeper={() => Alert.alert("Set Keeper 🧤", "Select team wicketkeeper")}
+      />
+
+      {/* 5. Custom Running Runs Input Modal */}
+      <CustomRunsModal
+        visible={isCustomRunsModalVisible}
+        onClose={() => setIsCustomRunsModalVisible(false)}
+        onSubmitCustomRuns={(runs) => scoreRuns(runs)}
+      />
+
+      {/* 6. Scoring Shortcuts Bottom Sheet Modal */}
+      <ScoringShortcutsModal
+        visible={isShortcutsModalVisible}
+        onClose={() => setIsShortcutsModalVisible(false)}
+        onSelectShortcut={handleSelectShortcut}
       />
 
       {/* 1st Innings Complete Modal */}
@@ -170,18 +220,18 @@ const LiveScoringScreen = ({ navigation }) => {
             </Text>
 
             <TouchableOpacity
-              className="w-full h-13 bg-[#0D9488] rounded-xl justify-center items-center shadow-md"
+              className="w-full h-13 bg-[#0D9488] rounded-xl justify-center items-center shadow-md mb-3"
               activeOpacity={0.85}
-              onPress={() => navigation.replace("Home")}
+              onPress={() => navigation.navigate("MatchSummary")}
             >
               <Text className="text-white text-base font-extrabold">
-                Back to Home Screen
+                View Match Summary & Scorecard 📊
               </Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

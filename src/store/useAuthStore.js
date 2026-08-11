@@ -1,6 +1,6 @@
 import createStore from "./createStore";
 import { getItem, setItem, removeItem } from "../utils/storage";
-import { getUserProfile, updateUserProfile } from "../services/userService";
+import { getUserProfile, updateUserProfile, uploadProfilePhoto, updateUserAvatar } from "../services/userService";
 
 export const useAuthStore = createStore((set, get) => ({
   user: null,
@@ -57,6 +57,49 @@ export const useAuthStore = createStore((set, get) => ({
       }
     } catch (err) {
       console.warn("[FETCH PROFILE API NOTICE]:", err?.message || err);
+    }
+  },
+
+  // Upload Profile Photo (`PUT /users/me/photo`)
+  uploadPhotoApi: async (imageUri) => {
+    try {
+      const res = await uploadProfilePhoto(imageUri);
+      const updatedData = res?.data || res?.user || {};
+      const currentUser = get().user || {};
+      const mergedUser = { ...currentUser, ...updatedData, profileImageUrl: updatedData.profileImageUrl || imageUri };
+
+      await setItem("user-profile", JSON.stringify(mergedUser));
+      set({ user: mergedUser, isAuthenticated: true });
+      return mergedUser;
+    } catch (err) {
+      console.warn("[UPLOAD PHOTO API NOTICE]:", err?.message || err);
+      // Fallback local save if offline
+      const currentUser = get().user || {};
+      const mergedUser = { ...currentUser, profileImageUrl: imageUri };
+      await setItem("user-profile", JSON.stringify(mergedUser));
+      set({ user: mergedUser });
+      return mergedUser;
+    }
+  },
+
+  // Select Preset Avatar (`PATCH /users/me/avatar`)
+  updateAvatarApi: async (avatarId) => {
+    try {
+      const res = await updateUserAvatar(avatarId);
+      const updatedData = res?.data || res?.user || {};
+      const currentUser = get().user || {};
+      const mergedUser = { ...currentUser, ...updatedData, avatarId };
+
+      await setItem("user-profile", JSON.stringify(mergedUser));
+      set({ user: mergedUser });
+      return mergedUser;
+    } catch (err) {
+      console.warn("[UPDATE AVATAR API NOTICE]:", err?.message || err);
+      const currentUser = get().user || {};
+      const mergedUser = { ...currentUser, avatarId };
+      await setItem("user-profile", JSON.stringify(mergedUser));
+      set({ user: mergedUser });
+      return mergedUser;
     }
   },
 

@@ -193,7 +193,7 @@ const SelectTeamScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       {/* Fixed Top Header */}
       <AppHeader
         title={headerTitle}
@@ -412,7 +412,7 @@ const SelectTeamScreen = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

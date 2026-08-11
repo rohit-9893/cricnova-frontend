@@ -63,8 +63,8 @@ const TossScreen = ({ navigation, route }) => {
     // 2. Set Toss result (calculates battingFirst vs bowlingFirst)
     setTossResult(selectedWinner, selectedChoice);
 
-    // 3. Navigate to Live Scoring Screen
-    navigation.replace("LiveScoring");
+    // 3. Navigate to Opening Player Selection (StartInnings) Screen
+    navigation.replace("StartInnings");
   };
 
   const spin = spinValue.interpolate({
@@ -73,9 +73,7 @@ const TossScreen = ({ navigation, route }) => {
   });
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]">
-      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
-
+    <View className="flex-1 bg-[#F8FAFC]">
       <AppHeader
         title="Match Toss"
         onBackPress={() => navigation.goBack()}
@@ -175,7 +173,7 @@ const TossScreen = ({ navigation, route }) => {
           </Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -96,8 +96,8 @@ const MobileInputScreen = ({ navigation }) => {
           <View className="flex-1 justify-between px-6 pb-6">
             {/* Top Branding Banner */}
             <View className="justify-center items-center my-4">
-              <View className="w-20 h-20 rounded-full bg-emerald-50 border-2 border-emerald-200 justify-center items-center shadow-xs mb-3">
-                <MaterialCommunityIcons name="cricket" size={40} color="#0D9488" />
+              <View className="w-20 h-20 rounded-full bg-[#0D9488] justify-center items-center shadow-lg shadow-teal-500/30 mb-3">
+                <MaterialCommunityIcons name="cricket" size={40} color="#FFFFFF" />
               </View>
               <Text className="text-2xl font-black text-slate-900 tracking-tight">
                 Cric<Text className="text-[#0D9488]">Novas</Text>
@@ -147,19 +147,19 @@ const MobileInputScreen = ({ navigation }) => {
                 </View>
               </View>
 
-              {/* Dynamic Action Button ("Send OTP →") */}
+              {/* Modern Premium Elevated CTA Button ("Send OTP ➔") */}
               <TouchableOpacity
                 disabled={!isValidNumber}
-                className={`w-full h-13 rounded-xl justify-center items-center shadow-md ${
+                className={`w-full h-14 rounded-2xl justify-center items-center shadow-xl ${
                   isValidNumber
-                    ? "bg-[#0D9488] shadow-teal-500/20"
+                    ? "bg-[#0D9488] border border-teal-400/40 shadow-teal-500/30"
                     : "bg-slate-300 opacity-60"
                 }`}
                 activeOpacity={isValidNumber ? 0.85 : 1}
                 onPress={handleSendOtp}
               >
-                <Text className="text-white text-base font-extrabold">
-                  {isValidNumber ? "Send OTP →" : "Enter 10-digit number"}
+                <Text className="text-white text-base font-black tracking-wider">
+                  {isValidNumber ? "Send OTP ➔" : "Enter 10-digit number"}
                 </Text>
               </TouchableOpacity>
             </Animated.View>

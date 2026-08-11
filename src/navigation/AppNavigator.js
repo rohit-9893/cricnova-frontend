@@ -19,7 +19,11 @@ import MyProfileScreen from "../app/profile/MyProfileScreen";
 import EditProfileScreen from "../app/profile/EditProfileScreen";
 
 import TossScreen from "../app/match/TossScreen";
+import StartInningsScreen from "../app/match/StartInningsScreen";
 import LiveScoringScreen from "../app/match/LiveScoringScreen";
+import PublicLiveMatchViewerScreen from "../app/match/PublicLiveMatchViewerScreen";
+import MatchSummaryScreen from "../app/match/MatchSummaryScreen";
+import FullScorecardScreen from "../app/match/FullScorecardScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -45,7 +49,11 @@ const AppNavigator = () => {
       <Stack.Screen name="TeamRoster" component={TeamRosterScreen} />
       <Stack.Screen name="StartMatchSetup" component={StartMatchSetupScreen} />
       <Stack.Screen name="Toss" component={TossScreen} />
+      <Stack.Screen name="StartInnings" component={StartInningsScreen} />
       <Stack.Screen name="LiveScoring" component={LiveScoringScreen} />
+      <Stack.Screen name="PublicLiveMatchViewer" component={PublicLiveMatchViewerScreen} />
+      <Stack.Screen name="MatchSummary" component={MatchSummaryScreen} />
+      <Stack.Screen name="FullScorecard" component={FullScorecardScreen} />
       <Stack.Screen name="CreateTournament" component={CreateTournamentScreen} />
       <Stack.Screen name="MyProfile" component={MyProfileScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />

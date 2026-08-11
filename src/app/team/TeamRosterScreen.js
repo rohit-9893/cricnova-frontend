@@ -110,9 +110,7 @@ const TeamRosterScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]">
-      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
-
+    <View className="flex-1 bg-[#F8FAFC]">
       {/* Header */}
       <AppHeader
         title={team.teamName}
@@ -378,7 +376,7 @@ const TeamRosterScreen = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

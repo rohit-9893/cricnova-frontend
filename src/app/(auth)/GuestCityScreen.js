@@ -73,13 +73,13 @@ const GuestCityScreen = ({ navigation }) => {
             />
           </View>
 
-          {/* Continue Button */}
+          {/* Modern Premium Elevated CTA Button */}
           <TouchableOpacity
-            className="w-full h-13 bg-[#0D9488] rounded-xl justify-center items-center shadow-md shadow-teal-500/20"
+            className="w-full h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-xl shadow-teal-500/30 border border-teal-400/40"
             activeOpacity={0.85}
             onPress={handleContinue}
           >
-            <Text className="text-white text-base font-extrabold">Continue</Text>
+            <Text className="text-white text-base font-black tracking-wider">Continue ➔</Text>
           </TouchableOpacity>
         </View>
       </View>

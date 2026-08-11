@@ -51,14 +51,18 @@ export const useRegisterFlow = (navigation, initialMobile) => {
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ImagePicker.MediaType?.Images || ImagePicker.MediaTypeOptions?.Images || ["images"],
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        setProfileImageUri(result.assets[0].uri);
+        const uri = result.assets[0].uri;
+        setProfileImageUri(uri);
+        // Sync live photo to backend API (PUT /users/me/photo)
+        const uploadPhotoApi = useAuthStore.getState().uploadPhotoApi;
+        if (uploadPhotoApi) uploadPhotoApi(uri);
       }
     } catch (err) {
       console.warn("[PICK GALLERY ERROR]:", err);
@@ -103,7 +107,11 @@ export const useRegisterFlow = (navigation, initialMobile) => {
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        setProfileImageUri(result.assets[0].uri);
+        const uri = result.assets[0].uri;
+        setProfileImageUri(uri);
+        // Sync live photo to backend API (PUT /users/me/photo)
+        const uploadPhotoApi = useAuthStore.getState().uploadPhotoApi;
+        if (uploadPhotoApi) uploadPhotoApi(uri);
       }
     } catch (err) {
       console.warn("[TAKE PHOTO ERROR]:", err);

@@ -385,11 +385,11 @@ const RegisterScreen = ({ navigation, route }) => {
 
                       {/* Bottom Done Button */}
                       <TouchableOpacity
-                        className="w-full h-13 bg-[#00A896] rounded-xl justify-center items-center shadow-md active:opacity-90"
+                        className="w-full h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-xl shadow-teal-500/30 border border-teal-400/40 active:opacity-90"
                         activeOpacity={0.85}
                         onPress={handleDoneStep5}
                       >
-                        <Text className="text-white text-base font-bold">Done</Text>
+                        <Text className="text-white text-base font-black tracking-wider">Done ➔</Text>
                       </TouchableOpacity>
                     </View>
                   )
@@ -435,12 +435,12 @@ const RegisterScreen = ({ navigation, route }) => {
 
                     {/* Bottom Action Button ("Let the games begin") */}
                     <TouchableOpacity
-                      className="w-full h-13 bg-[#00A896] rounded-xl justify-center items-center shadow-md active:opacity-90"
+                      className="w-full h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-xl shadow-teal-500/30 border border-teal-400/40 active:opacity-90"
                       activeOpacity={0.85}
                       onPress={handleLetTheGamesBegin}
                     >
-                      <Text className="text-white text-base font-bold">
-                        Let the games begin
+                      <Text className="text-white text-base font-black tracking-wider">
+                        Let the games begin 🏆
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -451,7 +451,7 @@ const RegisterScreen = ({ navigation, route }) => {
               {currentStep < 5 && (
                 <Animated.View style={{ marginBottom: keyboardMarginAnim }}>
                   <TouchableOpacity
-                    className="w-full h-13 bg-[#00A896] rounded-xl justify-center items-center shadow-md active:opacity-90"
+                    className="w-full h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-xl shadow-teal-500/30 border border-teal-400/40 active:opacity-90"
                     activeOpacity={0.85}
                     onPress={
                       currentStep === 1
@@ -463,7 +463,7 @@ const RegisterScreen = ({ navigation, route }) => {
                         : handleNextStep4
                     }
                   >
-                    <Text className="text-white text-base font-bold">Next</Text>
+                    <Text className="text-white text-base font-black tracking-wider">Next ➔</Text>
                   </TouchableOpacity>
                 </Animated.View>
               )}

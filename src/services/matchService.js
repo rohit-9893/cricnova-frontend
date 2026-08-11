@@ -47,9 +47,31 @@ export const fetchLiveMatches = async () => {
   }
 };
 
+export const getMatchDetails = async (matchId) => {
+  try {
+    const response = await apiClient.get(`/matches/${matchId}`);
+    return response;
+  } catch (error) {
+    console.warn("[GET MATCH DETAILS ERROR]:", error);
+    throw error;
+  }
+};
+
+export const getMatchSpectatorData = async (matchId) => {
+  try {
+    const response = await apiClient.get(`/matches/${matchId}/spectate`);
+    return response;
+  } catch (error) {
+    console.warn("[GET MATCH SPECTATOR DATA ERROR]:", error);
+    throw error;
+  }
+};
+
 export default {
   createMatch,
   updateToss,
   recordBallScore,
   fetchLiveMatches,
+  getMatchDetails,
+  getMatchSpectatorData,
 };

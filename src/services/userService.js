@@ -1,34 +1,52 @@
 import apiClient from "./apiClient";
 
-/**
- * User Profile API Service Module
- * Connects to /api/v1/users Endpoints
- */
-
-// 1. Get Authenticated User Profile
-export const getUserProfile = async () => {
+// 1. Upload Profile Photo (Gallery & Camera Selfie) - PUT /users/me/photo
+export const uploadProfilePhoto = async (imageUri) => {
   try {
-    const response = await apiClient.get("/users/me");
+    const formData = new FormData();
+    const filename = imageUri.split("/").pop() || "profile_photo.jpg";
+    const match = /\.(\w+)$/.exec(filename);
+    const type = match ? `image/${match[1]}` : "image/jpeg";
+
+    formData.append("photo", {
+      uri: imageUri,
+      name: filename,
+      type,
+    });
+
+    const response = await apiClient.put("/users/me/photo", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response;
   } catch (error) {
-    console.warn("[GET USER PROFILE API ERROR]:", error);
+    console.warn("[UPLOAD PROFILE PHOTO API ERROR]:", error);
     throw error;
   }
 };
 
-// 2. Update User Profile (Onboarding / Profile Edit)
+// 2. Select Preset Cricket Avatar - PATCH /users/me/avatar
+export const updateUserAvatar = async (avatarId) => {
+  try {
+    const response = await apiClient.patch("/users/me/avatar", { avatarId });
+    return response;
+  } catch (error) {
+    console.warn("[UPDATE AVATAR API ERROR]:", error);
+    throw error;
+  }
+};
+
+// 3. Update Onboarding Profile Info - PATCH /users/me/profile
 export const updateUserProfile = async (profilePayload) => {
   try {
-    // Sanitize payload to ONLY send fields supported by Backend schema
     const allowedKeys = [
       "firstName",
       "lastName",
       "city",
       "gender",
       "dateOfBirth",
-      "avatarId",
       "preferredLanguage",
-      "profileImageUrl",
     ];
 
     const cleanPayload = {};
@@ -46,7 +64,20 @@ export const updateUserProfile = async (profilePayload) => {
   }
 };
 
+// 4. Get Current User Profile - GET /users/me
+export const getUserProfile = async () => {
+  try {
+    const response = await apiClient.get("/users/me");
+    return response;
+  } catch (error) {
+    console.warn("[GET USER PROFILE API ERROR]:", error);
+    throw error;
+  }
+};
+
 export default {
-  getUserProfile,
+  uploadProfilePhoto,
+  updateUserAvatar,
   updateUserProfile,
+  getUserProfile,
 };

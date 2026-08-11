@@ -40,9 +40,7 @@ const SelectPlayingTeamsScreen = ({ navigation, route }) => {
   const isTeamBPulsing = teamA && !teamB;
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
-
+    <View className="flex-1 bg-white">
       {/* App Header Component */}
       <AppHeader
         title="Select playing teams"
@@ -98,9 +96,9 @@ const SelectPlayingTeamsScreen = ({ navigation, route }) => {
 
       {/* Start Match Action Bar (Appears when both teams are selected) */}
       {teamA && teamB && (
-        <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 shadow-lg">
+        <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 shadow-xl">
           <TouchableOpacity
-            className="w-full h-13 bg-[#0D9488] rounded-xl justify-center items-center shadow-md shadow-teal-500/20"
+            className="w-full h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-xl shadow-teal-500/30 border border-teal-400/40"
             activeOpacity={0.85}
             onPress={() =>
               navigation.navigate("StartMatchSetup", {
@@ -109,13 +107,13 @@ const SelectPlayingTeamsScreen = ({ navigation, route }) => {
               })
             }
           >
-            <Text className="text-white text-base font-extrabold">
+            <Text className="text-white text-base font-black tracking-wider">
               Start Match 🏏 ({teamA.teamName} vs {teamB.teamName})
             </Text>
           </TouchableOpacity>
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

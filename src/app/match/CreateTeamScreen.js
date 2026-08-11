@@ -31,7 +31,7 @@ const CreateTeamScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]">
+    <View className="flex-1 bg-[#F8FAFC]">
       {/* Top Header */}
       <AppHeader
         title="Create your team"
@@ -121,16 +121,16 @@ const CreateTeamScreen = ({ navigation }) => {
       </ScrollView>
 
       {/* Fixed Bottom Action Bar */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3">
+      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 shadow-xl">
         <TouchableOpacity
-          className="h-12 bg-[#0D9488] rounded-xl justify-center items-center shadow-md shadow-teal-500/20"
+          className="h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-xl shadow-teal-500/30 border border-teal-400/40"
           activeOpacity={0.85}
           onPress={() => navigation.goBack()}
         >
-          <Text className="text-white text-base font-bold">Add team</Text>
+          <Text className="text-white text-base font-black tracking-wider">Add Team ➔</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

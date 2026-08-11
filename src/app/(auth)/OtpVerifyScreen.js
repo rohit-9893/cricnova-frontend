@@ -82,20 +82,42 @@ const OtpVerifyScreen = ({ navigation, route }) => {
         await useAuthStore.getState().setAuth(token, user);
       }
 
-      // Only navigate on SUCCESSFUL verification
-      Alert.alert(
-        "OTP Verified! 🎉",
-        "Please complete your player profile.",
-        [
-          {
-            text: "Continue to Profile Setup ➔",
-            onPress: () =>
-              navigation &&
-              navigation.navigate &&
-              navigation.navigate("Register", { mobileNumber }),
-          },
-        ]
-      );
+      // Check profileCompleted flag from backend response
+      const isProfileCompleted = user?.profileCompleted === true || user?.isRegistered === true;
+
+      if (isProfileCompleted) {
+        // User profile is complete -> Direct Home Screen navigation
+        Alert.alert(
+          "Welcome Back! 🎉",
+          "Logging in to CricNovas...",
+          [
+            {
+              text: "Continue ➔",
+              onPress: () => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "Home" }],
+                });
+              },
+            },
+          ]
+        );
+      } else {
+        // New user or incomplete profile -> Navigate to Onboarding Profile Setup
+        Alert.alert(
+          "OTP Verified! 🎉",
+          "Please complete your player profile.",
+          [
+            {
+              text: "Continue to Profile Setup ➔",
+              onPress: () =>
+                navigation &&
+                navigation.navigate &&
+                navigation.navigate("Register", { mobileNumber }),
+            },
+          ]
+        );
+      }
     } catch (err) {
       console.warn("[VERIFY OTP API ERROR]:", err?.message || err);
       Alert.alert(
@@ -207,18 +229,18 @@ const OtpVerifyScreen = ({ navigation, route }) => {
             </View>
           </View>
 
-          {/* Action Button ("Verify & Continue") */}
+          {/* Modern Premium Elevated CTA Button */}
           <TouchableOpacity
-            className={`w-full h-13 rounded-xl justify-center items-center shadow-md mt-auto ${
+            className={`w-full h-14 rounded-2xl justify-center items-center shadow-xl mt-auto ${
               otp.join("").length === 4
-                ? "bg-[#0D9488] shadow-teal-500/20"
+                ? "bg-[#0D9488] border border-teal-400/40 shadow-teal-500/30"
                 : "bg-slate-300"
             }`}
             activeOpacity={0.85}
             onPress={handleVerify}
           >
-            <Text className="text-white text-base font-extrabold">
-              Verify & Continue
+            <Text className="text-white text-base font-black tracking-wider">
+              Verify & Continue ➔
             </Text>
           </TouchableOpacity>
         </ScrollView>

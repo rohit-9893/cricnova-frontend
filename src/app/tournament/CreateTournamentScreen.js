@@ -74,7 +74,7 @@ const CreateTournamentScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["left", "right", "bottom"]}>
+    <View className="flex-1 bg-white">
       {/* Light Emerald Teal Top Header */}
       <AppHeader
         title="Add a tournament / series"
@@ -400,16 +400,16 @@ const CreateTournamentScreen = ({ navigation }) => {
       </ScrollView>
 
       {/* Fixed Bottom Action Bar */}
-      <View className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-slate-200 elevation-5">
+      <View className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-slate-200 shadow-xl">
         <TouchableOpacity
-          className="w-full h-12 bg-[#0D9488] rounded-xl justify-center items-center shadow-md shadow-teal-500/20"
+          className="w-full h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-xl shadow-teal-500/30 border border-teal-400/40"
           activeOpacity={0.85}
           onPress={handleNext}
         >
-          <Text className="text-white text-base font-extrabold">Next</Text>
+          <Text className="text-white text-base font-black tracking-wider">Next ➔</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

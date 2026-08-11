@@ -77,9 +77,7 @@ const StartMatchSetupScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]">
-      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
-
+    <View className="flex-1 bg-[#F8FAFC]">
       {/* Top Header */}
       <AppHeader
         title="Start a match"
@@ -341,6 +339,35 @@ const StartMatchSetupScreen = ({ navigation, route }) => {
               ))}
             </View>
           </View>
+
+          {/* Section 7: Match Officials Matrix */}
+          <View className="mb-8">
+            <Text className="text-slate-800 text-sm font-bold mb-3">
+              Match officials
+            </Text>
+            <View className="flex-row justify-between">
+              {[
+                { name: "Umpires", icon: "shield-checkmark-outline" },
+                { name: "Scorers", icon: "clipboard-outline" },
+                { name: "Live streamer", icon: "videocam-outline" },
+                { name: "Others", icon: "person-outline" },
+              ].map((official, idx) => (
+                <TouchableOpacity
+                  key={idx}
+                  className="items-center w-[22%]"
+                  activeOpacity={0.7}
+                  onPress={() => Alert.alert("Match Official 👔", `Select ${official.name}`)}
+                >
+                  <View className="w-13 h-13 rounded-full bg-slate-100 border border-slate-300 justify-center items-center mb-1 shadow-xs">
+                    <Ionicons name={official.icon} size={22} color="#334155" />
+                  </View>
+                  <Text className="text-slate-700 text-[11px] font-bold text-center">
+                    {official.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
         </View>
       </ScrollView>
 
@@ -368,7 +395,7 @@ const StartMatchSetupScreen = ({ navigation, route }) => {
           </Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
