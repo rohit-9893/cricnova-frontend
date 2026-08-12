@@ -17,6 +17,8 @@ import StartMatchSetupScreen from "../app/match/StartMatchSetupScreen";
 import CreateTournamentScreen from "../app/tournament/CreateTournamentScreen";
 import MyProfileScreen from "../app/profile/MyProfileScreen";
 import EditProfileScreen from "../app/profile/EditProfileScreen";
+import PlayerStatsScreen from "../app/profile/PlayerStatsScreen";
+import SearchScreen from "../app/search/SearchScreen";
 
 import TossScreen from "../app/match/TossScreen";
 import StartInningsScreen from "../app/match/StartInningsScreen";
@@ -57,6 +59,8 @@ const AppNavigator = () => {
       <Stack.Screen name="CreateTournament" component={CreateTournamentScreen} />
       <Stack.Screen name="MyProfile" component={MyProfileScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      <Stack.Screen name="PlayerStats" component={PlayerStatsScreen} />
+      <Stack.Screen name="Search" component={SearchScreen} />
     </Stack.Navigator>
   );
 };

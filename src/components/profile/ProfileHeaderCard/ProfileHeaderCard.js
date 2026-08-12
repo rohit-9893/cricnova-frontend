@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const ProfileHeaderCard = ({
@@ -8,6 +8,7 @@ const ProfileHeaderCard = ({
   sinceDate = "",
   followersCount = 0,
   viewsCount = 0,
+  profileImageUrl = null,
   onGoProPress,
   onEditAvatarPress,
   onQrPress,
@@ -22,10 +23,14 @@ const ProfileHeaderCard = ({
           activeOpacity={0.8}
           onPress={onEditAvatarPress}
         >
-          <View className="w-20 h-20 rounded-full bg-slate-700 justify-center items-center overflow-hidden relative border-2 border-slate-200">
-            <Ionicons name="person" size={44} color="#CBD5E1" />
-            <View className="absolute bottom-0 left-0 right-0 bg-slate-900/80 py-0.5 items-center">
-              <Text className="text-white text-[10px] font-bold">Edit</Text>
+          <View className="w-20 h-20 rounded-full bg-slate-800 justify-center items-center overflow-hidden relative border-2 border-[#0D9488] shadow-sm">
+            {profileImageUrl ? (
+              <Image source={{ uri: profileImageUrl }} className="w-full h-full" resizeMode="cover" />
+            ) : (
+              <Ionicons name="person" size={44} color="#CBD5E1" />
+            )}
+            <View className="absolute bottom-0 left-0 right-0 bg-[#0D9488] py-0.5 items-center">
+              <Text className="text-white text-[10px] font-extrabold">Edit</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -36,18 +41,18 @@ const ProfileHeaderCard = ({
 
           <View className="flex-row items-center mb-1">
             <Ionicons name="location-outline" size={15} color="#0D9488" />
-            <Text className="text-xs text-slate-600 font-medium ml-1">{location}</Text>
+            <Text className="text-xs text-slate-600 font-medium ml-1">{location || "India"}</Text>
           </View>
 
           <View className="flex-row items-center">
             <Ionicons name="calendar-outline" size={15} color="#94A3B8" />
-            <Text className="text-xs text-slate-500 font-medium ml-1">Since {sinceDate}</Text>
+            <Text className="text-xs text-slate-500 font-medium ml-1">Since {sinceDate || "2026"}</Text>
           </View>
         </View>
 
         {/* Go PRO Button */}
         <TouchableOpacity
-          className="bg-brand-teal px-3 py-1.5 rounded-full"
+          className="bg-[#0D9488] px-3.5 py-1.5 rounded-full shadow-xs"
           activeOpacity={0.8}
           onPress={onGoProPress}
         >

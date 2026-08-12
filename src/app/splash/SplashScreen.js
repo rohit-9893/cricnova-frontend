@@ -66,8 +66,11 @@ const SplashScreen = ({ navigation }) => {
       easing: Easing.bezier(0.4, 0, 0.2, 1),
       useNativeDriver: false,
     }).start(({ finished }) => {
-      if (finished && navigation && navigation.replace) {
-        navigation.replace("Login");
+      if (finished && navigation && navigation.reset) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Login" }],
+        });
       }
     });
 
@@ -80,6 +83,15 @@ const SplashScreen = ({ navigation }) => {
     inputRange: [0, 1],
     outputRange: ["0%", "100%"],
   });
+
+  const handleNavigateToLogin = () => {
+    if (navigation && navigation.reset) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white justify-between items-center py-10 px-4">
@@ -112,7 +124,7 @@ const SplashScreen = ({ navigation }) => {
           />
 
           {/* Center Cricket Emblem */}
-          <View className="w-24 h-24 rounded-full bg-[#10B981] justify-center items-center shadow-xl border-2 border-white">
+          <View className="w-24 h-24 rounded-full bg-[#0D9488] justify-center items-center shadow-xl border-2 border-white">
             <MaterialCommunityIcons name="cricket" size={54} color="#FFFFFF" />
           </View>
         </Animated.View>
@@ -128,10 +140,10 @@ const SplashScreen = ({ navigation }) => {
           ]}
         >
           <Text className="text-4xl font-black text-slate-900 tracking-widest">
-            CRIC<Text className="text-[#10B981]">NOVAS</Text>
+            CRIC<Text className="text-[#0D9488]">NOVAS</Text>
           </Text>
           <View className="flex-row items-center bg-emerald-50 px-4 py-2 rounded-full mt-3 border border-emerald-200">
-            <Ionicons name="trophy-outline" size={14} color="#10B981" />
+            <Ionicons name="trophy-outline" size={14} color="#0D9488" />
             <Text className="text-emerald-800 text-[11px] font-extrabold tracking-wider ml-1.5">
               LIVE SCORES • TOURNAMENTS • STATS
             </Text>
@@ -146,13 +158,13 @@ const SplashScreen = ({ navigation }) => {
 
           {/* Progress Track */}
           <View className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-4 border border-slate-200">
-            <Animated.View className="h-full bg-[#10B981] rounded-full" style={[{ width: progressWidth }]} />
+            <Animated.View className="h-full bg-[#0D9488] rounded-full" style={[{ width: progressWidth }]} />
           </View>
 
           {/* Skip Button */}
           <TouchableOpacity
             className="py-1.5 px-3"
-            onPress={() => navigation && navigation.replace("Login")}
+            onPress={handleNavigateToLogin}
             activeOpacity={0.7}
           >
             <Text className="text-slate-400 text-xs font-bold">Skip directly to Login →</Text>

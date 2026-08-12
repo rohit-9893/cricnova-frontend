@@ -210,17 +210,19 @@ const LiveScoringScreen = ({ navigation }) => {
       {/* Match Finished Winner Modal */}
       <Modal visible={isMatchFinished} transparent animationType="fade">
         <View className="flex-1 bg-black/80 justify-center items-center px-6">
-          <View className="bg-white w-full rounded-2xl p-6 items-center shadow-2xl">
-            <MaterialCommunityIcons name="crown" size={60} color="#C59B27" />
-            <Text className="text-2xl font-black text-slate-900 mt-2 mb-1 text-center">
-              🎉 MATCH WON BY {matchWinner?.teamName?.toUpperCase()}! 🎉
+          <View className="bg-white w-full rounded-3xl p-6 items-center shadow-2xl border border-slate-100">
+            <View className="w-20 h-20 rounded-full bg-amber-50 border-2 border-amber-300 justify-center items-center mb-3 shadow-sm">
+              <MaterialCommunityIcons name="crown" size={48} color="#C59B27" />
+            </View>
+            <Text className="text-xl font-black text-slate-900 mt-1 mb-1 text-center tracking-wide">
+              🎉 {matchWinner?.teamName?.toUpperCase() || "FIRST"} WON THE MATCH! 🎉
             </Text>
             <Text className="text-slate-600 text-sm font-bold text-center mb-6">
-              Congratulations to {matchWinner?.teamName}!
+              Congratulations to {matchWinner?.teamName || "First"}!
             </Text>
 
             <TouchableOpacity
-              className="w-full h-13 bg-[#0D9488] rounded-xl justify-center items-center shadow-md mb-3"
+              className="w-full h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-lg shadow-teal-500/30 active:bg-teal-700 mb-2"
               activeOpacity={0.85}
               onPress={() => navigation.navigate("MatchSummary")}
             >

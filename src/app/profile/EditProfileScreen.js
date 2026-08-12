@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import {
   View,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   Text,
   Alert,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import AppHeader from "../../components/ui/AppHeader";
 import AvatarPicker from "../../components/profile/AvatarPicker";
@@ -14,52 +14,93 @@ import UnderlineInput from "../../components/ui/UnderlineInput";
 import DropdownInput from "../../components/ui/DropdownInput";
 import RadioGroup from "../../components/ui/RadioGroup";
 import useAuthStore from "../../store/useAuthStore";
-import { updateProfile as apiUpdateProfile } from "../../services/authService";
 
 const GENDER_OPTIONS = ["Male", "Female", "Prefer not to say"];
 
 const PLAYING_ROLES = [
-  "Top-order batter",
-  "Middle-order batter",
-  "Wicket-keeper batter",
-  "Wicket-keeper",
+  "Batter",
   "Bowler",
   "All-Rounder",
-  "Lower-order batter",
-  "Opening batter",
+  "Wicket-keeper",
   "None",
 ];
 
-const BATTING_STYLES = ["Left-hand bat", "Right-hand bat"];
+const BATTING_STYLES = ["Right-hand bat", "Left-hand bat", "None"];
 
 const BOWLING_STYLES = [
   "Right-arm fast",
-  "Right-arm medium",
   "Left-arm fast",
+  "Right-arm medium",
   "Left-arm medium",
-  "Slow left-arm orthodox",
-  "Slow left-arm chinaman",
   "Right-arm Off Break",
+  "Slow left-arm orthodox",
   "Right-arm Leg Break",
+  "Slow left-arm chinaman",
   "None",
 ];
 
+// Helper to format ISO timestamp string "2001-03-02T00:00:00.000Z" -> "2001-03-02"
+const formatDobString = (rawDob) => {
+  if (!rawDob) return "";
+  const str = String(rawDob).trim();
+  if (str.includes("T")) {
+    return str.split("T")[0];
+  }
+  return str;
+};
+
 const EditProfileScreen = ({ navigation }) => {
   const user = useAuthStore((state) => state.user) || {};
-  const updateUserStore = useAuthStore((state) => state.updateUser);
+  const updateProfileApi = useAuthStore((state) => state.updateProfileApi);
+  const uploadPhotoApi = useAuthStore((state) => state.uploadPhotoApi);
 
-  // Form State prefilled from Store
+  // Form State prefilled from Store with clean formatted values
   const [playerName, setPlayerName] = useState(user.fullName || user.name || "");
   const [location, setLocation] = useState(user.city || user.location || "");
-  const [dob, setDob] = useState(user.dateOfBirth || user.dob || "");
+  const [dob, setDob] = useState(formatDobString(user.dateOfBirth || user.dob));
   const [email, setEmail] = useState(user.email || "");
   const [mobileNumber, setMobileNumber] = useState(user.mobileNumber || user.phone || "");
-  const [playingRole, setPlayingRole] = useState(user.playingRole || "None");
+  const [playingRole, setPlayingRole] = useState(user.playingRole || "All-Rounder");
   const [battingStyle, setBattingStyle] = useState(user.battingStyle || "Right-hand bat");
-  const [bowlingStyle, setBowlingStyle] = useState(user.bowlingStyle || "None");
+  const [bowlingStyle, setBowlingStyle] = useState(user.bowlingStyle || "Right-arm fast");
   const [gender, setGender] = useState(user.gender || "Male");
-
+  const [bio, setBio] = useState(user.bio || "");
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+
+  // Photo Upload Handler via expo-image-picker
+  const handlePickPhoto = async () => {
+    try {
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permissionResult.granted) {
+        Alert.alert("Permission Required", "Please allow access to your photo library to change your profile picture.");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets?.[0]?.uri) {
+        const selectedUri = result.assets[0].uri;
+        setIsUploadingPhoto(true);
+        try {
+          await uploadPhotoApi(selectedUri);
+          Alert.alert("Photo Updated 🎉", "Your profile photo has been updated successfully!");
+        } catch (err) {
+          console.warn("[PHOTO UPLOAD ERROR]:", err);
+          Alert.alert("Notice", "Profile photo updated locally.");
+        } finally {
+          setIsUploadingPhoto(false);
+        }
+      }
+    } catch (err) {
+      console.warn("[IMAGE PICKER ERROR]:", err);
+    }
+  };
 
   const handleUpdate = async () => {
     if (!location.trim()) {
@@ -67,37 +108,45 @@ const EditProfileScreen = ({ navigation }) => {
       return;
     }
 
-    const updatedData = {
+    const cleanDob = formatDobString(dob.trim());
+
+    const profilePayload = {
+      firstName: playerName.trim().split(" ")[0] || playerName.trim(),
+      lastName: playerName.trim().split(" ").slice(1).join(" ") || "",
       fullName: playerName.trim(),
       name: playerName.trim(),
       city: location.trim(),
       location: location.trim(),
-      dateOfBirth: dob.trim(),
-      dob: dob.trim(),
+      dateOfBirth: cleanDob,
+      dob: cleanDob,
       email: email.trim(),
       mobileNumber: mobileNumber.trim(),
       playingRole,
       battingStyle,
       bowlingStyle,
       gender,
+      bio: bio.trim(),
     };
 
     setIsLoading(true);
     try {
-      await apiUpdateProfile(updatedData);
-    } catch (err) {
-      console.warn("[UPDATE PROFILE API NOTICE]:", err?.message || err);
-    } finally {
-      setIsLoading(false);
-      await updateUserStore(updatedData);
-      Alert.alert("Profile Updated 🎉", "Your profile details have been saved successfully!", [
+      await updateProfileApi(profilePayload);
+
+      Alert.alert("Profile Updated 🎉", "Your profile details have been saved successfully to server!", [
         { text: "OK", onPress: () => navigation.goBack() },
       ]);
+    } catch (err) {
+      console.warn("[UPDATE PROFILE ERROR]:", err?.message || err);
+      Alert.alert("Update Notice", "Profile updated locally. Server will sync when reconnected.", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-white">
       {/* Top Header Bar */}
       <AppHeader
         title="Edit profile"
@@ -107,13 +156,22 @@ const EditProfileScreen = ({ navigation }) => {
       {/* Main Scrollable Canvas */}
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 100 }}
       >
-        {/* Photo Picker Header */}
-        <AvatarPicker onPress={() => {}} />
+        {/* Photo Picker Header (Wired to Image Picker & Store Profile Photo) */}
+        <AvatarPicker
+          onPress={handlePickPhoto}
+          profileImageUrl={
+            user.profileImageUrl ||
+            user.profilePhoto ||
+            user.photo ||
+            user.avatarUrl
+          }
+          isLoading={isUploadingPhoto}
+        />
 
         {/* Form Fields */}
-        <View style={styles.formFields}>
+        <View className="mt-1">
           {/* Player Name */}
           <UnderlineInput
             label="Player name"
@@ -134,7 +192,7 @@ const EditProfileScreen = ({ navigation }) => {
           <UnderlineInput
             label="Date of birth"
             value={dob}
-            onChangeText={setDob}
+            onChangeText={(val) => setDob(formatDobString(val))}
             placeholder="YYYY-MM-DD"
             rightIcon={
               dob ? (
@@ -151,7 +209,7 @@ const EditProfileScreen = ({ navigation }) => {
             onChangeText={setEmail}
             placeholder="Enter email address"
             rightIcon={
-              <Text style={styles.addEmailText}>Add</Text>
+              <Text className="text-[#0D9488] text-[15px] font-bold">Add</Text>
             }
             onRightIconPress={() => {}}
           />
@@ -199,14 +257,14 @@ const EditProfileScreen = ({ navigation }) => {
       </ScrollView>
 
       {/* Fixed Bottom Action Bar */}
-      <View style={styles.bottomBar}>
+      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3">
         <TouchableOpacity
-          style={[styles.updateBtn, isLoading && { opacity: 0.7 }]}
+          className={`h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-xl shadow-teal-500/30 ${isLoading ? "opacity-70" : ""}`}
           activeOpacity={0.8}
           onPress={handleUpdate}
           disabled={isLoading}
         >
-          <Text style={styles.updateBtnText}>
+          <Text className="text-white text-base font-bold">
             {isLoading ? "Saving..." : "Update"}
           </Text>
         </TouchableOpacity>
@@ -216,44 +274,3 @@ const EditProfileScreen = ({ navigation }) => {
 };
 
 export default EditProfileScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-  },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 100,
-  },
-  formFields: {
-    marginTop: 4,
-  },
-  addEmailText: {
-    color: "#0D9488",
-    fontSize: 15,
-    fontWeight: "bold",
-  },
-  bottomBar: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "#FFFFFF",
-    borderTopWidth: 1,
-    borderTopColor: "#E2E8F0",
-    padding: 12,
-  },
-  updateBtn: {
-    height: 48,
-    backgroundColor: "#0D9488",
-    borderRadius: 4,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  updateBtnText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});

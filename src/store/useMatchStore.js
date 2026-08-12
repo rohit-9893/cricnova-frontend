@@ -79,6 +79,15 @@ export const useMatchStore = createStore((set, get) => ({
     });
   },
 
+  // Set Opening Players (Striker, Non-Striker, Bowler)
+  setOpeningPlayers: (strikerName, nonStrikerName, bowlerName) => {
+    set({
+      striker: strikerName,
+      nonStriker: nonStrikerName,
+      currentBowler: bowlerName,
+    });
+  },
+
   // Record Ball Action (Runs, Extras, Wickets)
   recordBall: ({ runs = 0, isExtra = false, extraType = null, isWicket = false, wicketType = null }) => {
     const state = get();

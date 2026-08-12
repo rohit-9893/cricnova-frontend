@@ -1,6 +1,19 @@
 import createStore from "./createStore";
 import { getItem, setItem, removeItem } from "../utils/storage";
-import { getUserProfile, updateUserProfile, uploadProfilePhoto, updateUserAvatar } from "../services/userService";
+import {
+  getUserProfile,
+  updateUserProfile,
+  uploadProfilePhoto,
+  updateUserAvatar,
+  getPlayerProfile,
+  updatePlayerProfile,
+  mapRoleToBackendEnum,
+  mapRoleToUiString,
+  mapBattingStyleToBackendEnum,
+  mapBattingStyleToUiString,
+  mapBowlingStyleToBackendEnum,
+  mapBowlingStyleToUiString,
+} from "../services/userService";
 
 export const useAuthStore = createStore((set, get) => ({
   user: null,
@@ -44,17 +57,48 @@ export const useAuthStore = createStore((set, get) => ({
     });
   },
 
-  // Fetch Live Profile from Backend API (`GET /users/me`)
+  // Fetch Live Profile from Backend API (`GET /users/me` & `GET /users/me/player-profile`)
   fetchProfileApi: async () => {
     try {
-      const res = await getUserProfile();
-      const userData = res?.data || res?.user || res;
-      if (userData) {
-        const currentUser = get().user || {};
-        const mergedUser = { ...currentUser, ...userData };
-        await setItem("user-profile", JSON.stringify(mergedUser));
-        set({ user: mergedUser, isAuthenticated: true });
+      const currentUser = get().user || {};
+      let mergedUser = { ...currentUser };
+
+      // 1. Fetch Basic User Profile
+      try {
+        const resUser = await getUserProfile();
+        const userData = resUser?.data || resUser?.user || resUser;
+        if (userData) {
+          mergedUser = { ...mergedUser, ...userData };
+        }
+      } catch (userErr) {
+        console.warn("[GET USER PROFILE API NOTICE]:", userErr?.message || userErr);
       }
+
+      // 2. Fetch Player Profile Module (GET /users/me/player-profile)
+      try {
+        const resPlayer = await getPlayerProfile();
+        const playerData = resPlayer?.data || resPlayer?.playerProfile || resPlayer;
+        if (playerData) {
+          mergedUser = {
+            ...mergedUser,
+            playerProfileId: playerData.id,
+            fullName: playerData.displayName || mergedUser.fullName || mergedUser.name,
+            name: playerData.displayName || mergedUser.name || mergedUser.fullName,
+            playingRole: mapRoleToUiString(playerData.playingRole),
+            battingStyle: mapBattingStyleToUiString(playerData.battingStyle),
+            bowlingStyle: mapBowlingStyleToUiString(playerData.bowlingStyle),
+            bio: playerData.bio || mergedUser.bio,
+            playingRoleEnum: playerData.playingRole,
+            battingStyleEnum: playerData.battingStyle,
+            bowlingStyleEnum: playerData.bowlingStyle,
+          };
+        }
+      } catch (playerErr) {
+        console.warn("[GET PLAYER PROFILE API NOTICE]:", playerErr?.message || playerErr);
+      }
+
+      await setItem("user-profile", JSON.stringify(mergedUser));
+      set({ user: mergedUser, isAuthenticated: true });
     } catch (err) {
       console.warn("[FETCH PROFILE API NOTICE]:", err?.message || err);
     }
@@ -103,13 +147,52 @@ export const useAuthStore = createStore((set, get) => ({
     }
   },
 
-  // Update Profile on Backend API (`PATCH /users/me/profile`)
+  // Update Profile on Backend API (`PATCH /users/me/profile` & `PATCH /users/me/player-profile`)
   updateProfileApi: async (profilePayload) => {
     try {
-      const res = await updateUserProfile(profilePayload);
-      const updatedData = res?.data || res?.user || profilePayload;
       const currentUser = get().user || {};
-      const mergedUser = { ...currentUser, ...updatedData, isRegistered: true };
+      let mergedUser = { ...currentUser, ...profilePayload, isRegistered: true };
+
+      // 1. Send Basic User Info (PATCH /users/me/profile)
+      try {
+        const resUser = await updateUserProfile(profilePayload);
+        const updatedUserData = resUser?.data || resUser?.user || {};
+        mergedUser = { ...mergedUser, ...updatedUserData };
+      } catch (userErr) {
+        console.warn("[UPDATE USER PROFILE API NOTICE]:", userErr?.message || userErr);
+      }
+
+      // 2. Send Player Profile Module Contract (PATCH /users/me/player-profile)
+      try {
+        const playerContractPayload = {
+          displayName: profilePayload.fullName || profilePayload.name || currentUser.fullName || currentUser.name || "Cricketer",
+          playingRole: mapRoleToBackendEnum(profilePayload.playingRole || currentUser.playingRole),
+          battingStyle: mapBattingStyleToBackendEnum(profilePayload.battingStyle || currentUser.battingStyle),
+          bowlingStyle: mapBowlingStyleToBackendEnum(profilePayload.bowlingStyle || currentUser.bowlingStyle),
+          bio: profilePayload.bio || currentUser.bio || "Passionate Cricketer",
+        };
+
+        const resPlayer = await updatePlayerProfile(playerContractPayload);
+        const updatedPlayerData = resPlayer?.data || resPlayer?.playerProfile || resPlayer;
+
+        if (updatedPlayerData) {
+          mergedUser = {
+            ...mergedUser,
+            playerProfileId: updatedPlayerData.id,
+            fullName: updatedPlayerData.displayName || mergedUser.fullName,
+            name: updatedPlayerData.displayName || mergedUser.name,
+            playingRole: mapRoleToUiString(updatedPlayerData.playingRole),
+            battingStyle: mapBattingStyleToUiString(updatedPlayerData.battingStyle),
+            bowlingStyle: mapBowlingStyleToUiString(updatedPlayerData.bowlingStyle),
+            bio: updatedPlayerData.bio || mergedUser.bio,
+            playingRoleEnum: updatedPlayerData.playingRole,
+            battingStyleEnum: updatedPlayerData.battingStyle,
+            bowlingStyleEnum: updatedPlayerData.bowlingStyle,
+          };
+        }
+      } catch (playerErr) {
+        console.warn("[UPDATE PLAYER PROFILE API NOTICE]:", playerErr?.message || playerErr);
+      }
 
       await setItem("user-profile", JSON.stringify(mergedUser));
       set({ user: mergedUser, isAuthenticated: true });

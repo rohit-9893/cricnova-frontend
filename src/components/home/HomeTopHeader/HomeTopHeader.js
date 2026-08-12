@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   StatusBar,
-  StyleSheet,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -20,13 +19,14 @@ const HomeTopHeader = ({
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={{ backgroundColor: "#0D9488", paddingTop: insets.top }}>
-      <StatusBar barStyle="light-content" backgroundColor="#0D9488" translucent />
-      <View style={styles.container}>
-        {/* LEFT: Hamburger Menu + Cricket Logo Badge */}
-        <View style={styles.leftGroup}>
+    <View style={{ paddingTop: insets.top }} className="w-full bg-[#0D9488]">
+      <StatusBar barStyle="light-content" backgroundColor="#0D9488" translucent={true} />
+
+      <View className="w-full h-14 bg-[#0D9488] flex-row items-center justify-between px-3.5 shadow-md">
+        {/* LEFT: Hamburger Menu + Cricket Logo + Left-Aligned PRO Pill Button */}
+        <View className="flex-row items-center space-x-2">
           <TouchableOpacity
-            style={styles.iconTouchable}
+            className="p-1 justify-center items-center"
             activeOpacity={0.7}
             onPress={onMenuPress}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -34,24 +34,26 @@ const HomeTopHeader = ({
             <Ionicons name="menu" size={26} color="#FFFFFF" />
           </TouchableOpacity>
 
-          <View style={styles.logoBadge}>
-            <MaterialCommunityIcons name="cricket" size={22} color="#0D9488" />
+          <View className="w-8 h-8 rounded-full bg-white justify-center items-center shadow-xs">
+            <MaterialCommunityIcons name="cricket" size={20} color="#0D9488" />
           </View>
+
+          {/* Sleek Glassmorphism PRO Pill Button */}
+          <TouchableOpacity
+            className="bg-teal-900/40 border border-white/50 rounded-full px-3 py-1 ml-1.5 active:bg-teal-900/60 shadow-xs"
+            activeOpacity={0.8}
+            onPress={onProPress}
+          >
+            <Text className="text-white text-[11px] font-black tracking-wider">
+              PRO @ ₹199
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        {/* CENTER: Outlined PRO Pill Button */}
-        <TouchableOpacity
-          style={styles.proPill}
-          activeOpacity={0.8}
-          onPress={onProPress}
-        >
-          <Text style={styles.proPillText}>PRO @ ₹199</Text>
-        </TouchableOpacity>
-
         {/* RIGHT: Search + Chat + Notification Bell with Badge */}
-        <View style={styles.rightGroup}>
+        <View className="flex-row items-center gap-3.5">
           <TouchableOpacity
-            style={styles.iconTouchable}
+            className="p-1 justify-center items-center"
             activeOpacity={0.7}
             onPress={onSearchPress}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -60,7 +62,7 @@ const HomeTopHeader = ({
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.iconTouchable}
+            className="p-1 justify-center items-center"
             activeOpacity={0.7}
             onPress={onChatPress}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -69,15 +71,15 @@ const HomeTopHeader = ({
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.bellTouchable}
+            className="relative p-1 justify-center items-center"
             activeOpacity={0.7}
             onPress={onNotificationPress}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Ionicons name="notifications-outline" size={23} color="#FFFFFF" />
             {notificationCount > 0 && (
-              <View style={styles.badgeCount}>
-                <Text style={styles.badgeText}>
+              <View className="absolute -top-1 -right-1 bg-amber-500 min-w-[17px] h-[17px] rounded-full justify-center items-center px-1 border border-[#0D9488]">
+                <Text className="text-white text-[9px] font-black leading-none">
                   {notificationCount > 9 ? "9+" : notificationCount}
                 </Text>
               </View>
@@ -90,80 +92,3 @@ const HomeTopHeader = ({
 };
 
 export default HomeTopHeader;
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: 58,
-    backgroundColor: "#0D9488",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 14,
-    elevation: 4,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-  },
-  leftGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  iconTouchable: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logoBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#FFFFFF",
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 1,
-  },
-  proPill: {
-    borderWidth: 1.5,
-    borderColor: "#FFFFFF",
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 5,
-  },
-  proPillText: {
-    color: "#FFFFFF",
-    fontSize: 13,
-    fontWeight: "bold",
-    letterSpacing: 0.2,
-  },
-  rightGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-  },
-  bellTouchable: {
-    position: "relative",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  badgeCount: {
-    position: "absolute",
-    top: -5,
-    right: -6,
-    backgroundColor: "#F59E0B",
-    minWidth: 17,
-    height: 17,
-    borderRadius: 9,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 3,
-    borderWidth: 1.5,
-    borderColor: "#0D9488",
-  },
-  badgeText: {
-    color: "#FFFFFF",
-    fontSize: 9,
-    fontWeight: "bold",
-  },
-});

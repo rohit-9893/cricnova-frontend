@@ -117,11 +117,11 @@ const TeamRosterScreen = ({ navigation, route }) => {
         onBackPress={() => navigation.goBack()}
         rightComponent={
           <TouchableOpacity
-            className="bg-[#0D9488] px-3 py-1.5 rounded-lg flex-row items-center"
+            className="bg-[#0D9488] px-3.5 py-1.5 rounded-xl flex-row items-center shadow-sm"
             activeOpacity={0.8}
             onPress={handleConfirmTeam}
           >
-            <Text className="text-white text-xs font-bold mr-1">Select Team</Text>
+            <Text className="text-white text-xs font-bold mr-1">Next: Playing XI</Text>
             <Ionicons name="arrow-forward" size={14} color="#FFFFFF" />
           </TouchableOpacity>
         }
@@ -130,7 +130,7 @@ const TeamRosterScreen = ({ navigation, route }) => {
       <ScrollView
         className="flex-1 px-4 pt-4"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 110 }}
+        contentContainerStyle={{ paddingBottom: 120 }}
       >
         {/* Top Captain Profile Banner Card */}
         <View className="w-full bg-white rounded-2xl p-5 border border-slate-200 shadow-xs mb-6">
@@ -172,11 +172,13 @@ const TeamRosterScreen = ({ navigation, route }) => {
         {/* Squad Players Roster Header */}
         <View className="flex-row items-center justify-between mb-3 px-1">
           <Text className="text-base font-black text-slate-900">
-            Squad Roster ({players.length} Players)
+            Squad Roster ({players.length} {players.length === 1 ? "Player" : "Players"})
           </Text>
-          <Text className="text-slate-400 text-xs font-semibold">
-            Playing XI Selection
-          </Text>
+          <TouchableOpacity activeOpacity={0.7} onPress={handleConfirmTeam}>
+            <Text className="text-[#0D9488] text-xs font-bold">
+              Playing XI Selection →
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Squad Players List */}
@@ -186,7 +188,7 @@ const TeamRosterScreen = ({ navigation, route }) => {
             className="w-full bg-white rounded-xl p-4 border border-slate-200 flex-row items-center justify-between mb-3 shadow-2xs"
           >
             <View className="flex-row items-center flex-1">
-              <View className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 justify-center items-center mr-3">
+              <View className="w-10 h-10 rounded-full bg-teal-50 border border-teal-200 justify-center items-center mr-3">
                 <MaterialCommunityIcons
                   name={item.isCaptain ? "crown" : "account"}
                   size={20}
@@ -216,25 +218,25 @@ const TeamRosterScreen = ({ navigation, route }) => {
       </ScrollView>
 
       {/* Bottom Fixed Action Buttons (Profile & Add Player) */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 flex-row items-center justify-between space-x-3 shadow-lg">
+      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 pb-6 flex-row items-center justify-between space-x-3 shadow-lg">
         {/* Button 1: Profile */}
         <TouchableOpacity
-          className="flex-1 h-13 bg-slate-100 border border-slate-300 rounded-xl justify-center items-center flex-row mr-2"
+          className="flex-1 h-14 bg-white border-2 border-slate-200 rounded-2xl justify-center items-center flex-row mr-2 active:bg-slate-50"
           activeOpacity={0.8}
           onPress={() => setIsProfileModalVisible(true)}
         >
-          <Ionicons name="person-outline" size={18} color="#334155" className="mr-1.5" />
-          <Text className="text-slate-800 text-base font-bold ml-1">Profile</Text>
+          <Ionicons name="person-outline" size={18} color="#0F172A" className="mr-1.5" />
+          <Text className="text-slate-900 text-base font-bold ml-1">Profile</Text>
         </TouchableOpacity>
 
         {/* Button 2: Add Player */}
         <TouchableOpacity
-          className="flex-1 h-13 bg-[#0D9488] rounded-xl justify-center items-center flex-row shadow-md shadow-teal-500/20"
+          className="flex-1 h-14 bg-[#0D9488] rounded-2xl justify-center items-center flex-row shadow-lg shadow-teal-500/30 active:bg-teal-700"
           activeOpacity={0.85}
           onPress={() => setIsAddPlayerModalVisible(true)}
         >
           <Ionicons name="person-add-outline" size={18} color="#FFFFFF" className="mr-1.5" />
-          <Text className="text-white text-base font-extrabold ml-1">Add Player</Text>
+          <Text className="text-white text-base font-extrabold ml-1">+ Add Player</Text>
         </TouchableOpacity>
       </View>
 
@@ -313,7 +315,7 @@ const TeamRosterScreen = ({ navigation, route }) => {
                   </View>
 
                   <TouchableOpacity
-                    className="w-full h-13 bg-[#0D9488] rounded-xl justify-center items-center shadow-md shadow-teal-500/20"
+                    className="w-full h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-lg shadow-teal-500/30 active:bg-teal-700 mt-2 mb-4"
                     activeOpacity={0.85}
                     onPress={handleAddPlayer}
                   >

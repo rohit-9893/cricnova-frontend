@@ -2,12 +2,14 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import RootNavigator from "./src/navigation/RootNavigator";
 import ErrorBoundary from "./src/components/ui/ErrorBoundary/ErrorBoundary";
+import InternetSnackbar from "./src/components/common/InternetSnackbar";
 import "./src/app/global.css";
 
 export default function App() {
   return (
     <ErrorBoundary>
       <View style={styles.container}>
+        <InternetSnackbar />
         <RootNavigator />
       </View>
     </ErrorBoundary>

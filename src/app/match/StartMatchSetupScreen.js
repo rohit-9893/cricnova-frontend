@@ -372,26 +372,27 @@ const StartMatchSetupScreen = ({ navigation, route }) => {
       </ScrollView>
 
       {/* Bottom Fixed Action Bar (Schedule Match & Next Toss) */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex-row h-14">
+      {/* Bottom Fixed Action Bar */}
+      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 pb-6 flex-row items-center justify-between space-x-3 shadow-lg">
         {/* Schedule Match */}
         <TouchableOpacity
-          className="flex-1 bg-slate-200 justify-center items-center"
+          className="flex-1 h-14 bg-white border-2 border-slate-200 rounded-2xl justify-center items-center mr-2 active:bg-slate-50"
           activeOpacity={0.8}
           onPress={handleScheduleMatch}
         >
-          <Text className="text-slate-700 text-base font-extrabold">
+          <Text className="text-slate-800 text-base font-extrabold">
             Schedule match
           </Text>
         </TouchableOpacity>
 
         {/* Next (toss) */}
         <TouchableOpacity
-          className="flex-1 bg-[#0D9488] justify-center items-center"
+          className="flex-1 h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-lg shadow-teal-500/30 active:bg-teal-700"
           activeOpacity={0.85}
           onPress={handleNextToss}
         >
           <Text className="text-white text-base font-extrabold">
-            Next (toss)
+            Next (Toss) ➔
           </Text>
         </TouchableOpacity>
       </View>

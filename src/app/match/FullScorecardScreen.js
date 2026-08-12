@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StatusBar,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AppHeader from "../../components/ui/AppHeader";
 import useMatchStore from "../../store/useMatchStore";
@@ -21,10 +20,6 @@ const FullScorecardScreen = ({ navigation }) => {
   const oversCompleted = useMatchStore((s) => s.oversCompleted);
   const legalBalls = useMatchStore((s) => s.legalBallsInCurrentOver);
   const totalOvers = useMatchStore((s) => s.totalOvers);
-  const currentInning = useMatchStore((s) => s.currentInning);
-  const targetRuns = useMatchStore((s) => s.targetRuns);
-  const battingTeam = useMatchStore((s) => s.battingTeam);
-  const bowlingTeam = useMatchStore((s) => s.bowlingTeam);
 
   // Mock scorecard data for 1st & 2nd innings
   const inning1Batting = [
@@ -70,7 +65,7 @@ const FullScorecardScreen = ({ navigation }) => {
       <View className="flex-row bg-slate-200 p-1 mx-4 my-3 rounded-xl">
         <TouchableOpacity
           className={`flex-1 py-2.5 rounded-lg justify-center items-center ${
-            selectedInning === 1 ? "bg-[#143D2B] shadow-sm" : ""
+            selectedInning === 1 ? "bg-[#0D9488] shadow-sm" : ""
           }`}
           onPress={() => setSelectedInning(1)}
         >
@@ -79,13 +74,13 @@ const FullScorecardScreen = ({ navigation }) => {
               selectedInning === 1 ? "text-white" : "text-slate-700"
             }`}
           >
-            1ST INNING ({teamA.teamName})
+            1ST INNINGS ({teamA.teamName})
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           className={`flex-1 py-2.5 rounded-lg justify-center items-center ${
-            selectedInning === 2 ? "bg-[#143D2B] shadow-sm" : ""
+            selectedInning === 2 ? "bg-[#0D9488] shadow-sm" : ""
           }`}
           onPress={() => setSelectedInning(2)}
         >
@@ -94,29 +89,29 @@ const FullScorecardScreen = ({ navigation }) => {
               selectedInning === 2 ? "text-white" : "text-slate-700"
             }`}
           >
-            2ND INNING ({teamB.teamName})
+            2ND INNINGS ({teamB.teamName})
           </Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
         {/* Innings Summary Header Card */}
-        <View className="bg-[#143D2B] p-4 rounded-2xl mb-4 flex-row justify-between items-center shadow-md">
+        <View className="bg-[#0D9488] p-4 rounded-2xl mb-4 flex-row justify-between items-center shadow-md">
           <View>
-            <Text className="text-emerald-400 font-extrabold text-xs tracking-wider">
+            <Text className="text-teal-100 font-extrabold text-xs tracking-wider">
               {activeTeamName.toUpperCase()} BATTING
             </Text>
             <Text className="text-white text-2xl font-black mt-0.5">
               {selectedInning === 1 ? "180/3" : `${totalRuns}/${wickets}`}
-              <Text className="text-slate-300 text-sm font-semibold">
+              <Text className="text-teal-100 text-sm font-semibold">
                 {" "}
                 ({selectedInning === 1 ? `${totalOvers}.0` : `${oversCompleted}.${legalBalls}`} ov)
               </Text>
             </Text>
           </View>
 
-          <View className="bg-emerald-500/20 px-3 py-1.5 rounded-full border border-emerald-400/40">
-            <Text className="text-emerald-300 font-bold text-xs">
+          <View className="bg-white/20 px-3 py-1.5 rounded-full border border-white/30">
+            <Text className="text-white font-bold text-xs">
               CRR: {selectedInning === 1 ? "9.00" : ((totalRuns / Math.max(1, oversCompleted * 6 + legalBalls)) * 6).toFixed(2)}
             </Text>
           </View>
@@ -156,9 +151,17 @@ const FullScorecardScreen = ({ navigation }) => {
               <Text className="text-slate-600 text-xs font-bold w-9 text-right">{item.balls}</Text>
               <Text className="text-slate-600 text-xs font-medium w-8 text-right">{item.fours}</Text>
               <Text className="text-slate-600 text-xs font-medium w-8 text-right">{item.sixes}</Text>
-              <Text className="text-teal-700 text-xs font-bold w-12 text-right">{item.sr}</Text>
+              <Text className="text-[#0D9488] text-xs font-bold w-12 text-right">{item.sr}</Text>
             </View>
           ))}
+
+          {/* Total Extras Summary Row */}
+          <View className="flex-row justify-between items-center pt-2.5">
+            <Text className="text-slate-600 text-xs font-extrabold">Extras</Text>
+            <Text className="text-slate-900 text-xs font-black">
+              10 <Text className="text-slate-400 font-semibold text-[10px]">(b 2, lb 3, w 4, nb 1)</Text>
+            </Text>
+          </View>
         </View>
 
         {/* Bowling Scorecard Table Header */}
@@ -181,18 +184,24 @@ const FullScorecardScreen = ({ navigation }) => {
           </View>
 
           {/* Bowling Rows */}
-          {currentBowling.map((item, idx) => (
-            <View key={idx} className="flex-row justify-between items-center py-2.5 border-b border-slate-100">
-              <Text className="text-slate-900 text-xs font-extrabold flex-2" numberOfLines={1}>
-                {item.name}
-              </Text>
-              <Text className="text-slate-600 text-xs font-bold w-9 text-right">{item.overs}</Text>
-              <Text className="text-slate-600 text-xs font-medium w-8 text-right">{item.maidens}</Text>
-              <Text className="text-slate-600 text-xs font-medium w-9 text-right">{item.runs}</Text>
-              <Text className="text-red-600 text-xs font-black w-8 text-right">{item.wickets}</Text>
-              <Text className="text-teal-700 text-xs font-bold w-12 text-right">{item.econ}</Text>
-            </View>
-          ))}
+          {currentBowling.map((item, idx) => {
+            const econValue = parseFloat(item.econ || "0");
+            const econColor = econValue < 6.0 ? "text-[#0D9488]" : econValue >= 9.0 ? "text-slate-900" : "text-slate-700";
+            return (
+              <View key={idx} className="flex-row justify-between items-center py-2.5 border-b border-slate-100">
+                <Text className="text-slate-900 text-xs font-extrabold flex-2" numberOfLines={1}>
+                  {item.name}
+                </Text>
+                <Text className="text-slate-600 text-xs font-bold w-9 text-right">{item.overs}</Text>
+                <Text className="text-slate-600 text-xs font-medium w-8 text-right">{item.maidens}</Text>
+                <Text className="text-slate-600 text-xs font-medium w-9 text-right">{item.runs}</Text>
+                <Text className={`text-xs font-black w-8 text-right ${item.wickets > 0 ? "text-[#0D9488]" : "text-slate-400"}`}>
+                  {item.wickets}
+                </Text>
+                <Text className={`text-xs font-bold w-12 text-right ${econColor}`}>{item.econ}</Text>
+              </View>
+            );
+          })}
         </View>
       </ScrollView>
     </View>

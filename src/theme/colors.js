@@ -6,7 +6,7 @@ const Colors = {
   warmCream: "#FDFBF5",
 
   primary: "#0D9488",
-  primaryDark: "#143D2B",
+  primaryDark: "#3b7a5fff",
   secondary: "#C59B27",
 
   success: "#10B981",

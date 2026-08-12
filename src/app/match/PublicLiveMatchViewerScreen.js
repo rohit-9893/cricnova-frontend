@@ -40,34 +40,34 @@ const PublicLiveMatchViewerScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#143D2B]" edges={["top"]}>
-      <StatusBar barStyle="light-content" backgroundColor="#143D2B" translucent={true} />
+    <SafeAreaView className="flex-1 bg-[#0D9488]" edges={["top"]}>
+      <StatusBar barStyle="light-content" backgroundColor="#0D9488" translucent={true} />
 
-      {/* Top Header Bar */}
-      <View className="flex-row justify-between items-center px-4 py-3 bg-[#143D2B] border-b border-emerald-800">
+      {/* Top Header Bar (CricNovas Brand Teal #0D9488) */}
+      <View className="flex-row justify-between items-center px-4 py-3 bg-[#0D9488] border-b border-teal-700/60">
         <TouchableOpacity onPress={() => navigation.goBack()} className="p-1">
           <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
         </TouchableOpacity>
 
-        <Text className="text-white text-base font-extrabold flex-1 ml-3" numberOfLines={1}>
+        <Text className="text-white text-base font-black flex-1 ml-3" numberOfLines={1}>
           {teamAName} vs {teamBName}, Live Match
         </Text>
 
         <View className="flex-row items-center space-x-3">
-          <Ionicons name="pin-outline" size={20} color="#A7F3D0" className="mr-2" />
-          <Ionicons name="notifications-outline" size={20} color="#A7F3D0" className="mr-2" />
+          <Ionicons name="pin-outline" size={20} color="#E0F2FE" className="mr-2" />
+          <Ionicons name="notifications-outline" size={20} color="#E0F2FE" className="mr-2" />
           <Ionicons name="ellipsis-vertical" size={20} color="#FFFFFF" />
         </View>
       </View>
 
-      {/* Sub-Header Horizontal Navigation Tabs (CricNovas Teal/Emerald Theme) */}
-      <View className="flex-row bg-[#143D2B] border-b border-emerald-800/80 px-2">
+      {/* Sub-Header Horizontal Navigation Tabs (Brand Gold Underline) */}
+      <View className="flex-row bg-[#0D9488] border-b border-teal-700/80 px-2">
         {["Fantasy", "Commentary", "Live", "Scorecard", "Graphs"].map((tab) => {
           const isActive = activeTab === tab;
           return (
             <TouchableOpacity
               key={tab}
-              className={`py-3 px-3 relative`}
+              className="py-3 px-3 relative"
               onPress={() => {
                 setActiveTab(tab);
                 if (tab === "Scorecard") navigation.navigate("FullScorecard");
@@ -75,7 +75,7 @@ const PublicLiveMatchViewerScreen = ({ navigation, route }) => {
             >
               <Text
                 className={`text-xs font-black ${
-                  isActive ? "text-emerald-300 font-black" : "text-slate-300 font-semibold"
+                  isActive ? "text-white font-black" : "text-teal-100/80 font-semibold"
                 }`}
               >
                 {tab}
@@ -89,14 +89,14 @@ const PublicLiveMatchViewerScreen = ({ navigation, route }) => {
       </View>
 
       <ScrollView className="flex-1 bg-[#F8FAFC]" showsVerticalScrollIndicator={false}>
-        {/* Dark Emerald Hero Score Card Section */}
-        <View className="bg-[#143D2B] p-4 border-b border-emerald-800 shadow-md">
+        {/* Brand Teal Hero Score Card Section */}
+        <View className="bg-[#0D9488] p-4 border-b border-teal-700/60 shadow-md">
           <View className="flex-row justify-between items-center mb-3">
             {/* Left: Flag & Score */}
             <View className="flex-row items-center">
-              <View className="w-10 h-10 rounded-full bg-emerald-600 justify-center items-center mr-3 border border-white/30 shadow-sm">
+              <View className="w-11 h-11 rounded-full bg-teal-800 justify-center items-center mr-3 border-2 border-[#C59B27] shadow-sm">
                 <Text className="text-white font-black text-xs">
-                  {teamAName.substring(0, 2).toUpperCase()}
+                  {teamAName.substring(0, 3).toUpperCase()}
                 </Text>
               </View>
               <View>
@@ -104,46 +104,46 @@ const PublicLiveMatchViewerScreen = ({ navigation, route }) => {
                   <Text className="text-white text-3xl font-black mr-2">
                     {displayTotalRuns}-{displayWickets}
                   </Text>
-                  <Text className="text-emerald-200 text-xs font-bold">
+                  <Text className="text-teal-100 text-xs font-extrabold">
                     {displayOvers}
                   </Text>
                 </View>
-                <Text className="text-emerald-300 text-[10px] font-black tracking-wider">
-                  {teamAName} P1
+                <Text className="text-teal-100/90 text-[10px] font-black tracking-wider uppercase">
+                  {teamAName} 1st Innings
                 </Text>
               </View>
             </View>
 
             {/* Right: Unmute Button & Over Label */}
             <View className="items-end">
-              <TouchableOpacity className="flex-row items-center bg-emerald-950/80 px-2.5 py-1 rounded-full border border-emerald-700 mb-1">
-                <Ionicons name="volume-mute-outline" size={13} color="#A7F3D0" />
-                <Text className="text-emerald-200 text-[10px] font-bold ml-1">Unmute</Text>
+              <TouchableOpacity className="flex-row items-center bg-teal-950/40 px-2.5 py-1 rounded-full border border-teal-600 mb-1">
+                <Ionicons name="volume-mute-outline" size={13} color="#E0F2FE" />
+                <Text className="text-teal-100 text-[10px] font-bold ml-1">Unmute</Text>
               </TouchableOpacity>
               <Text className="text-white text-xl font-black tracking-wider">Over</Text>
             </View>
           </View>
 
           {/* Sub-strip: CRR & Toss info */}
-          <View className="flex-row justify-between items-center pt-2 border-t border-emerald-800/80">
-            <Text className="text-emerald-200 text-xs font-bold">
+          <View className="flex-row justify-between items-center pt-2 border-t border-teal-700/60">
+            <Text className="text-teal-100 text-xs font-bold">
               CRR: {displayCrr}
             </Text>
-            <Text className="text-emerald-200 text-xs font-bold" numberOfLines={1}>
+            <Text className="text-teal-100 text-xs font-bold" numberOfLines={1}>
               {displayToss}
             </Text>
           </View>
         </View>
 
         <View className="p-4 space-y-4">
-          {/* Live Video / Streaming Promotion Card (CricNovas Brand Palette) */}
-          <View className="bg-[#143D2B] rounded-2xl p-3.5 flex-row justify-between items-center border border-emerald-700 shadow-md">
+          {/* Live Video / Broadcast Card (Option 1 Soft Mint Emerald Card) */}
+          <View className="bg-teal-50/80 rounded-2xl p-4 flex-row justify-between items-center border border-teal-200/80 shadow-xs">
             <View className="flex-1 mr-2">
-              <Text className="text-white text-sm font-black mb-2" numberOfLines={1}>
-                {teamAName} vs {teamBName} live by <Text className="text-[#C59B27] italic font-black">CricNovas</Text>
+              <Text className="text-slate-900 text-sm font-black mb-2" numberOfLines={1}>
+                {teamAName} vs {teamBName} live by <Text className="text-[#0D9488] font-black">CricNovas</Text>
               </Text>
               <TouchableOpacity
-                className="bg-[#0D9488] px-4 py-2 rounded-full flex-row items-center self-start shadow-sm"
+                className="bg-[#0D9488] px-4 py-2 rounded-xl flex-row items-center self-start shadow-sm active:bg-teal-700"
                 activeOpacity={0.8}
                 onPress={() => Alert.alert("Live Stream 📹", "Connecting to CricNovas HD live stream...")}
               >
@@ -152,41 +152,41 @@ const PublicLiveMatchViewerScreen = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
 
-            <View className="bg-[#C59B27] px-3 py-2 rounded-xl border border-amber-300 shadow-sm justify-center items-center">
-              <Text className="text-slate-950 font-black text-xs">5 min Free</Text>
+            <View className="bg-[#C59B27] px-3 py-2 rounded-xl border border-amber-300 shadow-xs justify-center items-center">
+              <Text className="text-white font-black text-xs">5 min Free</Text>
             </View>
           </View>
 
           {/* Recent Overs Ball-by-Ball Timeline Strip */}
-          <View className="bg-white rounded-2xl p-3 border border-slate-200 flex-row items-center justify-between shadow-xs">
+          <View className="bg-white rounded-2xl p-3.5 border border-slate-200 flex-row items-center justify-between shadow-xs">
             <Text className="text-slate-500 text-xs font-bold">= 4</Text>
 
             <View className="flex-row items-center space-x-1.5 flex-1 justify-center px-2">
-              <Text className="text-slate-800 text-xs font-black mr-1">Over 5</Text>
+              <Text className="text-slate-900 text-xs font-black mr-1">Over 5</Text>
               {(timeline.length > 0 ? timeline : ["2", "0", "0", "0", "1", "0"]).map((ball, idx) => (
                 <View
                   key={idx}
-                  className={`w-6 h-6 rounded-full justify-center items-center border ${
+                  className={`w-6.5 h-6.5 rounded-full justify-center items-center border ${
                     ball === "W" || ball === "CAO"
-                      ? "bg-red-600 border-red-700 text-white"
+                      ? "bg-red-600 border-red-700"
                       : "bg-slate-100 border-slate-300"
                   }`}
                 >
-                  <Text className={`text-[11px] font-extrabold ${ball === "W" || ball === "CAO" ? "text-white" : "text-slate-800"}`}>
+                  <Text className={`text-[11px] font-black ${ball === "W" || ball === "CAO" ? "text-white" : "text-slate-800"}`}>
                     {ball}
                   </Text>
                 </View>
               ))}
-              <Text className="text-slate-800 text-xs font-black ml-1">= 3</Text>
+              <Text className="text-slate-900 text-xs font-black ml-1">= 3</Text>
             </View>
 
             <TouchableOpacity className="flex-row items-center" onPress={() => navigation.navigate("FullScorecard")}>
-              <Text className="text-slate-500 text-xs font-bold">Overs</Text>
-              <Ionicons name="chevron-forward" size={14} color="#64748B" />
+              <Text className="text-[#0D9488] text-xs font-extrabold mr-0.5">Overs</Text>
+              <Ionicons name="chevron-forward" size={14} color="#0D9488" />
             </TouchableOpacity>
           </View>
 
-          {/* Realtime Win % Probability Bar Card */}
+          {/* Realtime Win % Probability Bar Card (Brand Teal & Gold Palette) */}
           <View className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs">
             <View className="flex-row justify-between items-center mb-2">
               <Text className="text-slate-900 font-black text-sm">{teamBName} 32%</Text>
@@ -197,7 +197,7 @@ const PublicLiveMatchViewerScreen = ({ navigation, route }) => {
               <Text className="text-slate-900 font-black text-sm">{teamAName} 68%</Text>
             </View>
 
-            {/* CricNovas Gold & Emerald Gradient Slider Bar */}
+            {/* CricNovas Gold & Teal Probability Slider Bar */}
             <View className="h-2.5 bg-slate-200 rounded-full overflow-hidden flex-row">
               <View className="h-full bg-[#C59B27]" style={{ width: "32%" }} />
               <View className="h-full bg-[#0D9488]" style={{ width: "68%" }} />
@@ -226,7 +226,7 @@ const PublicLiveMatchViewerScreen = ({ navigation, route }) => {
             </View>
 
             {/* Batter 2 (Striker) */}
-            <View className="flex-row justify-between items-center py-2 border-b border-slate-100">
+            <View className="flex-row justify-between items-center py-2 border-b border-slate-100 bg-teal-50/40 rounded-xl px-1">
               <View className="flex-row items-center flex-2">
                 <Text className="text-slate-900 text-xs font-black" numberOfLines={1}>
                   {striker || "Anthony Mosca"}

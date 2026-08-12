@@ -47,8 +47,31 @@ const SidebarDrawer = ({ visible, onClose, navigation, user: propsUser = {} }) =
   const displayName = activeUser.fullName || `${activeUser.firstName || ""} ${activeUser.lastName || ""}`.trim() || activeUser.name || "Cricket Player";
   const displayPhone = activeUser.mobileNumber || activeUser.phone || "Logged In";
   const avatarBg = activeUser.avatarColor || "#C59B27";
-  const avatarText = activeUser.avatarInitials || (displayName !== "Cricket Player" ? displayName.substring(0, 2).toUpperCase() : "CN");
-  const completionPercent = activeUser.profileCompleted || activeUser.isRegistered ? 100 : 60;
+  const avatarText =
+    activeUser.avatarInitials ||
+    (displayName !== "Cricket Player" ? displayName.substring(0, 2).toUpperCase() : "CN");
+
+  // Real-time Dynamic Profile Completion Percentage Calculator
+  const calcProfileCompletion = (u) => {
+    if (!u) return 0;
+    const fields = [
+      u.fullName || u.name,
+      u.city || u.location,
+      u.gender,
+      u.dateOfBirth || u.dob,
+      u.email,
+      u.mobileNumber || u.phone,
+      u.playingRole,
+      u.battingStyle,
+      u.bowlingStyle,
+    ];
+    const filled = fields.filter(
+      (f) => f && String(f).trim() !== "" && f !== "None" && f !== "Prefer not to say"
+    ).length;
+    return Math.round((filled / fields.length) * 100);
+  };
+
+  const completionPercent = calcProfileCompletion(activeUser);
   const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const isClosing = useRef(false);
@@ -215,7 +238,7 @@ const SidebarDrawer = ({ visible, onClose, navigation, user: propsUser = {} }) =
         {/* Sliding Drawer Container */}
         <Animated.View
           {...panResponder.panHandlers}
-          className="absolute left-0 bottom-0 bg-[#143D2B] shadow-2xl elevation-xl"
+          className="absolute left-0 bottom-0 bg-white shadow-2xl elevation-xl"
           style={[
             {
               width: DRAWER_WIDTH,
@@ -225,19 +248,29 @@ const SidebarDrawer = ({ visible, onClose, navigation, user: propsUser = {} }) =
           ]}
         >
           <View
-            className="flex-1 bg-[#143D2B]"
+            className="flex-1 bg-white"
             onStartShouldSetResponder={() => true}
           >
-              {/* Profile Top Header Section (Option 1: Modern Dark Slate Glassmorphism) */}
-              <View className="bg-[#0F172A] p-4 border-b border-slate-800 shadow-lg">
+              {/* Profile Top Header Section (Option 1: Deep Harmonious Brand Teal) */}
+              <View className="bg-[#085E56] p-4 border-b border-teal-700/40 shadow-md">
                 <View className="flex-row items-center mb-3.5">
                   {/* User Avatar Circle (Vibrant Teal with Gold Accent Ring) */}
                   <View className="relative mr-3.5">
                     <View
                       className="w-14 h-14 rounded-full justify-center items-center border-2 border-[#C59B27] shadow-md overflow-hidden bg-[#0D9488]"
                     >
-                      {activeUser.profileImageUrl ? (
-                        <Image source={{ uri: activeUser.profileImageUrl }} className="w-full h-full" resizeMode="cover" />
+                      {activeUser.profileImageUrl || activeUser.profilePhoto || activeUser.photo || activeUser.avatarUrl ? (
+                        <Image
+                          source={{
+                            uri:
+                              activeUser.profileImageUrl ||
+                              activeUser.profilePhoto ||
+                              activeUser.photo ||
+                              activeUser.avatarUrl,
+                          }}
+                          className="w-full h-full"
+                          resizeMode="cover"
+                        />
                       ) : (
                         <Text className="text-white text-lg font-black tracking-wider">{avatarText}</Text>
                       )}
