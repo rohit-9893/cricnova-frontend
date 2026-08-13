@@ -17,21 +17,21 @@ const ProfileHeaderCard = ({
     <View className="bg-white p-4 border-b-8 border-slate-100">
       {/* Top User Details Row */}
       <View className="flex-row items-start justify-between mb-4">
-        {/* Avatar Circle with Edit Badge */}
+        {/* Avatar Circle with Plus (+) Badge */}
         <TouchableOpacity
-          className="mr-3"
+          className="mr-3 relative"
           activeOpacity={0.8}
           onPress={onEditAvatarPress}
         >
-          <View className="w-20 h-20 rounded-full bg-slate-800 justify-center items-center overflow-hidden relative border-2 border-[#0D9488] shadow-sm">
+          <View className="w-20 h-20 rounded-full bg-slate-800 justify-center items-center overflow-hidden border-2 border-[#0D9488] shadow-sm">
             {profileImageUrl ? (
               <Image source={{ uri: profileImageUrl }} className="w-full h-full" resizeMode="cover" />
             ) : (
               <Ionicons name="person" size={44} color="#CBD5E1" />
             )}
-            <View className="absolute bottom-0 left-0 right-0 bg-[#0D9488] py-0.5 items-center">
-              <Text className="text-white text-[10px] font-extrabold">Edit</Text>
-            </View>
+          </View>
+          <View className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-[#0D9488] justify-center items-center border-2 border-white shadow-xs">
+            <Ionicons name="add" size={14} color="#FFFFFF" />
           </View>
         </TouchableOpacity>
 

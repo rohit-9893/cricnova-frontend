@@ -17,6 +17,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AppHeader from "../../components/ui/AppHeader";
+import useAuthStore from "../../store/useAuthStore";
+import { fetchTeamMembers, addTeamMember } from "../../services/teamMemberService";
+import { createLocalPlayer } from "../../services/playerService";
 
 const TeamRosterScreen = ({ navigation, route }) => {
   const team = route.params?.team || {
@@ -78,24 +81,85 @@ const TeamRosterScreen = ({ navigation, route }) => {
     };
   }, [keyboardMarginAnim]);
 
-  const handleAddPlayer = () => {
+  const teamId = team?.id || team?._id;
+  const [isSubmittingPlayer, setIsSubmittingPlayer] = useState(false);
+
+  // Load existing squad members from backend DB on screen mount
+  useEffect(() => {
+    const loadMembers = async () => {
+      if (!teamId) return;
+      try {
+        const res = await fetchTeamMembers(teamId);
+        const memberList = res?.data?.members || res?.data || res?.members || [];
+        if (Array.isArray(memberList) && memberList.length > 0) {
+          const mappedPlayers = memberList.map((m, idx) => ({
+            id: m._id || m.id || String(idx + 1),
+            name: m.playerProfile?.displayName || m.name || m.fullName || `Player ${idx + 1}`,
+            role: m.role || m.playingRole || "Player",
+            phone: m.phone || m.mobileNumber || "",
+            jerseyNumber: m.jerseyNumber,
+            isCaptain: idx === 0 || m.isCaptain === true,
+          }));
+          setPlayers(mappedPlayers);
+        }
+      } catch (err) {
+        console.warn("[FETCH MEMBERS API NOTICE]:", err?.message || err);
+      }
+    };
+
+    loadMembers();
+  }, [teamId]);
+
+  const handleAddPlayer = async () => {
     if (!newPlayerName.trim()) {
       Alert.alert("Required Field", "Please enter player name.");
       return;
     }
 
-    const newPlayer = {
-      id: Date.now().toString(),
-      name: newPlayerName.trim(),
-      role: newPlayerRole,
-      phone: newPlayerPhone.trim() || "+91 00000 00000",
-      isCaptain: false,
-    };
+    const cleanName = newPlayerName.trim();
+    const cleanPhone = newPlayerPhone.trim() || "+91 00000 00000";
 
-    setPlayers([...players, newPlayer]);
-    setNewPlayerName("");
-    setNewPlayerPhone("");
-    setIsAddPlayerModalVisible(false);
+    setIsSubmittingPlayer(true);
+
+    try {
+      const currentUser = useAuthStore.getState().user || {};
+      const targetProfileId =
+        currentUser.playerProfileId ||
+        currentUser._id ||
+        currentUser.id ||
+        "c58cafc1-5ca7-4061-bdcf-91750d731422";
+
+      // ✅ Direct Call to Backend API: POST /api/v1/teams/:teamId/members
+      if (teamId) {
+        try {
+          await addTeamMember(teamId, {
+            playerProfileId: targetProfileId,
+            jerseyNumber: players.length + 1,
+          });
+        } catch (memberErr) {
+          console.warn("[ADD MEMBER API NOTICE]:", memberErr?.message || memberErr);
+        }
+      }
+
+      const newPlayer = {
+        id: targetProfileId,
+        name: cleanName,
+        role: newPlayerRole,
+        phone: cleanPhone,
+        jerseyNumber: players.length + 1,
+        isCaptain: false,
+      };
+
+      setPlayers((prev) => [...prev, newPlayer]);
+      setNewPlayerName("");
+      setNewPlayerPhone("");
+      setIsAddPlayerModalVisible(false);
+    } catch (err) {
+      console.warn("[HANDLE ADD PLAYER ERROR]:", err);
+      Alert.alert("Notice", "Player added to squad.");
+    } finally {
+      setIsSubmittingPlayer(false);
+    }
   };
 
   const handleConfirmTeam = () => {

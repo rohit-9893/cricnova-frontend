@@ -144,10 +144,23 @@ const SelectTeamScreen = ({ navigation, route }) => {
       }
     }
 
-    // Build payload matching backend contract: { name, description, logoUrl, location }
+    const teamCleanName = teamName.trim();
+    const cleanCity = city.trim() || "Indore";
+    const generateShortName = (str) => {
+      const parts = str.split(" ").filter(Boolean);
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[1][0] + (parts[2] ? parts[2][0] : "")).toUpperCase();
+      }
+      return str.substring(0, 4).toUpperCase();
+    };
+
     const payload = {
-      name: teamName.trim(),
-      location: city.trim() || "India",
+      name: teamCleanName,
+      shortName: generateShortName(teamCleanName),
+      city: cleanCity,
+      state: "Madhya Pradesh",
+      country: "India",
+      description: `Cricket team from ${cleanCity}`,
     };
 
     // Generate UI avatar data for local display
