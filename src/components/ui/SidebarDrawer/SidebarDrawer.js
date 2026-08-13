@@ -116,6 +116,8 @@ const SidebarDrawer = ({ visible, onClose, navigation, user: propsUser = {} }) =
           navigation.navigate("CreateTournament");
         } else if (item.id === "profile" || item.title === "My Profile") {
           navigation.navigate("MyProfile");
+        } else if (item.id === "my_cricket" || item.title === "My Cricket") {
+          navigation.navigate("MainTabs", { initialTab: "My Cricket" });
         } else {
           navigation.navigate("Placeholder", { title: item.title });
         }

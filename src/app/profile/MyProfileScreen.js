@@ -180,13 +180,9 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   scrollContent: {
-    paddingBottom: 60,
+    paddingBottom: 30,
   },
   bottomNoticeBar: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
     backgroundColor: "#CCFBF1",
     paddingVertical: 10,
     alignItems: "center",

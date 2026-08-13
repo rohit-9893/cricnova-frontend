@@ -7,7 +7,7 @@ import MobileInputScreen from "../app/(auth)/MobileInputScreen";
 import OtpVerifyScreen from "../app/(auth)/OtpVerifyScreen";
 import RegisterScreen from "../app/(auth)/RegisterScreen";
 import GuestCityScreen from "../app/(auth)/GuestCityScreen";
-import HomeScreen from "../app/(home)/HomeScreen";
+import MainTabsNavigator from "./MainTabsNavigator";
 import PlaceholderScreen from "../app/placeholder/PlaceholderScreen";
 import SelectPlayingTeamsScreen from "../app/match/SelectPlayingTeamsScreen";
 import SelectTeamScreen from "../app/match/SelectTeamScreen";
@@ -18,7 +18,6 @@ import CreateTournamentScreen from "../app/tournament/CreateTournamentScreen";
 import MyProfileScreen from "../app/profile/MyProfileScreen";
 import EditProfileScreen from "../app/profile/EditProfileScreen";
 import PlayerStatsScreen from "../app/profile/PlayerStatsScreen";
-import SearchScreen from "../app/search/SearchScreen";
 
 import TossScreen from "../app/match/TossScreen";
 import StartInningsScreen from "../app/match/StartInningsScreen";
@@ -43,7 +42,10 @@ const AppNavigator = () => {
       <Stack.Screen name="OtpVerify" component={OtpVerifyScreen} />
       <Stack.Screen name="GuestCity" component={GuestCityScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="MainTabs" component={MainTabsNavigator} />
+      <Stack.Screen name="Home" component={MainTabsNavigator} />
+      <Stack.Screen name="Search" component={MainTabsNavigator} />
+      <Stack.Screen name="MyProfile" component={MyProfileScreen} />
       <Stack.Screen name="Placeholder" component={PlaceholderScreen} />
       <Stack.Screen name="SelectPlayingTeams" component={SelectPlayingTeamsScreen} />
       <Stack.Screen name="SelectTeam" component={SelectTeamScreen} />
@@ -57,10 +59,8 @@ const AppNavigator = () => {
       <Stack.Screen name="MatchSummary" component={MatchSummaryScreen} />
       <Stack.Screen name="FullScorecard" component={FullScorecardScreen} />
       <Stack.Screen name="CreateTournament" component={CreateTournamentScreen} />
-      <Stack.Screen name="MyProfile" component={MyProfileScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="PlayerStats" component={PlayerStatsScreen} />
-      <Stack.Screen name="Search" component={SearchScreen} />
     </Stack.Navigator>
   );
 };

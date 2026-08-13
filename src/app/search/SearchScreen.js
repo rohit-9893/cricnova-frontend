@@ -197,7 +197,7 @@ const SearchScreen = ({ navigation }) => {
       {/* ── Standard Brand Header (Same Teal #0D9488 + Zero Top White Space) ── */}
       <View style={{ paddingTop: insets.top }} className="bg-[#0D9488] w-full">
         <StatusBar barStyle="light-content" backgroundColor="#0D9488" translucent={true} />
-        
+
         {/* Header Top Bar */}
         <View className="flex-row items-center px-3 h-14">
           <TouchableOpacity
@@ -240,9 +240,8 @@ const SearchScreen = ({ navigation }) => {
           return (
             <TouchableOpacity
               key={tab.key}
-              className={`flex-1 flex-row justify-center items-center py-3 gap-1.5 border-b-2 ${
-                isActive ? "border-[#0D9488]" : "border-transparent"
-              }`}
+              className={`flex-1 flex-row justify-center items-center py-3 gap-1.5 border-b-2 ${isActive ? "border-[#0D9488]" : "border-transparent"
+                }`}
               onPress={() => handleTabChange(tab.key)}
               activeOpacity={0.8}
             >
@@ -252,9 +251,8 @@ const SearchScreen = ({ navigation }) => {
                 color={isActive ? "#0D9488" : "#94A3B8"}
               />
               <Text
-                className={`text-xs font-bold ${
-                  isActive ? "text-[#0D9488]" : "text-slate-400"
-                }`}
+                className={`text-xs font-bold ${isActive ? "text-[#0D9488]" : "text-slate-400"
+                  }`}
               >
                 {tab.label}
               </Text>

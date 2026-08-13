@@ -80,13 +80,23 @@ const OtpVerifyScreen = ({ navigation, route }) => {
 
       if (token) {
         await useAuthStore.getState().setAuth(token, user);
+
+        // ✅ Fetch complete merged profile (local storage + backend)
+        // This ensures isRegistered is preserved even if backend doesn't send it
+        await useAuthStore.getState().fetchProfileApi();
       }
 
-      // Check profileCompleted flag from backend response
-      const isProfileCompleted = user?.profileCompleted === true || user?.isRegistered === true;
+      // Check profile completion from store (merged local + backend data)
+      // — NOT from raw verify-otp response which often lacks these flags
+      const storeUser = useAuthStore.getState().user || {};
+      const isProfileCompleted =
+        storeUser?.profileCompleted === true ||
+        storeUser?.isRegistered === true ||
+        Boolean(storeUser?.fullName || storeUser?.name) ||
+        Boolean(storeUser?.city || storeUser?.location);
 
       if (isProfileCompleted) {
-        // User profile is complete -> Direct Home Screen navigation
+        // Returning user — go directly to Home
         Alert.alert(
           "Welcome Back! 🎉",
           "Logging in to CricNovas...",
@@ -103,7 +113,7 @@ const OtpVerifyScreen = ({ navigation, route }) => {
           ]
         );
       } else {
-        // New user or incomplete profile -> Navigate to Onboarding Profile Setup
+        // New user — go to profile setup
         Alert.alert(
           "OTP Verified! 🎉",
           "Please complete your player profile.",

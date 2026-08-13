@@ -7,18 +7,20 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#0D9488",
-        tabBarInactiveTintColor: "#64748B",
+        tabBarActiveTintColor: "#0D9488", // Header Teal Brand Color
+        tabBarInactiveTintColor: "#334155", // Dark Inactive
         tabBarStyle: {
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          height: 64,
+          paddingBottom: 6,
+          paddingTop: 6,
           backgroundColor: "#FFFFFF",
           borderTopColor: "#E2E8F0",
+          borderTopWidth: 1,
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "600",
+          marginTop: 2,
         },
       }}
     >
@@ -26,35 +28,44 @@ export default function TabsLayout() {
         name="home"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "home" : "home-outline"} size={25} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="matches"
+        name="looking"
         options={{
-          title: "Matches",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="cricket" size={size} color={color} />
+          title: "Looking",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="binoculars" size={25} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="tournaments"
+        name="mycricket"
         options={{
-          title: "Tournaments",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="trophy-outline" size={size} color={color} />
+          title: "My Cricket",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="cricket" size={25} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="community"
         options={{
-          title: "Profile",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
+          title: "Community",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "people" : "people-outline"} size={25} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="store"
+        options={{
+          title: "Store",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? "bag-handle" : "bag-handle-outline"} size={25} color={color} />
           ),
         }}
       />

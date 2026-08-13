@@ -16,9 +16,9 @@ const HomeScreen = ({ navigation }) => {
   const [isLoadingLive, setIsLoadingLive] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Local Match Store State (Hybrid Fallback)
-  const localTeamA = useMatchStore((s) => s.teamA) || { teamName: "Italy", avatarInitials: "ITA" };
-  const localTeamB = useMatchStore((s) => s.teamB) || { teamName: "Uganda", avatarInitials: "UGN" };
+  // Local in-progress match from scoring engine (device-only, no static fallback)
+  const localTeamA = useMatchStore((s) => s.teamA);
+  const localTeamB = useMatchStore((s) => s.teamB);
   const localTotalRuns = useMatchStore((s) => s.totalRuns);
   const localWickets = useMatchStore((s) => s.wickets);
   const localOversCompleted = useMatchStore((s) => s.oversCompleted);
@@ -28,6 +28,12 @@ const HomeScreen = ({ navigation }) => {
   const striker = useMatchStore((s) => s.striker);
   const nonStriker = useMatchStore((s) => s.nonStriker);
   const currentBowler = useMatchStore((s) => s.currentBowler);
+
+  // Is there an active local scoring session on this device?
+  const hasLocalLiveMatch =
+    !isMatchFinished &&
+    localTeamA?.teamName &&
+    (localTotalRuns > 0 || localOversCompleted > 0 || localLegalBalls > 0);
 
   // Fetch Live Matches from Backend API
   const loadLiveMatches = useCallback(async (showRefreshing = false) => {
@@ -40,6 +46,7 @@ const HomeScreen = ({ navigation }) => {
       setApiLiveMatches(Array.isArray(matches) ? matches : []);
     } catch (err) {
       console.warn("[HOME LIVE MATCHES API NOTICE]:", err?.message || err);
+      setApiLiveMatches([]);
     } finally {
       setIsLoadingLive(false);
       setIsRefreshing(false);
@@ -54,33 +61,33 @@ const HomeScreen = ({ navigation }) => {
     loadLiveMatches(true);
   };
 
-  // Determine active live match data (API > Local Store > Mock Featured)
-  const hasApiLiveMatch = apiLiveMatches.length > 0;
-  const hasLocalLiveMatch = !isMatchFinished && (localTotalRuns > 0 || localOversCompleted > 0 || localLegalBalls > 0);
+  // Build local match display object from scoring store (no hardcoded values)
+  const localMatchDisplay = hasLocalLiveMatch
+    ? {
+        matchId: null,
+        teamA: localTeamA?.avatarInitials || localTeamA?.teamName?.substring(0, 3).toUpperCase(),
+        teamB: localTeamB?.avatarInitials || localTeamB?.teamName?.substring(0, 3).toUpperCase(),
+        teamAName: localTeamA?.teamName,
+        teamBName: localTeamB?.teamName,
+        totalRuns: localTotalRuns,
+        wickets: localWickets,
+        overs: `${localOversCompleted}.${localLegalBalls}`,
+        totalOvers: localTotalOvers,
+        crr: ((localTotalRuns / Math.max(1, localOversCompleted * 6 + localLegalBalls)) * 6).toFixed(2),
+        tossInfo: "",
+        striker: typeof striker === "string" ? striker : striker?.name || "",
+        nonStriker: typeof nonStriker === "string" ? nonStriker : nonStriker?.name || "",
+        bowler: typeof currentBowler === "string" ? currentBowler : currentBowler?.name || "",
+      }
+    : null;
 
-  const displayMatch = hasApiLiveMatch
-    ? apiLiveMatches[0]
-    : {
-        matchId: "26303040",
-        teamA: localTeamA.avatarInitials || "ITA",
-        teamB: localTeamB.avatarInitials || "UGN",
-        teamAName: localTeamA.teamName || "Italy",
-        teamBName: localTeamB.teamName || "Uganda",
-        totalRuns: hasLocalLiveMatch ? localTotalRuns : 14,
-        wickets: hasLocalLiveMatch ? localWickets : 0,
-        overs: hasLocalLiveMatch ? `${localOversCompleted}.${localLegalBalls}` : "5.0",
-        totalOvers: localTotalOvers || 20,
-        crr: hasLocalLiveMatch
-          ? ((localTotalRuns / Math.max(1, localOversCompleted * 6 + localLegalBalls)) * 6).toFixed(2)
-          : "2.80",
-        tossInfo: `${localTeamA.teamName || "Italy"} won the toss and elected to bat`,
-        striker: typeof striker === "string" ? striker : striker?.name || "Justin Mosca",
-        nonStriker: typeof nonStriker === "string" ? nonStriker : nonStriker?.name || "Anthony Mosca",
-        bowler: typeof currentBowler === "string" ? currentBowler : currentBowler?.name || "Alpesh Ramjani",
-      };
+  // Priority: API match > Local scoring session > Nothing (show empty state)
+  const hasApiMatch = apiLiveMatches.length > 0;
+  const displayMatch = hasApiMatch ? apiLiveMatches[0] : localMatchDisplay;
+  const hasAnyMatch = Boolean(displayMatch);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }} edges={["left", "right", "bottom"]}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }} edges={["left", "right"]}>
       {/* Top Header Bar */}
       <HomeTopHeader
         onMenuPress={() => setIsSidebarVisible(true)}
@@ -96,7 +103,7 @@ const HomeScreen = ({ navigation }) => {
         onNotificationPress={() =>
           navigation && navigation.navigate && navigation.navigate("Placeholder", { title: "Notifications" })
         }
-        notificationCount={2}
+        notificationCount={0}
       />
 
       {/* Main Scrollable Canvas with Pull-to-Refresh */}
@@ -115,7 +122,7 @@ const HomeScreen = ({ navigation }) => {
 
         {activeTab === "For you" ? (
           <View className="space-y-4 my-2">
-            {/* User Story Feed Bar (Avatar with (+) Plus Badge & Speech Recommendation Box) */}
+            {/* User Story Feed Bar */}
             <UserStoryFeedBar
               onProfilePress={() => navigation.navigate("MyProfile")}
               onAddPostPress={() =>
@@ -123,111 +130,135 @@ const HomeScreen = ({ navigation }) => {
               }
             />
 
-            {/* Live Featured Match Card (Dynamic / Hybrid) */}
-            <View className="bg-white rounded-2xl p-4 border border-slate-200 shadow-md">
-              <View className="flex-row justify-between items-center pb-2 border-b border-slate-100 mb-3">
-                <Text className="text-slate-500 text-[11px] font-black tracking-wider uppercase">
-                  {hasLocalLiveMatch ? "YOUR LOCAL MATCH • LIVE" : "35TH LIST A • LIVE MATCH"}
+            {/* ── Live Match Section ── */}
+            {isLoadingLive ? (
+              /* Loading Skeleton */
+              <View className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm items-center justify-center" style={{ minHeight: 120 }}>
+                <ActivityIndicator size="small" color="#0D9488" />
+                <Text className="text-slate-400 text-xs font-semibold mt-2">
+                  Fetching live matches...
                 </Text>
-                <View className="flex-row items-center bg-red-600 px-2 py-0.5 rounded-full">
-                  <View className="w-1.5 h-1.5 rounded-full bg-white mr-1" />
-                  <Text className="text-white text-[9px] font-black">LIVE</Text>
-                </View>
               </View>
-
-              {/* Match Teams & Score Row */}
-              <TouchableOpacity
-                activeOpacity={0.85}
-                onPress={() =>
-                  navigation.navigate("PublicLiveMatchViewer", {
-                    matchId: displayMatch.matchId || "26303040",
-                    teamA: displayMatch.teamA || "ITA",
-                    teamB: displayMatch.teamB || "UGN",
-                    teamAName: displayMatch.teamAName || "Italy",
-                    teamBName: displayMatch.teamBName || "Uganda",
-                    totalRuns: displayMatch.totalRuns || 0,
-                    wickets: displayMatch.wickets || 0,
-                    overs: displayMatch.overs || "0.0",
-                    crr: displayMatch.crr || "0.00",
-                    tossInfo: displayMatch.tossInfo || "",
-                    striker: displayMatch.striker || "Striker",
-                    nonStriker: displayMatch.nonStriker || "Non-Striker",
-                    bowler: displayMatch.bowler || "Bowler",
-                  })
-                }
-              >
-                {/* Team A Score Row */}
-                <View className="flex-row justify-between items-center mb-3">
-                  <View className="flex-row items-center">
-                    <View className="w-9 h-9 rounded-full bg-[#0D9488] justify-center items-center mr-2.5 shadow-xs">
-                      <Text className="text-white font-black text-xs">
-                        {(displayMatch.teamA || "ITA").slice(0, 3).toUpperCase()}
-                      </Text>
-                    </View>
-                    <Text className="text-slate-900 font-extrabold text-sm">
-                      {displayMatch.teamAName || "Team A"}
-                    </Text>
-                  </View>
-
-                  <View className="items-end">
-                    <Text className="text-slate-900 font-black text-base">
-                      {displayMatch.totalRuns}/{displayMatch.wickets}
-                    </Text>
-                    <Text className="text-slate-500 text-[10px] font-bold">
-                      {displayMatch.overs} ov
-                    </Text>
+            ) : hasAnyMatch ? (
+              /* Live Match Card */
+              <View className="bg-white rounded-2xl p-4 border border-slate-200 shadow-md">
+                {/* Card Header */}
+                <View className="flex-row justify-between items-center pb-2 border-b border-slate-100 mb-3">
+                  <Text className="text-slate-500 text-[11px] font-black tracking-wider uppercase">
+                    {hasLocalLiveMatch ? "YOUR LOCAL MATCH • LIVE" : "LIVE MATCH"}
+                  </Text>
+                  <View className="flex-row items-center bg-red-600 px-2 py-0.5 rounded-full">
+                    <View className="w-1.5 h-1.5 rounded-full bg-white mr-1" />
+                    <Text className="text-white text-[9px] font-black">LIVE</Text>
                   </View>
                 </View>
 
-                {/* Team B Score Row */}
-                <View className="flex-row justify-between items-center mb-3">
-                  <View className="flex-row items-center">
-                    <View className="w-9 h-9 rounded-full bg-[#C59B27] justify-center items-center mr-2.5 shadow-xs">
-                      <Text className="text-white font-black text-xs">
-                        {(displayMatch.teamB || "UGN").slice(0, 3).toUpperCase()}
+                {/* Match Teams & Score */}
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() =>
+                    displayMatch?.matchId &&
+                    navigation.navigate("PublicLiveMatchViewer", {
+                      matchId: displayMatch.matchId,
+                      teamA: displayMatch.teamA,
+                      teamB: displayMatch.teamB,
+                      teamAName: displayMatch.teamAName,
+                      teamBName: displayMatch.teamBName,
+                      totalRuns: displayMatch.totalRuns,
+                      wickets: displayMatch.wickets,
+                      overs: displayMatch.overs,
+                      crr: displayMatch.crr,
+                      tossInfo: displayMatch.tossInfo,
+                      striker: displayMatch.striker,
+                      nonStriker: displayMatch.nonStriker,
+                      bowler: displayMatch.bowler,
+                    })
+                  }
+                >
+                  {/* Team A */}
+                  <View className="flex-row justify-between items-center mb-3">
+                    <View className="flex-row items-center">
+                      <View className="w-9 h-9 rounded-full bg-[#0D9488] justify-center items-center mr-2.5 shadow-xs">
+                        <Text className="text-white font-black text-xs">
+                          {String(displayMatch.teamA || "").slice(0, 3).toUpperCase()}
+                        </Text>
+                      </View>
+                      <Text className="text-slate-900 font-extrabold text-sm">
+                        {displayMatch.teamAName}
                       </Text>
                     </View>
-                    <Text className="text-slate-900 font-extrabold text-sm">
-                      {displayMatch.teamBName || "Team B"}
+                    <View className="items-end">
+                      <Text className="text-slate-900 font-black text-base">
+                        {displayMatch.totalRuns}/{displayMatch.wickets}
+                      </Text>
+                      <Text className="text-slate-500 text-[10px] font-bold">
+                        {displayMatch.overs} ov
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Team B */}
+                  <View className="flex-row justify-between items-center mb-3">
+                    <View className="flex-row items-center">
+                      <View className="w-9 h-9 rounded-full bg-[#C59B27] justify-center items-center mr-2.5 shadow-xs">
+                        <Text className="text-white font-black text-xs">
+                          {String(displayMatch.teamB || "").slice(0, 3).toUpperCase()}
+                        </Text>
+                      </View>
+                      <Text className="text-slate-900 font-extrabold text-sm">
+                        {displayMatch.teamBName}
+                      </Text>
+                    </View>
+                    <View className="items-end">
+                      <Text className="text-slate-400 font-bold text-xs">Yet to bat</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+
+                {/* Watch Live Button */}
+                {hasApiMatch && displayMatch?.matchId && (
+                  <TouchableOpacity
+                    className="w-full h-11 bg-[#0D9488] rounded-xl justify-center items-center flex-row shadow-sm mt-1"
+                    activeOpacity={0.85}
+                    onPress={() =>
+                      navigation.navigate("PublicLiveMatchViewer", {
+                        matchId: displayMatch.matchId,
+                        teamA: displayMatch.teamA,
+                        teamB: displayMatch.teamB,
+                        teamAName: displayMatch.teamAName,
+                        teamBName: displayMatch.teamBName,
+                        totalRuns: displayMatch.totalRuns,
+                        wickets: displayMatch.wickets,
+                        overs: displayMatch.overs,
+                        crr: displayMatch.crr,
+                        tossInfo: displayMatch.tossInfo,
+                        striker: displayMatch.striker,
+                        nonStriker: displayMatch.nonStriker,
+                        bowler: displayMatch.bowler,
+                      })
+                    }
+                  >
+                    <Ionicons name="play-circle-outline" size={18} color="#FFFFFF" />
+                    <Text className="text-white font-black text-xs ml-1.5">
+                      Watch Live Spectator Broadcast 📺
                     </Text>
-                  </View>
-
-                  <View className="items-end">
-                    <Text className="text-slate-400 font-bold text-xs">Yet to bat</Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-
-              {/* Action Button: Watch Live Spectator Stream */}
-              <TouchableOpacity
-                className="w-full h-11 bg-[#0D9488] rounded-xl justify-center items-center flex-row shadow-sm mt-1"
-                activeOpacity={0.85}
-                onPress={() =>
-                  navigation.navigate("PublicLiveMatchViewer", {
-                    matchId: displayMatch.matchId || "26303040",
-                    teamA: displayMatch.teamA || "ITA",
-                    teamB: displayMatch.teamB || "UGN",
-                    teamAName: displayMatch.teamAName || "Italy",
-                    teamBName: displayMatch.teamBName || "Uganda",
-                    totalRuns: displayMatch.totalRuns || 0,
-                    wickets: displayMatch.wickets || 0,
-                    overs: displayMatch.overs || "0.0",
-                    crr: displayMatch.crr || "0.00",
-                    tossInfo: displayMatch.tossInfo || "",
-                    striker: displayMatch.striker || "Striker",
-                    nonStriker: displayMatch.nonStriker || "Non-Striker",
-                    bowler: displayMatch.bowler || "Bowler",
-                  })
-                }
-              >
-                <Ionicons name="play-circle-outline" size={18} color="#FFFFFF" />
-                <Text className="text-white font-black text-xs ml-1.5">
-                  Watch Live Match Spectator Broadcast 📺
+                  </TouchableOpacity>
+                )}
+              </View>
+            ) : (
+              /* No Live Matches Empty State */
+              <View className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm items-center">
+                <MaterialCommunityIcons name="cricket" size={40} color="#CBD5E1" />
+                <Text className="text-slate-900 font-extrabold text-sm mt-3">
+                  No Live Matches Right Now
                 </Text>
-              </TouchableOpacity>
-            </View>
+                <Text className="text-slate-400 text-xs font-medium text-center mt-1 leading-4">
+                  Pull down to refresh or start scoring{"\n"}your own match below.
+                </Text>
+              </View>
+            )}
 
-            {/* Quick Action Banner */}
+            {/* Quick Action Banner — Start a Match */}
             <TouchableOpacity
               className="bg-teal-50/80 p-4 rounded-2xl flex-row justify-between items-center shadow-xs border border-teal-200/80"
               activeOpacity={0.85}

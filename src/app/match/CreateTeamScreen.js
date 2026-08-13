@@ -4,6 +4,8 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,6 +13,7 @@ import AppHeader from "../../components/ui/AppHeader";
 import SubHeaderTabs from "../../components/ui/SubHeaderTabs";
 import TeamLogoPicker from "../../components/team/TeamLogoPicker";
 import UnderlineInput from "../../components/ui/UnderlineInput";
+import { createTeam } from "../../services/teamService";
 
 const TABS = ["Your teams", "Opponents", "Add"];
 
@@ -23,10 +26,44 @@ const CreateTeamScreen = ({ navigation }) => {
   const [captainPhone, setCaptainPhone] = useState("");
   const [captainName, setCaptainName] = useState("");
   const [addSelf, setAddSelf] = useState(false);
+  const [isCreatingTeam, setIsCreatingTeam] = useState(false);
 
   const handleTabPress = (tab) => {
     if (tab === "Your teams" || tab === "Opponents") {
       navigation.navigate("SelectTeam", { teamType: "A" });
+    }
+  };
+
+  // POST /api/v1/teams — Save team permanently to DB
+  const handleCreateTeam = async () => {
+    if (!teamName.trim()) {
+      Alert.alert("Required Field", "Please enter a team name.");
+      return;
+    }
+
+    const payload = {
+      name: teamName.trim(),
+      location: city.trim() || "India",
+    };
+
+    try {
+      setIsCreatingTeam(true);
+      const res = await createTeam(payload);
+      const savedTeam = res?.data?.team || res?.data || res?.team || res;
+
+      Alert.alert(
+        "Team Created ✅",
+        `"${savedTeam?.name || teamName.trim()}" has been saved to your account!`,
+        [{ text: "OK", onPress: () => navigation.goBack() }]
+      );
+    } catch (err) {
+      console.warn("[CREATE TEAM ERROR]:", err);
+      Alert.alert(
+        "Creation Failed ❌",
+        err?.message || "Could not save team. Please check your connection."
+      );
+    } finally {
+      setIsCreatingTeam(false);
     }
   };
 
@@ -123,11 +160,16 @@ const CreateTeamScreen = ({ navigation }) => {
       {/* Fixed Bottom Action Bar */}
       <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 shadow-xl">
         <TouchableOpacity
-          className="h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-xl shadow-teal-500/30 border border-teal-400/40"
+          className={`h-14 bg-[#0D9488] rounded-2xl justify-center items-center shadow-xl shadow-teal-500/30 border border-teal-400/40 ${isCreatingTeam ? "opacity-70" : ""}`}
           activeOpacity={0.85}
-          onPress={() => navigation.goBack()}
+          onPress={handleCreateTeam}
+          disabled={isCreatingTeam}
         >
-          <Text className="text-white text-base font-black tracking-wider">Add Team ➔</Text>
+          {isCreatingTeam ? (
+            <ActivityIndicator color="#FFFFFF" size="small" />
+          ) : (
+            <Text className="text-white text-base font-black tracking-wider">Add Team ➔</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>

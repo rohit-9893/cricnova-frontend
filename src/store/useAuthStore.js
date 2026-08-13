@@ -68,7 +68,12 @@ export const useAuthStore = createStore((set, get) => ({
         const resUser = await getUserProfile();
         const userData = resUser?.data || resUser?.user || resUser;
         if (userData) {
-          mergedUser = { ...mergedUser, ...userData };
+          mergedUser = {
+            ...mergedUser,
+            ...userData,
+            // ✅ Preserve local-only flags that backend does NOT return
+            isRegistered: mergedUser.isRegistered || userData.isRegistered || false,
+          };
         }
       } catch (userErr) {
         console.warn("[GET USER PROFILE API NOTICE]:", userErr?.message || userErr);
